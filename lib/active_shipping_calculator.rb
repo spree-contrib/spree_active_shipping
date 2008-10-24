@@ -20,11 +20,25 @@ class ActiveShippingCalculator
     ups = UPS.new(:login => Spree::ActiveShipping::Config[:ups_login], 
                   :password => Spree::ActiveShipping::Config[:ups_password], 
                   :key => Spree::ActiveShipping::Config[:ups_key])  
-                                  
-    response = @carrier.find_rates(origin, destination, packages(order))
+                
+    rates = Rails.cache.fetch(order) do                              
+      rates = retrieve_rates(origin, destination, packages(order))
+    end
   end
 
   private
+  
+  def retrieve_rates(origin, destination, packages)
+    begin
+      response = @carrier.find_rates(origin, destination, packages)
+      # turn this beastly array into a nice little hash
+      Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
+    rescue ActiveMerchant::Shipping::ResponseError     
+      # TODO - handle error
+      return nil
+    end
+  end
+  
   # Generates an array of Package objects based on the quantities and weights of the variants in the line items
   def packages(order)
     multiplier = Spree::ActiveShipping::Config[:unit_multiplier]

@@ -5,7 +5,6 @@ describe ActiveShippingCalculator do
   
   # NOTE: All specs will use the bogus calculator (no login information needed)
   before(:each) do
-    @calculator = ActiveShippingCalculator.new(ActiveMerchant::Shipping::BogusCarrier)
     Spree::ActiveShipping::Config.set(:units => "imperial")
     Spree::ActiveShipping::Config.set(:unit_multiplier => 16)
     v1 = Variant.new(:weight => 10)
@@ -15,14 +14,15 @@ describe ActiveShippingCalculator do
     
     @address = Address.new(:country => Country.new(:iso => "US"), :state => State.new(:abbr => "NY"))
     @order = Order.new(:line_items => [@line_item1, @line_item2], :address => @address)
+
+    @carrier = Spree::BogusCarrier.new
+    Spree::BogusCarrier.stub!(:new).and_return(@carrier)
+    @calculator = ActiveShippingCalculator.new(Spree::BogusCarrier)
   end
 
   describe "calculate_shipping" do
     it "should use the carrier supplied in the initializer" do
-      bogus_carrier = mock("Bogus Carrier")
-      bogus_carrier.should_receive(:find_rates)
-      ActiveMerchant::Shipping::BogusCarrier.stub!(:new).and_return(bogus_carrier)
-      @calculator = ActiveShippingCalculator.new(ActiveMerchant::Shipping::BogusCarrier)
+      @carrier.should_receive(:find_rates).and_return(ActiveMerchant::Shipping::RateResponse.new(true, "Foo"))
       @calculator.calculate_shipping(@order)
     end
     it "should multiply the weight by the line item quantity" do
@@ -30,9 +30,15 @@ describe ActiveShippingCalculator do
       @calculator.calculate_shipping(@order)
     end
     it "should create a package with the correct total weight in ounces" do
-      #expected_weight = BigDecimal.new("404") # (10 * 2 + 5.25 * 1) * 16
+      # (10 * 2 + 5.25 * 1) * 16 = 404
       Package.should_receive(:new).with(404, [], :units => :imperial)
       @calculator.calculate_shipping(@order) 
+    end
+    it "should check the cache first before finding rates" do
+      Rails.cache.fetch(@order) { mock("Mock Rates") }
+      @carrier.should_not_receive(:find_rates)
+      @calculator = ActiveShippingCalculator.new(Spree::BogusCarrier)
+      @calculator.calculate_shipping(@order)
     end
   end
 end
