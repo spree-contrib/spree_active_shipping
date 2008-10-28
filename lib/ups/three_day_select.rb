@@ -2,9 +2,9 @@ require 'active_shipping'
 include ActiveMerchant::Shipping
 
 module Ups
-  class NextDayAir < Ups::Base
+  class ThreeDaySelect < Ups::Base
     def rate_name
-      "UPS Next Day Air"
+      "UPS Three-Day Select"
     end
   end
 end
