@@ -39,7 +39,7 @@ class ActiveShippingCalculator
       # turn this beastly array into a nice little hash
       Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
     rescue ActiveMerchant::Shipping::ResponseError => re     
-      msg = "#{Globalite.loc(:shipping_error)}: #{re.message}"
+      msg = "#{t('shipping_error')}: #{re.message}"
       raise Spree::ShippingError.new(msg)
     end
   end
