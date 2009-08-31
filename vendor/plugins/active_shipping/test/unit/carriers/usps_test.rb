@@ -1,12 +1,11 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
 class USPSTest < Test::Unit::TestCase
-  include ActiveMerchant::Shipping
   
   def setup
-    @packages               = fixtures(:packages)
-    @locations              = fixtures(:locations)
-    @carrier                = USPS.new(:login => 'login')
+    @packages  = TestFixtures.packages
+    @locations = TestFixtures.locations
+    @carrier   = USPS.new(:login => 'login')
     @international_rate_responses = {
       :vanilla => xml_fixture('usps/beverly_hills_to_ottawa_book_rate_response')
     }
@@ -24,13 +23,15 @@ class USPSTest < Test::Unit::TestCase
 
   def test_parse_international_rate_response
     fixture_xml = @international_rate_responses[:vanilla]
-    USPS.any_instance.expects(:commit).returns(fixture_xml)
+    @carrier.expects(:commit).returns(fixture_xml)
     
     response = begin
-      @carrier.find_rates( @locations[:beverly_hills], # imperial (U.S. origin)
-                                  @locations[:ottawa],
-                                  @packages[:book],
-                                  :test => true)
+      @carrier.find_rates(
+        @locations[:beverly_hills], # imperial (U.S. origin)
+        @locations[:ottawa],
+        @packages[:book],
+        :test => true
+      )
     rescue ResponseError => e
       e.response
     end
@@ -70,15 +71,15 @@ class USPSTest < Test::Unit::TestCase
     p = @packages[:book]
     limits.each do |sentence,hashes|
       dimensions = hashes[0].update(:weight => 50.0)
-      service_hash = build_service_hash(
+      service_node = build_service_node(
         :name => hashes[1],
         :max_weight => 50,
         :max_dimensions => sentence )
       @carrier.expects(:package_valid_for_max_dimensions).with(p, dimensions)
-      @carrier.send(:package_valid_for_service, p, service_hash)
+      @carrier.send(:package_valid_for_service, p, service_node)
     end
   
-    service_hash = build_service_hash(
+    service_node = build_service_node(
         :name => "flat-rate box",
         :max_weight => 50,
         :max_dimensions => "USPS-supplied Priority Mail flat-rate box. Maximum weight 20 pounds." )
@@ -88,7 +89,7 @@ class USPSTest < Test::Unit::TestCase
       {:weight => 50.0, :length => 13.625, :width => 11.875, :height => 3.375}]
     @carrier.expects(:package_valid_for_max_dimensions).with(p, dimensions[0])
     @carrier.expects(:package_valid_for_max_dimensions).with(p, dimensions[1])
-    @carrier.send(:package_valid_for_service, p, service_hash)
+    @carrier.send(:package_valid_for_service, p, service_node)
     
   end
   
@@ -112,7 +113,46 @@ class USPSTest < Test::Unit::TestCase
     assert request =~ /\>12345\</
   end
   
+  def test_xml_logging_to_file
+    mock_response = @international_rate_responses[:vanilla]
+    @carrier.expects(:commit).times(2).returns(mock_response)
+    @carrier.find_rates(
+      @locations[:beverly_hills],
+      @locations[:ottawa],
+      @packages[:book],
+      :test => true
+    )
+    @carrier.find_rates(
+      @locations[:beverly_hills],
+      @locations[:ottawa],
+      @packages[:book],
+      :test => true
+    )
+  end
+  
+  def test_maximum_weight
+    assert Package.new(70 * 16, [5,5,5], :units => :imperial).mass == @carrier.maximum_weight
+    assert Package.new((70 * 16) + 0.01, [5,5,5], :units => :imperial).mass > @carrier.maximum_weight
+    assert Package.new((70 * 16) - 0.01, [5,5,5], :units => :imperial).mass < @carrier.maximum_weight
+  end
+  
   private
+  
+  def build_service_node(options = {})
+    XmlNode.new('Service') do |service_node|
+      service_node << XmlNode.new('Pounds', options[:pounds] || "0")
+      service_node << XmlNode.new('SvcCommitments', options[:svc_commitments] || "Varies")
+      service_node << XmlNode.new('Country', options[:country] || "CANADA")
+      service_node << XmlNode.new('ID', options[:id] || "3")
+      service_node << XmlNode.new('MaxWeight', options[:max_weight] || "64")
+      service_node << XmlNode.new('SvcDescription', options[:name] || "First-Class Mail International")
+      service_node << XmlNode.new('MailType', options[:mail_type] || "Package")
+      service_node << XmlNode.new('Postage', options[:postage] || "3.76")
+      service_node << XmlNode.new('Ounces', options[:ounces] || "9")
+      service_node << XmlNode.new('MaxDimensions', options[:max_dimensions] || 
+          "Max. length 24\", Max. length, height, depth combined 36\"")
+    end.to_xml_element
+  end
   
   def build_service_hash(options = {})
     {"Pounds"=> options[:pounds] || "0",                                                                         # 8

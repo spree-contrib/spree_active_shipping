@@ -1,17 +1,9 @@
 #!/usr/bin/env ruby
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 
-
 require 'test/unit'
 require 'active_shipping'
-
-begin
-  require 'mocha'
-rescue LoadError
-  require 'rubygems'
-  require 'mocha'
-end
-
+require 'mocha'
 
 module Test
   module Unit
@@ -58,24 +50,7 @@ module Test
         hash.symbolize_keys!
         hash.each{|k,v| symbolize_keys(v)}
       end
-  
-      def xml_logs(response_object, options={})
-        name = options[:name] || Time.new.strftime('%Y%m%d%H%M%S')
-        carrier_name = @carrier.name rescue ''
-        path = options[:path] || File.join(ENV['HOME'], '.active_merchant', 'shipping', 'logs', carrier_name)
-        File.makedirs(path)
-        methods = {'request' => 'request', 'response' => 'xml'}
-        methods.each do |suffix, method|
-          file = File.join(path, ([name,suffix].join('_') + '.xml'))
-          i = 0
-          while File.exist?(file) do
-            file = File.join(path, ([name + (i += 1).to_s,suffix].join('_') + '.xml'))
-          end
-          File.open(file, 'w+') do |file|
-            file.puts response_object.send(method)
-          end
-        end
-      end
+      
     end
   end
 end
@@ -95,7 +70,8 @@ module ActiveMerchant
         :wii => Package.new((7.5 * 16), [15, 10, 4.5], :units => :imperial, :value => 269.99, :currency => 'GBP'),
         :poster => Package.new(100, [93,10], :cylinder => true),
         :small_half_pound => Package.new(8, [1,1,1], :units => :imperial),
-        :big_half_pound => Package.new((16 * 50), [24,24,36], :units => :imperial)
+        :big_half_pound => Package.new((16 * 50), [24,24,36], :units => :imperial),
+        :chocolate_stuff => Package.new(80, [2,6,12], :units => :imperial)
       }
       
       @@locations = {

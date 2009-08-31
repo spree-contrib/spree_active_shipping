@@ -1,38 +1,63 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class USPSTest < Test::Unit::TestCase
-  include ActiveMerchant::Shipping
   
   def setup
-    @packages               = fixtures(:packages)
-    @locations              = fixtures(:locations)
-    @carrier                = USPS.new(fixtures(:usps))
-    
+    @packages  = TestFixtures.packages
+    @locations = TestFixtures.locations
+    @carrier   = USPS.new(fixtures(:usps))
+  end
+  
+  def test_machinable_rate_discrepancy
+    assert_nothing_raised do
+      default_machinable_response = @carrier.find_rates(
+                                      Location.new(:zip => 83843),
+                                      Location.new(:zip => 70001),
+                                      Package.new(32, [12,6,2], :units => :imperial)
+                                    )
+      assert default_machinable_response.request =~ /<Machinable>TRUE<\/Machinable>/
+      
+      explicit_non_machinable_response = @carrier.find_rates(
+                                           Location.new(:zip => 83843),
+                                           Location.new(:zip => 70001),
+                                           Package.new(32, [12,6,2], :units => :imperial, :machinable => false)
+                                         )
+      assert explicit_non_machinable_response.request =~ /<Machinable>FALSE<\/Machinable>/
+      
+      assert_not_equal default_machinable_response.rates.map(&:price),
+                        explicit_non_machinable_response.rates.map(&:price)
+    end
   end
   
   def test_zip_to_zip
     assert_nothing_raised do
-      response = @carrier.find_rates( Location.new(:zip => 40524),
-                                      Location.new(:zip => 40515),
-                                      Package.new(16, [12,6,2], :units => :imperial))
+      response = @carrier.find_rates(
+                   Location.new(:zip => 40524),
+                   Location.new(:zip => 40515),
+                   Package.new(16, [12,6,2], :units => :imperial)
+                 )
     end
   end
   
   def test_just_country_given
     assert_nothing_raised do
-      response = @carrier.find_rates( @locations[:beverly_hills],
-                                      Location.new(:country => 'CZ'),
-                                      Package.new(100, [5,10,20]))
+      response = @carrier.find_rates(
+                   @locations[:beverly_hills],
+                   Location.new(:country => 'CZ'),
+                   Package.new(100, [5,10,20])
+                 )
     end
   end
   
   def test_us_to_canada
     response = nil
     assert_nothing_raised do
-      response = @carrier.find_rates(  @locations[:beverly_hills],
-                                  @locations[:ottawa],
-                                  @packages.values_at(:wii),
-                                  :test => true)
+      response = @carrier.find_rates(
+                   @locations[:beverly_hills],
+                   @locations[:ottawa],
+                   @packages.values_at(:wii),
+                   :test => true
+                 )
     assert_not_equal [], response.rates.length
     end
   end
@@ -40,10 +65,12 @@ class USPSTest < Test::Unit::TestCase
   def test_domestic_rates_thoroughly
     response = nil
     assert_nothing_raised do
-      response = @carrier.find_rates(  @locations[:new_york],
-                                  @locations[:beverly_hills],
-                                  @packages.values_at(:book,:wii),
-                                  :test => true)
+      response = @carrier.find_rates(
+                   @locations[:new_york],
+                   @locations[:beverly_hills],
+                   @packages.values_at(:book,:wii),
+                   :test => true
+                 )
     end
     assert response.success?, response.message
     assert_instance_of Hash, response.params
@@ -76,10 +103,12 @@ class USPSTest < Test::Unit::TestCase
     
     response = nil
     assert_nothing_raised do
-      response = @carrier.find_rates(  @locations[:beverly_hills],
-                                  @locations[:ottawa],
-                                  @packages.values_at(:book, :wii),
-                                  :test => true)
+      response = @carrier.find_rates(
+                   @locations[:beverly_hills],
+                   @locations[:ottawa],
+                   @packages.values_at(:book, :wii),
+                   :test => true
+                 )
     end
     
     assert response.success?, response.message
@@ -112,13 +141,20 @@ class USPSTest < Test::Unit::TestCase
     response = nil
     p = Package.new(0,0)
     response = begin
-      @carrier.find_rates( @locations[:beverly_hills], # imperial (U.S. origin)
-                                  @locations[:ottawa],
-                                  p, :test => true)
+      @carrier.find_rates(
+        @locations[:beverly_hills], # imperial (U.S. origin)
+        @locations[:ottawa],
+        p,
+        :test => true
+      )
     rescue ResponseError => e
       e.response
     end
     assert response.success?, response.message
+  end
+  
+  def test_valid_credentials
+    assert USPS.new(fixtures(:usps).merge(:test => true)).valid_credentials?
   end
   
   # Uncomment and switch out SPECIAL_COUNTRIES with some other batch to see which

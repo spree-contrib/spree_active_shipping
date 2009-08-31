@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2007 Jaded Pixel
+# Copyright (c) 2009 Jaded Pixel
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -23,17 +23,18 @@
 
 $:.unshift File.dirname(__FILE__)
 
-
-
 require 'rubygems'
 require 'active_support'
-require 'ftools'
 
 require 'vendor/xml_node/lib/xml_node'
+require 'vendor/quantified/lib/quantified'
+require 'quantified/mass'
+require 'quantified/length'
 
 require 'net/https'
 require 'active_shipping/lib/error'
 require 'active_shipping/lib/requires_parameters'
+require 'active_shipping/lib/connection'
 require 'active_shipping/lib/posts_data'
 require 'active_shipping/lib/country'
 

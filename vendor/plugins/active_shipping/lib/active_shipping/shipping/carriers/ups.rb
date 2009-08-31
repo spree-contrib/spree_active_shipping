@@ -1,21 +1,20 @@
+# -*- encoding: utf-8 -*-
+
 module ActiveMerchant
   module Shipping
     class UPS < Carrier
+      self.retry_safe = true
+      
       cattr_accessor :default_options
       cattr_reader :name
       @@name = "UPS"
       
-      TEST_DOMAIN = 'wwwcie.ups.com'
-      LIVE_DOMAIN = 'www.ups.com'
+      TEST_URL = 'https://wwwcie.ups.com'
+      LIVE_URL = 'https://www.ups.com'
       
       RESOURCES = {
-        :rates => '/ups.app/xml/Rate',
-        :track => '/ups.app/xml/Track'
-      }
-      
-      USE_SSL = {
-        :rates => true,
-        :track => true
+        :rates => 'ups.app/xml/Rate',
+        :track => 'ups.app/xml/Track'
       }
       
       PICKUP_CODES = {
@@ -72,12 +71,15 @@ module ActiveMerchant
       # From http://en.wikipedia.org/w/index.php?title=European_Union&oldid=174718707 (Current as of November 30, 2007)
       EU_COUNTRY_CODES = ["GB", "AT", "BE", "BG", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"]
       
+      US_TERRITORIES_TREATED_AS_COUNTRIES = ["AS", "FM", "GU", "MH", "MP", "PW", "PR", "VI"]
+      
       def requirements
         [:key, :login, :password]
       end
       
       def find_rates(origin, destination, packages, options={})
-        options = @options.update(options)
+        origin, destination = upsified_location(origin), upsified_location(destination)
+        options = @options.merge(options)
         packages = Array(packages)
         access_request = build_access_request
         rate_request = build_rate_request(origin, destination, packages, options)
@@ -94,13 +96,26 @@ module ActiveMerchant
       end
       
       protected
+      
+      def upsified_location(location)
+        if location.country_code == 'US' && US_TERRITORIES_TREATED_AS_COUNTRIES.include?(location.state)
+          atts = {:country => location.state}
+          [:zip, :city, :address1, :address2, :address3, :phone, :fax, :address_type].each do |att|
+            atts[att] = location.send(att)
+          end
+          Location.new(atts)
+        else
+          location
+        end
+      end
+      
       def build_access_request
         xml_request = XmlNode.new('AccessRequest') do |access_request|
           access_request << XmlNode.new('AccessLicenseNumber', @options[:key])
           access_request << XmlNode.new('UserId', @options[:login])
           access_request << XmlNode.new('Password', @options[:password])
         end
-        xml_request.to_xml
+        xml_request.to_s
       end
       
       def build_rate_request(origin, destination, packages, options={})
@@ -135,6 +150,7 @@ module ActiveMerchant
             #                   * Shipment/DocumentsOnly element                      
             
             packages.each do |package|
+              debugger if package.nil?
               
               
               imperial = ['US','LR','MM'].include?(origin.country_code(:alpha2))
@@ -181,7 +197,7 @@ module ActiveMerchant
           end
           
         end
-        xml_request.to_xml
+        xml_request.to_s
       end
       
       def build_tracking_request(tracking_number, options={})
@@ -192,7 +208,7 @@ module ActiveMerchant
           end
           root_node << XmlNode.new('TrackingNumber', tracking_number.to_s)
         end
-        xml_request.to_xml
+        xml_request.to_s
       end
       
       def build_location_node(name,location,options={})
@@ -228,78 +244,55 @@ module ActiveMerchant
       def parse_rate_response(origin, destination, packages, response, options={})
         rates = []
         
-        xml_hash = Hash.from_xml(response)['RatingServiceSelectionResponse']
-        success = response_hash_success?(xml_hash)
-        message = response_hash_message(xml_hash)
+        xml = REXML::Document.new(response)
+        success = response_success?(xml)
+        message = response_message(xml)
         
         if success
           rate_estimates = []
           
-          xml_hash['RatedShipment'] = [xml_hash['RatedShipment']] unless xml_hash['RatedShipment'].is_a? Array
-          xml_hash['RatedShipment'].each do |rated_shipment|
-            service_code = rated_shipment['Service']['Code']
+          xml.elements.each('/*/RatedShipment') do |rated_shipment|
+            service_code = rated_shipment.get_text('Service/Code').to_s
             rate_estimates << RateEstimate.new(origin, destination, @@name,
                                 service_name_for(origin, service_code),
-                                :total_price => rated_shipment['TotalCharges']['MonetaryValue'].to_f,
-                                :currency => rated_shipment['TotalCharges']['CurrencyCode'],
+                                :total_price => rated_shipment.get_text('TotalCharges/MonetaryValue').to_s.to_f,
+                                :currency => rated_shipment.get_text('TotalCharges/CurrencyCode').to_s,
                                 :service_code => service_code,
                                 :packages => packages)
           end
         end
-        RateResponse.new(success, message, xml_hash, :rates => rate_estimates, :xml => response, :request => last_request)
+        RateResponse.new(success, message, Hash.from_xml(response).values.first, :rates => rate_estimates, :xml => response, :request => last_request)
       end
       
       def parse_tracking_response(response, options={})
-        xml_hash = Hash.from_xml(response)['TrackResponse']
-        success = response_hash_success?(xml_hash)
-        message = response_hash_message(xml_hash)
+        xml = REXML::Document.new(response)
+        success = response_success?(xml)
+        message = response_message(xml)
         
         if success
           tracking_number, origin, destination = nil
           shipment_events = []
           
-          first_shipment = first_or_only(xml_hash['Shipment'])
-          first_package = first_or_only(first_shipment['Package'])
-          tracking_number = first_shipment['ShipmentIdentificationNumber'] || first_package['TrackingNumber']
+          first_shipment = xml.elements['/*/Shipment']
+          first_package = first_shipment.elements['Package']
+          tracking_number = first_shipment.get_text('ShipmentIdentificationNumber | Package/TrackingNumber').to_s
+          
           origin, destination = %w{Shipper ShipTo}.map do |location|
-            location_hash = first_shipment[location]
-            if location_hash && (address_hash = location_hash['Address'])
-              Location.new(
-                :country =>     address_hash['CountryCode'],
-                :postal_code => address_hash['PostalCode'],
-                :province =>    address_hash['StateProvinceCode'],
-                :city =>        address_hash['City'],
-                :address1 =>    address_hash['AddressLine1'],
-                :address2 =>    address_hash['AddressLine2'],
-                :address3 =>    address_hash['AddressLine3']
-              )
-            else
-              nil
-            end
+            location_from_address_node(first_shipment.elements["#{location}/Address"])
           end
           
-          activities = Array(first_package['Activity'])
+          activities = first_package.get_elements('Activity')
           unless activities.empty?
             shipment_events = activities.map do |activity|
-              address = activity['ActivityLocation']['Address']
-              location = Location.new(
-                :address1 => address['AddressLine1'],
-                :address2 => address['AddressLine2'],
-                :address3 => address['AddressLine3'],
-                :city => address['City'],
-                :state => address['StateProvinceCode'],
-                :postal_code => address['PostalCode'],
-                :country => address['CountryCode'])
-              status = activity['Status']
-              status_type = status['StatusType'] if status
-              description = status_type['Description'] if status_type
-            
-              # for now, just assume UTC, even though it probably isn't
-              zoneless_time = if activity['Time'] and activity['Date']
-                hour, minute, second = activity['Time'].scan(/\d{2}/)
-                year, month, day = activity['Date'][0..3], activity['Date'][4..5], activity['Date'][6..7]
-                Time.utc(year , month, day, hour, minute, second)
+              description = activity.get_text('Status/StatusType/Description').to_s
+              zoneless_time = if (time = activity.get_text('Time')) &&
+                                 (date = activity.get_text('Date'))
+                time, date = time.to_s, date.to_s
+                hour, minute, second = time.scan(/\d{2}/)
+                year, month, day = date[0..3], date[4..5], date[6..7]
+                Time.utc(year, month, day, hour, minute, second)
               end
+              location = location_from_address_node(activity.elements['ActivityLocation/Address'])
               ShipmentEvent.new(description, zoneless_time, location)
             end
             
@@ -320,9 +313,9 @@ module ActiveMerchant
               shipment_events[-1] = ShipmentEvent.new(shipment_events.last.name, shipment_events.last.time, destination)
             end
           end
+          
         end
-        
-        TrackingResponse.new(success, message, xml_hash,
+        TrackingResponse.new(success, message, Hash.from_xml(response).values.first,
           :xml => response,
           :request => last_request,
           :shipment_events => shipment_events,
@@ -331,29 +324,29 @@ module ActiveMerchant
           :tracking_number => tracking_number)
       end
       
-      def first_or_only(xml_hash)
-        xml_hash.is_a?(Array) ? xml_hash.first : xml_hash
+      def location_from_address_node(address)
+        return nil unless address
+        Location.new(
+                :country =>     node_text_or_nil(address.elements['CountryCode']),
+                :postal_code => node_text_or_nil(address.elements['PostalCode']),
+                :province =>    node_text_or_nil(address.elements['StateProvinceCode']),
+                :city =>        node_text_or_nil(address.elements['City']),
+                :address1 =>    node_text_or_nil(address.elements['AddressLine1']),
+                :address2 =>    node_text_or_nil(address.elements['AddressLine2']),
+                :address3 =>    node_text_or_nil(address.elements['AddressLine3'])
+              )
       end
       
-      def response_hash_success?(xml_hash)
-        xml_hash['Response']['ResponseStatusCode'] == '1'
+      def response_success?(xml)
+        xml.get_text('/*/Response/ResponseStatusCode').to_s == '1'
       end
       
-      def response_hash_message(xml_hash)
-        response_hash_success?(xml_hash) ?
-          xml_hash['Response']['ResponseStatusDescription'] :
-          xml_hash['Response']['Error']['ErrorDescription']
+      def response_message(xml)
+        xml.get_text('/*/Response/ResponseStatusDescription | /*/Response/Error/ErrorDescription').to_s
       end
       
       def commit(action, request, test = false)
-        http = Net::HTTP.new((test ? TEST_DOMAIN : LIVE_DOMAIN),
-                              (USE_SSL[action] ? 443 : 80 ))
-        http.use_ssl = USE_SSL[action]
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE if USE_SSL[action]
-        response = http.start do |http|
-          http.post RESOURCES[action], request
-        end
-        response.body
+        ssl_post("#{test ? TEST_URL : LIVE_URL}/#{RESOURCES[action]}", request)
       end
       
       
@@ -361,9 +354,9 @@ module ActiveMerchant
         origin = origin.country_code(:alpha2)
         
         name = case origin
-        when "CA": CANADA_ORIGIN_SERVICES[code]
-        when "MX": MEXICO_ORIGIN_SERVICES[code]
-        when *EU_COUNTRY_CODES: EU_ORIGIN_SERVICES[code]
+        when "CA" then CANADA_ORIGIN_SERVICES[code]
+        when "MX" then MEXICO_ORIGIN_SERVICES[code]
+        when *EU_COUNTRY_CODES then EU_ORIGIN_SERVICES[code]
         end
         
         name ||= OTHER_NON_US_ORIGIN_SERVICES[code] unless name == 'US'

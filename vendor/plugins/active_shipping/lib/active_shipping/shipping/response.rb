@@ -44,7 +44,6 @@ module ActiveMerchant #:nodoc:
       def test?
         @test ? true : false
       end
-      
     end
   end
 end

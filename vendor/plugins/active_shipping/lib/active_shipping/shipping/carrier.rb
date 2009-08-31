@@ -4,26 +4,20 @@ module ActiveMerchant
       
       include RequiresParameters
       include PostsData
+      include Quantified
       
       attr_reader :last_request
       attr_accessor :test_mode
       alias_method :test_mode?, :test_mode
       
-      # Override 'setup' method instead of 'initialize' in subclasses for most cases.
       # Credentials should be in options hash under keys :login, :password and/or :key.
       def initialize(options = {})
         requirements.each {|key| requires!(options, key)}
         @options = options
         @last_request = nil
         @test_mode = @options[:test]
-        setup
       end
-      
-      # Override to put any initializing code you want in this method; it gets called at the end of initialize.
-      def setup
-        
-      end
-      
+
       # Override to return required keys in options hash for initialize method.
       def requirements
         []
@@ -45,7 +39,15 @@ module ActiveMerchant
         true
       end
       
+      def maximum_weight
+        Mass.new(150, :pounds)
+      end
+      
       protected
+      
+      def node_text_or_nil(xml_node)
+        xml_node ? xml_node.text : nil
+      end
       
       # Override in subclasses for non-U.S.-based carriers.
       def self.default_location
@@ -63,11 +65,6 @@ module ActiveMerchant
       def save_request(r)
         @last_request = r
       end
-      
-      # Override in subclass to use for actual sending of request.
-      def commit(action, request, test = false)
-      end
-      
     end
   end
 end
