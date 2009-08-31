@@ -2,16 +2,19 @@
 # require_dependency 'application'
 
 class ActiveShippingExtension < Spree::Extension
-  version "0.6.0"
+  version "0.9.0"
   description "Describe your extension here"
   url "http://yourwebsite.com/active_shipping"
   
-  def activate
-    # admin.tabs.add "Active Shipping", "/admin/active_shipping", :after => "Layouts", :visibility => [:all]
-  end
-  
-  def deactivate
-    # admin.tabs.remove "Active Shipping"
-  end
-  
+  def activate 
+    [
+      Calculator::Ups::Ground,
+      Calculator::Ups::NextDayAir,
+      Calculator::Ups::NextDayAirEarlyAm,
+      Calculator::Ups::NextDayAirSaver,
+      Calculator::Ups::Saver,
+      Calculator::Ups::SecondDayAir,
+      Calculator::Ups::ThreeDaySelect
+    ].each(&:register)
+  end  
 end

@@ -1,36 +1,37 @@
-class ActiveShippingCalculator
-  #include Spree::ActiveShipping    
-  include ActiveMerchant::Shipping
+include ActiveMerchant::Shipping
+
+# This is a base calculator for shipping calcualations using the ActiveShipping plugin.  It is not intended to be 
+# instantiated directly.  Create sublcass for each specific shipping method you wish to support instead.
+class Calculator::ActiveShipping < Calculator  
+
+  def self.register
+    super                                
+    ShippingMethod.register_calculator(self)
+    ShippingRate.register_calculator(self)
+  end
   
-  #def initialize(carrier)
-  #  @carrier = carrier.new
-  #end
-  
-  def calculate_shipping(order)
+  def compute(line_items)
+    order = line_items.first.order
     origin      = Location.new(:country => Spree::ActiveShipping::Config[:origin_country], 
                                :city => Spree::ActiveShipping::Config[:origin_city],
                                :state => Spree::ActiveShipping::Config[:origin_state],
                                :zip => Spree::ActiveShipping::Config[:origin_zip])
 
-    destination = Location.new(:country => order.address.country.iso,
-                               :state => order.address.state.abbr,
-                               :city => order.address.city,
-                               :zip => order.address.zipcode)
+    destination = Location.new(:country => order.ship_address.country.iso,
+                               :state => order.ship_address.state.abbr,
+                               :city => order.ship_address.city,
+                               :zip => order.ship_address.zipcode)
 
     rates = Rails.cache.fetch(order) do                              
       rates = retrieve_rates(origin, destination, packages(order))
     end
-    
+
     return nil unless rates    
-    rate = rates[rate_name]
+    rate = rates[self.description]
     return nil unless rate
     # divide by 100 since active_shipping rates are expressed as cents
     return rate/100 
-  end
-
-  protected 
-  def rate_name
-  end
+  end  
   
   private  
   def retrieve_rates(origin, destination, packages)
@@ -39,7 +40,7 @@ class ActiveShippingCalculator
       # turn this beastly array into a nice little hash
       Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
     rescue ActiveMerchant::Shipping::ResponseError => re     
-      msg = "#{t('shipping_error')}: #{re.message}"
+      msg = "#{I18n.t('shipping_error')}: #{re.message}"
       raise Spree::ShippingError.new(msg)
     end
   end
