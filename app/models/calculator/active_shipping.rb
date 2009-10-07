@@ -27,7 +27,7 @@ class Calculator::ActiveShipping < Calculator
     end
 
     return nil unless rates    
-    rate = rates[self.description]
+    rate = rates[self.description].to_f
     return nil unless rate
     # divide by 100 since active_shipping rates are expressed as cents
     return rate/100 
