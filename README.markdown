@@ -25,7 +25,7 @@ Global Handling Fee
 Spree::ActiveShipping::Config[:handling_fee]
 </pre>
 
-This property allows you to set a global handling fee that will be added to all calculated shipping rates.
+This property allows you to set a global handling fee that will be added to all calculated shipping rates.  Specify the number of cents, not dollars.
 
 Future Development
 ------------------
