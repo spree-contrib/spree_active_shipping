@@ -18,6 +18,18 @@ Spree::ActiveShipping::Config[:ups_password]
 Spree::ActiveShipping::Config[:ups_key]
 </pre>
 
+Global Handling Fee
+-------------------
+
+<pre>
+Spree::ActiveShipping::Config[:handling_fee]
+</pre>
+
+This property allows you to set a global handling fee that will be added to all calculated shipping rates.
+
+Future Development
+------------------
+
 It will soon be possible to set these properties through a new admin configuration screen (even sooner if someone else writes the patch!)  
 
 If you'd like to set your shipping configuration as part of a migration you could add something like this to your site extension.
