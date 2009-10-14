@@ -14,7 +14,13 @@ class ActiveShippingExtension < Spree::Extension
       Calculator::Ups::NextDayAirSaver,
       Calculator::Ups::Saver,
       Calculator::Ups::SecondDayAir,
-      Calculator::Ups::ThreeDaySelect
+      Calculator::Ups::ThreeDaySelect,
+      Calculator::Usps::MediaMail,
+      Calculator::Usps::ExpressMail,
+      Calculator::Usps::PriorityMail,
+      Calculator::Usps::PriorityMailSmallFlatRateBox,
+      Calculator::Usps::PriorityMailRegularMediumFlatRateBoxes,
+      Calculator::Usps::PriorityMailLargeFlatRateBox
     ].each(&:register)
   end  
 end
