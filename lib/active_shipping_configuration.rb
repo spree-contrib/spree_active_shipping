@@ -3,6 +3,8 @@ class ActiveShippingConfiguration < Configuration
   preference :ups_login, :string, :default => "aunt_judy"
   preference :ups_password, :string, :default => "secret"
   preference :ups_key, :string, :default => "developer_key"
+  
+  preference :usps_login, :string, :default => "aunt_judy"
 
   preference :origin_country, :string, :default => "US"
   preference :origin_state, :string, :default => "PA"
