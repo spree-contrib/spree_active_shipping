@@ -1,8 +1,8 @@
-include ActiveMerchant::Shipping
-
 # This is a base calculator for shipping calcualations using the ActiveShipping plugin.  It is not intended to be 
 # instantiated directly.  Create sublcass for each specific shipping method you wish to support instead.
 class Calculator::ActiveShipping < Calculator  
+
+  include ActiveMerchant::Shipping
 
   def self.register
     super                                
@@ -30,7 +30,7 @@ class Calculator::ActiveShipping < Calculator
     rate = rates[self.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
     return nil unless rate
     # divide by 100 since active_shipping rates are expressed as cents
-    return rate/100 
+    return rate/100.0
   end  
   
   private  
