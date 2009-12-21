@@ -14,7 +14,32 @@ class ActiveShippingExtension < Spree::Extension
       Calculator::Ups::NextDayAirSaver,
       Calculator::Ups::Saver,
       Calculator::Ups::SecondDayAir,
-      Calculator::Ups::ThreeDaySelect
+      Calculator::Ups::ThreeDaySelect,
+      Calculator::Fedex::ExpressSaver,
+      Calculator::Fedex::FirstOvernight,
+      Calculator::Fedex::Ground,
+      Calculator::Fedex::GroundHomeDelivery,
+      Calculator::Fedex::InternationalEconomy,
+      Calculator::Fedex::InternationalEconomyFreight,
+      Calculator::Fedex::InternationalFirst,
+      Calculator::Fedex::InternationalGround,
+      Calculator::Fedex::InternationalPriority,
+      Calculator::Fedex::InternationalPriorityFreight,
+      Calculator::Fedex::InternationalPrioritySaturdayDelivery,
+      Calculator::Fedex::OneDayFreight,
+      Calculator::Fedex::OneDayFreightSaturdayDelivery,
+      Calculator::Fedex::PriorityOvernight,
+      Calculator::Fedex::PriorityOvernightSaturdayDelivery,
+      Calculator::Fedex::StandardOvernight,
+      Calculator::Fedex::ThreeDayFreight,
+      Calculator::Fedex::ThreeDayFreightSaturdayDelivery,
+      Calculator::Fedex::StandardOvernight,
+      Calculator::Fedex::ThreeDayFreight,
+      Calculator::Fedex::ThreeDayFreightSaturdayDelivery,
+      Calculator::Fedex::TwoDay,
+      Calculator::Fedex::TwoDayFreight,
+      Calculator::Fedex::TwoDayFreightSaturdayDelivery,
+      Calculator::Fedex::TwoDaySaturdayDelivery
     ].each(&:register)
   end  
 end
