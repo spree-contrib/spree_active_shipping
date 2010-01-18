@@ -5,8 +5,8 @@ class ActiveShippingExtension < Spree::Extension
   version "0.9.0"
   description "Describe your extension here"
   url "http://yourwebsite.com/active_shipping"
-  
-  def activate 
+
+  def activate
     [
       Calculator::Ups::Ground,
       Calculator::Ups::NextDayAir,
@@ -15,6 +15,7 @@ class ActiveShippingExtension < Spree::Extension
       Calculator::Ups::Saver,
       Calculator::Ups::SecondDayAir,
       Calculator::Ups::ThreeDaySelect,
+      Calculator::Ups::WorldwideExpedited,
       Calculator::Fedex::ExpressSaver,
       Calculator::Fedex::FirstOvernight,
       Calculator::Fedex::Ground,
@@ -41,5 +42,5 @@ class ActiveShippingExtension < Spree::Extension
       Calculator::Fedex::TwoDayFreightSaturdayDelivery,
       Calculator::Fedex::TwoDaySaturdayDelivery
     ].each(&:register)
-  end  
+  end
 end
