@@ -22,8 +22,10 @@ class Calculator::ActiveShipping < Calculator
                                :city => order.ship_address.city,
                                :zip => order.ship_address.zipcode)
 
-    rates = Rails.cache.fetch(order) do
-      rates = retrieve_rates(origin, destination, packages(order))
+    addr = order.ship_address
+    cache_key = "#{order.number}-#{addr.country.iso}-#{addr.state.abbr}-#{addr.city}-#{addr.zipcode}"
+    rates = Rails.cache.fetch(cache_key) do
+     rates = retrieve_rates(origin, destination, packages(order))
     end
 
     return nil unless rates
