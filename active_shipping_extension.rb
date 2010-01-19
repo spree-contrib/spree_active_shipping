@@ -40,7 +40,7 @@ class ActiveShippingExtension < Spree::Extension
       Calculator::Fedex::TwoDay,
       Calculator::Fedex::TwoDayFreight,
       Calculator::Fedex::TwoDayFreightSaturdayDelivery,
-      Calculator::Fedex::TwoDaySaturdayDelivery
+      Calculator::Fedex::TwoDaySaturdayDelivery,
       Calculator::Usps::MediaMail,
       Calculator::Usps::ExpressMail,
       Calculator::Usps::PriorityMail,
