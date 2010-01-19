@@ -41,6 +41,12 @@ class ActiveShippingExtension < Spree::Extension
       Calculator::Fedex::TwoDayFreight,
       Calculator::Fedex::TwoDayFreightSaturdayDelivery,
       Calculator::Fedex::TwoDaySaturdayDelivery
+      Calculator::Usps::MediaMail,
+      Calculator::Usps::ExpressMail,
+      Calculator::Usps::PriorityMail,
+      Calculator::Usps::PriorityMailSmallFlatRateBox,
+      Calculator::Usps::PriorityMailRegularMediumFlatRateBoxes,
+      Calculator::Usps::PriorityMailLargeFlatRateBox
     ].each(&:register)
   end
 end

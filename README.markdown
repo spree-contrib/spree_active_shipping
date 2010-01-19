@@ -6,7 +6,7 @@ This is a Spree extension that wraps the popular [active_shipping](http://github
 UPS 
 ---
 
-You will need a UPS developer account to get rate quotes (even in development and test mode.)  The UPS calculators also require that you set the following configuration properties.
+You will need a UPS developer account to get rate quotes (even in development and test mode.)  The UPS calculators also require that you set the following configuration properties. You will also need a USPS account to use USPS rate quote system. Note: acquiring the USPS developer account is easy but has a confusion activation step. Look for related sicussion in ActiveShipping's original discussion group as well as carefully read your USPS confirmation email. 
 
 <pre>
 Spree::ActiveShipping::Config[:origin_country]
@@ -16,6 +16,7 @@ Spree::ActiveShipping::Config[:origin_zip]
 Spree::ActiveShipping::Config[:ups_login]
 Spree::ActiveShipping::Config[:ups_password]
 Spree::ActiveShipping::Config[:ups_key]
+Spree::ActiveShipping::Config[:usps_login]
 </pre>
 
 It will soon be possible to set these properties through a new admin configuration screen (even sooner if someone else writes the patch!)  
@@ -40,6 +41,7 @@ class AddUpsConfiguration < ActiveRecord::Migration
     Spree::ActiveShipping::Config.set(:ups_login => "dpbrowning")
     Spree::ActiveShipping::Config.set(:ups_password => "doublewide")
     Spree::ActiveShipping::Config.set(:ups_key => "5B8DDE509EFDA5D6")
+    Spree::ActiveShipping::Config.set(:usps_login => "13658997AOE2568XOE")
   end
 
   def self.down
