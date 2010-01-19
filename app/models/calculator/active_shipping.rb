@@ -17,15 +17,16 @@ class Calculator::ActiveShipping < Calculator
                                :state => Spree::ActiveShipping::Config[:origin_state],
                                :zip => Spree::ActiveShipping::Config[:origin_zip])
 
-    destination = Location.new(:country => order.ship_address.country.iso,
-                               :state => order.ship_address.state.abbr,
-                               :city => order.ship_address.city,
-                               :zip => order.ship_address.zipcode)
-
     addr = order.ship_address
-    cache_key = "#{order.number}-#{addr.country.iso}-#{addr.state.abbr}-#{addr.city}-#{addr.zipcode}"
+
+    destination = Location.new(:country => addr.country.iso,
+                              :state => (addr.state ? addr.state.abbr : addr.state_name),
+                              :city => addr.city,
+                              :zip => addr.zipcode)
+
+    cache_key = "#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}"
     rates = Rails.cache.fetch(cache_key) do
-     rates = retrieve_rates(origin, destination, packages(order))
+      rates = retrieve_rates(origin, destination, packages(order))
     end
 
     return nil unless rates
