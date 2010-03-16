@@ -59,7 +59,7 @@ class Calculator::ActiveShipping < Calculator
   def packages(order)
     multiplier = Spree::ActiveShipping::Config[:unit_multiplier]
     weight = order.line_items.inject(0) do |weight, line_item|
-      line_item.variant.weight ? weight + (line_item.quantity * line_item.variant.weight * multiplier) : 0
+      weight + (line_item.variant.weight ? (line_item.quantity * line_item.variant.weight * multiplier) : 0)
     end
     package = Package.new(weight, [], :units => Spree::ActiveShipping::Config[:units].to_sym)
     [package]
