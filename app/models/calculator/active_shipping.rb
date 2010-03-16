@@ -24,8 +24,7 @@ class Calculator::ActiveShipping < Calculator
                               :city => addr.city,
                               :zip => addr.zipcode)
 
-    cache_key = "#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}"
-    rates = Rails.cache.fetch(cache_key) do
+    rates = Rails.cache.fetch(cache_key(line_items)) do
       rates = retrieve_rates(origin, destination, packages(order))
     end
 
@@ -64,5 +63,11 @@ class Calculator::ActiveShipping < Calculator
     end
     package = Package.new(weight, [], :units => Spree::ActiveShipping::Config[:units].to_sym)
     [package]
+  end
+
+  def cache_key(line_items)
+    order = line_items.first.order
+    addr = order.ship_address
+    "#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items.map {|li| li.variant_id.to_s + "_" + li.quantity.to_s }.join("|")}"
   end
 end
