@@ -68,6 +68,6 @@ class Calculator::ActiveShipping < Calculator
   def cache_key(line_items)
     order = line_items.first.order
     addr = order.ship_address
-    "#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items.map {|li| li.variant_id.to_s + "_" + li.quantity.to_s }.join("|")}"
+    "#{carrier.name}-#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items.map {|li| li.variant_id.to_s + "_" + li.quantity.to_s }.join("|")}"
   end
 end
