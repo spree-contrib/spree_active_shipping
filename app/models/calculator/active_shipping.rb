@@ -28,7 +28,7 @@ class Calculator::ActiveShipping < Calculator
       rates = retrieve_rates(origin, destination, packages(order))
     end
 
-    return nil unless rates
+    return nil if rates.empty?
     rate = rates[self.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
     return nil unless rate
     # divide by 100 since active_shipping rates are expressed as cents
@@ -51,6 +51,8 @@ class Calculator::ActiveShipping < Calculator
         message = re.message
       end
 
+      Rails.cache.write @cache_key, {} #write empty hash to cache to prevent constant re-lookups
+
       raise Spree::ShippingError.new("#{I18n.t('shipping_error')}: #{message}")
     end
   end
@@ -68,6 +70,6 @@ class Calculator::ActiveShipping < Calculator
   def cache_key(line_items)
     order = line_items.first.order
     addr = order.ship_address
-    "#{carrier.name}-#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items.map {|li| li.variant_id.to_s + "_" + li.quantity.to_s }.join("|")}"
+    @cache_key = "#{carrier.name}-#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items.map {|li| li.variant_id.to_s + "_" + li.quantity.to_s }.join("|")}"
   end
 end
