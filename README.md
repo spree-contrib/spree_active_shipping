@@ -47,4 +47,9 @@ class AddUpsConfiguration < ActiveRecord::Migration
   def self.down
   end
 end
-</pre>
+</pre> 
+
+Further Reading
+---------------
+
+Andrea Singh has also written an excellent [blog post](http://trueparadox.net/posts/set_up_usps_shipping_with_spree) covering the use of this extension in detail.
