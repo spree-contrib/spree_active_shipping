@@ -43,7 +43,9 @@ class ActiveShippingExtension < Spree::Extension
       Calculator::Fedex::TwoDaySaturdayDelivery,
       Calculator::Usps::MediaMail,
       Calculator::Usps::ExpressMail,
+      Calculator::Usps::ExpressMailInternational,
       Calculator::Usps::PriorityMail,
+      Calculator::Usps::PriorityMailInternational,
       Calculator::Usps::PriorityMailSmallFlatRateBox,
       Calculator::Usps::PriorityMailRegularMediumFlatRateBoxes,
       Calculator::Usps::PriorityMailLargeFlatRateBox
