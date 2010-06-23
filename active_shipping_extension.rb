@@ -50,5 +50,9 @@ class ActiveShippingExtension < Spree::Extension
       Calculator::Usps::PriorityMailRegularMediumFlatRateBoxes,
       Calculator::Usps::PriorityMailLargeFlatRateBox
     ].each(&:register)
+
+    #Only required until following active_shipping commit is merged (add negotiated rates).
+    #http://github.com/BDQ/active_shipping/commit/2f2560d53aa7264383e5a35deb7264db60eb405a
+    ActiveMerchant::Shipping::UPS.send(:include, Spree::ActiveShipping::UpsOverride)
   end
 end

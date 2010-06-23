@@ -3,6 +3,7 @@ class ActiveShippingConfiguration < Configuration
   preference :ups_login, :string, :default => "aunt_judy"
   preference :ups_password, :string, :default => "secret"
   preference :ups_key, :string, :default => "developer_key"
+  preference :shipper_number, :string, :default => nil
 
   preference :fedex_login, :string, :default => "meter_no"
   preference :fedex_password, :string, :default => "special_sha1_looking_thing_sent_via_email"
