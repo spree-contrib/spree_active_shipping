@@ -3,7 +3,7 @@ module ActiveMerchant
     class Carrier
       
       include RequiresParameters
-      include ActiveMerchant::Shipping::PostsData
+      include PostsData
       include Quantified
       
       attr_reader :last_request
@@ -32,7 +32,7 @@ module ActiveMerchant
       # alternate functionality, such as checking for test_mode to use test servers, etc.
       def valid_credentials?
         location = self.class.default_location
-        find_rates(location,location,Package.new(100, [5,15,30]))
+        find_rates(location,location,Package.new(100, [5,15,30]), :test => test_mode)
       rescue ActiveMerchant::Shipping::ResponseError
         false
       else

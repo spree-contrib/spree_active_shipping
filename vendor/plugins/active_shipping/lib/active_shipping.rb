@@ -23,20 +23,19 @@
 
 $:.unshift File.dirname(__FILE__)
 
-require 'rubygems'
-require 'active_support'
+begin
+  require 'active_support/all'
+rescue LoadError => e
+  require 'rubygems'
+  gem "activesupport", ">= 2.3.5"
+  require "active_support/all"
+end
 
-require 'vendor/xml_node/lib/xml_node'
-require 'vendor/quantified/lib/quantified'
-require 'quantified/mass'
-require 'quantified/length'
+autoload :XmlNode, 'vendor/xml_node/lib/xml_node'
+autoload :Quantified, 'vendor/quantified/lib/quantified'
 
 require 'net/https'
-require 'active_shipping/lib/error'
-require 'active_shipping/lib/requires_parameters'
-require 'active_shipping/lib/connection'
-require 'active_shipping/lib/posts_data'
-require 'active_shipping/lib/country'
+require 'active_merchant/common'
 
 require 'active_shipping/shipping/base'
 require 'active_shipping/shipping/response'

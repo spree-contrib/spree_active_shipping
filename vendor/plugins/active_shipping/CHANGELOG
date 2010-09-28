@@ -1,3 +1,8 @@
+* Add carrier CanadaPost [william]
+* Update FedEx rates and added ability to auto-generate rate name from code that gets returned by FedEx [dennis]
+* Assume test_helper is in load path when running tests [cody]
+* Add support Kunaki rating service [cody]
+* Require active_support instead of activesupport to avoid deprecation warning in Rails 2.3.5 [cody]
 * Remove ftools for Rails 1.9 compatibility and remove xml logging, as logging is now included in the connection [cody]
 * Update connection code from ActiveMerchant [cody]
 * Fix space-ridden USPS usernames when validating credentials [james]
