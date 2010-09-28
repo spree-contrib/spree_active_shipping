@@ -51,6 +51,18 @@ class ActiveShippingExtension < Spree::Extension
       Calculator::Usps::PriorityMailLargeFlatRateBox
     ].each(&:register)
 
+    # handle shipping errors gracefully on admin ui
+    Admin::ShipmentsController.class_eval do
+      rescue_from Spree::ShippingError, :with => :handle_shipping_error
+
+      private
+        def handle_shipping_error(e)
+          load_object
+          flash.now[:error] = e.message
+          render :action => "edit"
+        end
+    end
+
     #Only required until following active_shipping commit is merged (add negotiated rates).
     #http://github.com/BDQ/active_shipping/commit/2f2560d53aa7264383e5a35deb7264db60eb405a
     ActiveMerchant::Shipping::UPS.send(:include, Spree::ActiveShipping::UpsOverride)
