@@ -7,7 +7,6 @@ class Calculator::ActiveShipping < Calculator
   def self.register
     super
     ShippingMethod.register_calculator(self)
-    ShippingRate.register_calculator(self)
   end
 
   def compute(line_items)
