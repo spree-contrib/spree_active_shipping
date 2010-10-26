@@ -1,3 +1,4 @@
+require 'spree_core'
 require 'active_shipping'
 
 module ActiveShippingExtension
@@ -5,11 +6,11 @@ module ActiveShippingExtension
     
     def self.activate
       Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/**/*.rb")) do |c|
-        Rails.env == "production" ? require(c) : load(c)
+        Rails.env.production? ? require(c) : load(c)
       end
       
       Dir.glob(File.join(File.dirname(__FILE__), "spree/**/*.rb")) do |c|
-        Rails.env == "production" ? require(c) : load(c)
+        Rails.env.production? ? require(c) : load(c)
       end
       
       [

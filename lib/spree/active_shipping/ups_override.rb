@@ -130,7 +130,6 @@ module Spree
           end
 
           def parse_rate_response(origin, destination, packages, response, options={})
-            debugger
             rates = []
             xml = REXML::Document.new(response)
             success = response_success?(xml)

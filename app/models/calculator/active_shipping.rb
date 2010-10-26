@@ -9,12 +9,18 @@ class Calculator::ActiveShipping < Calculator
     ShippingMethod.register_calculator(self)
   end
 
-  def compute(line_items)
-    order = line_items.first.order
-    origin      = Location.new(:country => Spree::ActiveShipping::Config[:origin_country],
-                               :city => Spree::ActiveShipping::Config[:origin_city],
-                               :state => Spree::ActiveShipping::Config[:origin_state],
-                               :zip => Spree::ActiveShipping::Config[:origin_zip])
+  def compute(object)
+    if object.is_a?(Array)
+      order = object.first.order
+    elsif object.is_a?(Shipment)
+      order = object.order
+    else
+      order = object
+    end
+    origin= Location.new(:country => Spree::ActiveShipping::Config[:origin_country],
+                         :city => Spree::ActiveShipping::Config[:origin_city],
+                         :state => Spree::ActiveShipping::Config[:origin_state],
+                         :zip => Spree::ActiveShipping::Config[:origin_zip])
 
     addr = order.ship_address
 
@@ -23,7 +29,7 @@ class Calculator::ActiveShipping < Calculator
                               :city => addr.city,
                               :zip => addr.zipcode)
 
-    rates = Rails.cache.fetch(cache_key(line_items)) do
+    rates = Rails.cache.fetch(cache_key(order.line_items)) do
       rates = retrieve_rates(origin, destination, packages(order))
     end
 
