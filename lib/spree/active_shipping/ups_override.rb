@@ -202,7 +202,7 @@ module Spree
           def parse_time_in_transit_response(origin, destination, packages, response, options={})
 
             time_code_mapping = {
-              "DA" => "01",
+              "1DA" => "01",
               "2DA" => "02",
               "GND" => "03",
               "01" => "07",
@@ -228,7 +228,7 @@ module Spree
                 guaranteed_code = service_summary.get_text('Guaranteed/Code').to_s
                 business_transit_days = service_summary.get_text('EstimatedArrival/BusinessTransitDays').to_s
                 date = service_summary.get_text('EstimatedArrival/Date').to_s
-                rate_estimates[service_desc] = {:service_code => service_code, :service_code_2 => service_code_2, :service_desc => service_desc,
+                rate_estimates[service_name_for(origin, service_code_2)] = {:service_code => service_code, :service_code_2 => service_code_2, :service_desc => service_desc,
                     :guaranteed_code => guaranteed_code, :business_transit_days => business_transit_days,
                     :date => date}
               end
@@ -253,7 +253,7 @@ module Spree
                 negotiated_rate = rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue').to_s
                 total_price     = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/MonetaryValue').to_s.to_f : negotiated_rate.to_f
                 currency        = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/CurrencyCode').to_s : rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/CurrencyCode').to_s
-
+                
                 rate_estimates << ActiveMerchant::Shipping::RateEstimate.new(origin, destination, ActiveMerchant::Shipping::UPS.name,
                                     service_name_for(origin, service_code),
                                     :total_price => total_price,
