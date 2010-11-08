@@ -34,7 +34,7 @@ class Calculator::ActiveShipping < Calculator
     end
 
     return nil if rates.empty?
-    rate = rates[self.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
+    rate = rates[self.class.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
     return nil unless rate
     # divide by 100 since active_shipping rates are expressed as cents
 
