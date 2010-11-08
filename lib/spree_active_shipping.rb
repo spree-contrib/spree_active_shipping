@@ -57,6 +57,10 @@ module ActiveShippingExtension
         Calculator::Usps::PriorityMailLargeFlatRateBox
       ].each(&:register)
       
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
+        Rails.env.production? ? require(c) : load(c)
+      end
+      
       #Only required until following active_shipping commit is merged (add negotiated rates).
       #http://github.com/BDQ/active_shipping/commit/2f2560d53aa7264383e5a35deb7264db60eb405a
       ActiveMerchant::Shipping::UPS.send(:include, Spree::ActiveShipping::UpsOverride)
