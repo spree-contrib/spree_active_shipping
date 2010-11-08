@@ -1,0 +1,42 @@
+<%- locals = {:f => f} %>
+<%= hook :admin_shipping_method_form_fields, locals do %>
+  <%= f.field_container :name do %>
+    <%= f.label :name, t("name") %><br />
+    <%= f.text_field :name  %>
+    <%= error_message_on :shipping_method, :name %>
+  <% end %>
+
+  <%= f.field_container :zone_id do %>
+    <%= f.label :zone_id, t("zone") %><br />
+    <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {"style" => "width:200px"})  %>
+    <%= error_message_on :shipping_method, :zone_id %>
+  <% end %>
+  <%= f.field_container :display_on do %>
+    <%= f.label :display_on, t("display") %><br />
+    <%= select(:shipping_method, :display_on, ShippingMethod::DISPLAY.collect {|display| [t(display), display == :both ? nil : display.to_s]})  %>
+    <%= error_message_on :shipping_method, :display_on %>
+  <% end %>
+<% end %>
+
+<%= hook :admin_shipping_method_form_calculator_fields, locals do %>
+  <fieldset id="calculator_fields">
+    <legend><%= t('calculator') %></legend>
+    <div id="preference-settings">
+      <p>
+        <%= f.label(:calc_type, t("calculator")) %>
+        <%= f.collection_select(:calculator_type, @calculators, :class, :description, {}, {:id => "calc-type"}) %>
+      </p>
+      <% if !@object.new_record? %>
+        <div class="calculator-settings">
+          <%= f.fields_for :calculator do |calculator_form| %>
+            <%= preference_fields(@object.calculator, calculator_form) %>
+          <% end %>
+        </div>
+        <% if @object.calculator.respond_to?(:preferences) %>
+          <div id="calculator-settings-warning"><%= t('calculator_settings_warning')%></div>
+        <% end %>
+      <% end %>
+    </div>
+  </fieldset>
+<% end %>
+
