@@ -56,9 +56,8 @@ class Calculator::ActiveShipping < Calculator
         message = re.message
       end
 
-      Rails.cache.write @cache_key, {} #write empty hash to cache to prevent constant re-lookups
-
-      raise Spree::ShippingError.new("#{I18n.t('shipping_error')}: #{message}")
+      Rails.cache.delete @cache_key # delete cache to prevent constant re-lookups
+      raise Spree::ShippingError, "#{I18n.t('shipping_error')}: #{message}"
     end
   end
 
