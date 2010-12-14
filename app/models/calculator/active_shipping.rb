@@ -37,17 +37,36 @@ class Calculator::ActiveShipping < Calculator
     rate = rates[self.class.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
     return nil unless rate
     # divide by 100 since active_shipping rates are expressed as cents
-
     return rate/100.0
   end
 
-  private
 
+  def timing(line_items)
+    order = line_items.first.order
+    origin      = Location.new(:country => Spree::ActiveShipping::Config[:origin_country],
+                               :city => Spree::ActiveShipping::Config[:origin_city],
+                               :state => Spree::ActiveShipping::Config[:origin_state],
+                               :zip => Spree::ActiveShipping::Config[:origin_zip])
+    addr = order.ship_address
+    destination = Location.new(:country => addr.country.iso,
+                              :state => (addr.state ? addr.state.abbr : addr.state_name),
+                              :city => addr.city,
+                              :zip => addr.zipcode)
+    timings = Rails.cache.fetch(cache_key(line_items)+"-timings") do
+      timings = retrieve_timings(origin, destination, packages(order))
+    end
+    return nil if timings.nil? || !timings.is_a?(Hash) || timings.empty?
+    return timings[self.description]
+
+  end
+
+  private
   def retrieve_rates(origin, destination, packages)
     begin
       response = carrier.find_rates(origin, destination, packages)
       # turn this beastly array into a nice little hash
-      Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
+      rate_hash = Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
+      return rate_hash
     rescue ActiveMerchant::Shipping::ResponseError => re
       params = re.response.params
       if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
@@ -58,8 +77,31 @@ class Calculator::ActiveShipping < Calculator
 
       Rails.cache.delete @cache_key # delete cache to prevent constant re-lookups
       raise Spree::ShippingError, "#{I18n.t('shipping_error')}: #{message}"
+
     end
   end
+
+
+  def retrieve_timings(origin, destination, packages)
+    begin
+      if carrier.respond_to?(:find_time_in_transit)
+        response = carrier.find_time_in_transit(origin, destination, packages)
+        return response
+      end
+    rescue ActiveMerchant::Shipping::ResponseError => re
+      params = re.response.params
+      if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
+        message = params["Response"]["Error"]["ErrorDescription"]
+      elsee
+        message = re.message
+      end
+      Rails.cache.write @cache_key+'-', {} #write empty hash to cache to prevent constant re-lookups
+      raise Spree::ShippingError.new("#{I18n.t('shipping_error')}: #{message}")
+    end
+  end
+
+
+  private
 
   # Generates an array of Package objects based on the quantities and weights of the variants in the line items
   def packages(order)

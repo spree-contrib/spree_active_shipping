@@ -3,8 +3,8 @@ module Spree
     module UpsOverride
       def self.included(base)
 
-
         base.class_eval do
+
           def build_rate_request(origin, destination, packages, options={})
              packages = Array(packages)
              xml_request = XmlNode.new('RatingServiceSelectionRequest') do |root_node|
@@ -99,6 +99,55 @@ module Spree
              xml_request.to_s
           end
 
+          def build_time_in_transit_request(origin, destination, packages, options={})
+            packages = Array(packages)
+            xml_request = XmlNode.new('TimeInTransitRequest') do |root_node|
+              root_node << XmlNode.new('Request') do |request|
+                request << XmlNode.new('TransactionReference') do |transaction_reference|
+                  transaction_reference << XmlNode.new('CustomerContext', 'Time in Transit')
+                  transaction_reference << XmlNode.new('XpciVersion', '1.0002')
+                end
+                request << XmlNode.new('RequestAction', 'TimeInTransit')
+              end
+              root_node << XmlNode.new('TransitFrom') do |transit_from|
+                transit_from << XmlNode.new('AddressArtifactFormat') do |address_artifact_format|
+                  address_artifact_format << XmlNode.new('PoliticalDivision2',origin.city)
+                  address_artifact_format << XmlNode.new('PoliticalDivision1',origin.state)
+                  address_artifact_format << XmlNode.new('CountryCode',origin.country_code(:alpha2))
+                  address_artifact_format << XmlNode.new('PostcodePrimaryLow',origin.postal_code)
+                end
+              end
+
+              root_node << XmlNode.new('TransitTo') do |transit_to|
+                transit_to << XmlNode.new('AddressArtifactFormat') do |address_artifact_format|
+                  address_artifact_format << XmlNode.new('PoliticalDivision2',destination.city)
+                  address_artifact_format << XmlNode.new('PoliticalDivision1',destination.state)
+                  address_artifact_format << XmlNode.new('CountryCode',destination.country_code(:alpha2))
+                  address_artifact_format << XmlNode.new('PostcodePrimaryLow',destination.postal_code)
+                end
+              end
+
+              root_node << XmlNode.new("ShipmentWeight") do |shipment_weight|
+                shipment_weight << XmlNode.new("UnitOfMeasurement") do |units|
+                  units << XmlNode.new("Code", 'LBS')
+                end
+
+                value = ((packages[0].lbs).to_f*1000).round/1000.0 # 3 decimals
+                shipment_weight << XmlNode.new("Weight", [value,0.1].max)
+              end
+
+              root_node << XmlNode.new("InvoiceLineTotal") do |invoice_line_total|
+                invoice_line_total << XmlNode.new("CurrencyCode","USD")
+                invoice_line_total << XmlNode.new("MonetaryValue","50")
+              end
+
+              root_node << XmlNode.new("PickupDate",Date.today.strftime("%Y%m%d"))
+
+
+            end
+            xml_request.to_s
+          end
+
           def build_location_node(name,location,options={})
             # not implemented:  * Shipment/Shipper/Name element
             #                   * Shipment/(ShipTo|ShipFrom)/CompanyName element
@@ -129,32 +178,93 @@ module Spree
             end
           end
 
+           def find_time_in_transit(origin, destination, packages, options={})
+             origin, destination = upsified_location(origin), upsified_location(destination)
+             options = @options.merge(options)
+             packages = Array(packages)
+             access_request = build_access_request
+             rate_request = build_time_in_transit_request(origin, destination, packages, options)
+             response = ssl_post("https://www.ups.com/ups.app/xml/TimeInTransit", "<?xml version=\"1.0\"?>"+access_request+"<?xml version=\"1.0\"?>"+rate_request)
+             parse_time_in_transit_response(origin, destination, packages,response, options)
+          end
+
+          def find_rates(origin, destination, packages, options={})
+            origin, destination = upsified_location(origin), upsified_location(destination)
+            options = @options.merge(options)
+            packages = Array(packages)
+            access_request = build_access_request
+            rate_request = build_rate_request(origin, destination, packages, options)
+            response = commit(:rates, save_request(access_request + rate_request), (options[:test] || false))
+            parse_rate_response(origin, destination, packages, response, options)
+          end
+
+
+          def parse_time_in_transit_response(origin, destination, packages, response, options={})
+
+            time_code_mapping = {
+              "1DA" => "01",
+              "2DA" => "02",
+              "GND" => "03",
+              "01" => "07",
+              "05" => "08",
+              "03" => "11",
+              "3DS" => "12",
+              "1DP" => "13",
+              "1DM" => "14",
+              "21" => "54",
+              "2DM" => "59"
+            }
+
+            rates = []
+            xml = REXML::Document.new(response)
+            success = response_success?(xml)
+            message = response_message(xml)
+            if success
+              rate_estimates = {}
+              xml.elements.each('/*/TransitResponse/ServiceSummary') do |service_summary|
+                service_code    = service_summary.get_text('Service/Code').to_s
+                service_code_2 = time_code_mapping[service_code]
+                service_desc    = service_summary.get_text('Service/Description').to_s
+                guaranteed_code = service_summary.get_text('Guaranteed/Code').to_s
+                business_transit_days = service_summary.get_text('EstimatedArrival/BusinessTransitDays').to_s
+                date = service_summary.get_text('EstimatedArrival/Date').to_s
+                rate_estimates[service_name_for(origin, service_code_2)] = {:service_code => service_code, :service_code_2 => service_code_2, :service_desc => service_desc,
+                    :guaranteed_code => guaranteed_code, :business_transit_days => business_transit_days,
+                    :date => date}
+              end
+            end
+            return rate_estimates
+          end
+
+
+
           def parse_rate_response(origin, destination, packages, response, options={})
             rates = []
             xml = REXML::Document.new(response)
             success = response_success?(xml)
             message = response_message(xml)
-
+            transits = options[:transit]
             if success
               rate_estimates = []
 
               xml.elements.each('/*/RatedShipment') do |rated_shipment|
                 service_code    = rated_shipment.get_text('Service/Code').to_s
+                service    = rated_shipment.get_text('Service/Code').to_s
                 negotiated_rate = rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue').to_s
                 total_price     = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/MonetaryValue').to_s.to_f : negotiated_rate.to_f
                 currency        = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/CurrencyCode').to_s : rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/CurrencyCode').to_s
-
+                
                 rate_estimates << ActiveMerchant::Shipping::RateEstimate.new(origin, destination, ActiveMerchant::Shipping::UPS.name,
                                     service_name_for(origin, service_code),
                                     :total_price => total_price,
                                     :currency => currency,
                                     :service_code => service_code,
-                                    :packages => packages)
+                                    :packages => packages
+                                    )
               end
             end
             ActiveMerchant::Shipping::RateResponse.new(success, message, Hash.from_xml(response).values.first, :rates => rate_estimates, :xml => response, :request => last_request)
           end
-
         end
       end
 

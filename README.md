@@ -52,4 +52,4 @@ end
 Further Reading
 ---------------
 
-Andrea Singh has also written an excellent [blog post](http://trueparadox.net/posts/set_up_usps_shipping_with_spree) covering the use of this extension in detail.
+Andrea Singh has also written an excellent [blog post](http://blog.madebydna.com/all/code/2010/05/26/setting-up-usps-shipping-with-spree.html) covering the use of this extension in detail.
