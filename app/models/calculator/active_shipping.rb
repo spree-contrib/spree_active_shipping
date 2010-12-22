@@ -43,12 +43,17 @@ class Calculator::ActiveShipping < Calculator
       response = carrier.find_rates(origin, destination, packages)
       # turn this beastly array into a nice little hash
       Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
-    rescue ActiveMerchant::Shipping::ResponseError => re
-      params = re.response.params
-      if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
-        message = params["Response"]["Error"]["ErrorDescription"]
+    rescue ActiveMerchant::ActiveMerchantError => e
+
+      if [ActiveMerchant::ResponseError, ActiveMerchant::Shipping::ResponseError,].include? e.class
+        params = e.response.params
+        if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
+          message = params["Response"]["Error"]["ErrorDescription"]
+        else
+          message = e.message
+        end
       else
-        message = re.message
+        message = e.to_s
       end
 
       Rails.cache.write @cache_key, {} #write empty hash to cache to prevent constant re-lookups
