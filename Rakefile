@@ -1,22 +1,7 @@
 require 'rake'
 require 'rake/testtask'
-require 'rake/packagetask'
-require 'rake/gempackagetask'
-
-spec = eval(File.read('spree_active_shipping.gemspec'))
-
-Rake::GemPackageTask.new(spec) do |p|
-  p.gem_spec = spec
-end
-
-desc "Release to gemcutter"
-task :release => :package do
-  require 'rake/gemcutter'
-  Rake::Gemcutter::Tasks.new(spec).define
-  Rake::Task['gem:push'].invoke
-end
-
 require 'rspec/core/rake_task'
+
 RSpec::Core::RakeTask.new
 
 require 'cucumber/rake/task'
@@ -26,13 +11,15 @@ end
 
 desc "Regenerates a rails 3 app for testing"
 task :test_app do
-  require '../lib/generators/spree/test_app_generator'
+  SPREE_PATH = ENV['SPREE_PATH']
+  raise "SPREE_PATH should be specified" unless SPREE_PATH
+  require File.join(SPREE_PATH, 'lib/generators/spree/test_app_generator')
   class SpreeActiveShippingTestAppGenerator < Spree::Generators::TestAppGenerator
     def tweak_gemfile
       append_file 'Gemfile' do
 <<-gems
-        gem 'spree_core', :path => '../../../core'
-        gem 'spree_active_shipping', :path => '../..'
+gem 'spree_core', :path => '#{File.join(SPREE_PATH, 'core')}'
+gem 'spree_active_shipping', :path => '#{File.dirname(__FILE__)}'
 gems
       end
     end

@@ -49,6 +49,18 @@ class AddUpsConfiguration < ActiveRecord::Migration
 end
 </pre> 
 
+Installation
+------------
+
+1. Add the following to your applications Gemfile
+
+    gem 'spree_active_shipping'
+
+2. Run bundler
+
+    bundle install
+
+
 Further Reading
 ---------------
 

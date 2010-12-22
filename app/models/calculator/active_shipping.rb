@@ -67,18 +67,24 @@ class Calculator::ActiveShipping < Calculator
       # turn this beastly array into a nice little hash
       rate_hash = Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
       return rate_hash
-    rescue ActiveMerchant::Shipping::ResponseError => re
-      params = re.response.params
-      if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
-        message = params["Response"]["Error"]["ErrorDescription"]
+    rescue ActiveMerchant::ActiveMerchantError => e
+
+      if [ActiveMerchant::ResponseError, ActiveMerchant::Shipping::ResponseError].include? e.class
+        params = e.response.params
+        if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
+          message = params["Response"]["Error"]["ErrorDescription"]
+        else
+          message = e.message
+        end
       else
-        message = re.message
+        message = e.to_s
       end
 
-      Rails.cache.delete @cache_key # delete cache to prevent constant re-lookups
-      raise Spree::ShippingError, "#{I18n.t('shipping_error')}: #{message}"
+      Rails.cache.write @cache_key, {} #write empty hash to cache to prevent constant re-lookups
 
+      raise Spree::ShippingError.new("#{I18n.t('shipping_error')}: #{message}")
     end
+
   end
 
 
