@@ -1,12 +1,32 @@
+# encoding: utf-8
+require 'rubygems'
 require 'rake'
 require 'rake/testtask'
-require 'rspec/core/rake_task'
 
-RSpec::Core::RakeTask.new
+desc "Default Task"
+task :default => [ :spec ]
 
-require 'cucumber/rake/task'
-Cucumber::Rake::Task.new do |t|
-  t.cucumber_opts = %w{--format pretty}
+gemfile = File.expand_path('../spec/test_app/Gemfile', __FILE__)
+if File.exists?(gemfile) && %w(rcov spec cucumber).include?(ARGV.first.to_s)
+  require 'bundler'
+  ENV['BUNDLE_GEMFILE'] = gemfile
+  Bundler.setup
+
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new
+
+  require 'cucumber/rake/task'
+  Cucumber::Rake::Task.new do |t|
+    t.cucumber_opts = %w{--format pretty}
+  end
+
+  desc "Run specs with RCov"
+  RSpec::Core::RakeTask.new(:rcov) do |t|
+    t.rcov = true
+    t.rcov_opts = %w{ --exclude gems\/,spec\/,features\/}
+    t.verbose = true
+  end
+
 end
 
 desc "Regenerates a rails 3 app for testing"
@@ -19,6 +39,7 @@ task :test_app do
       append_file 'Gemfile' do
 <<-gems
 gem 'spree_core', :path => '#{File.join(SPREE_PATH, 'core')}'
+gem 'spree_auth', :path => '#{File.join(SPREE_PATH, 'auth')}'
 gem 'spree_active_shipping', :path => '#{File.dirname(__FILE__)}'
 gems
       end
@@ -27,6 +48,7 @@ gems
     def install_gems
       inside "test_app" do
         run 'rake spree_core:install'
+        run 'rake spree_auth:install'
       end
     end
 
@@ -43,3 +65,5 @@ namespace :test_app do
     system("cd spec/test_app && rake db:drop db:migrate RAILS_ENV=test && rake db:drop db:migrate RAILS_ENV=cucumber")
   end
 end
+
+

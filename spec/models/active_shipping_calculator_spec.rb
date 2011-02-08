@@ -13,6 +13,8 @@ module ActiveShipping
 
     let(:carrier) { Spree::ActiveShipping::BogusCarrier.new }
     let(:calculator) {  Spree::ActiveShipping::BogusCalculator.new }
+    let(:response) { ActiveMerchant::Shipping::RateResponse.new(true, "success!", {:rate => 'Super Fast'},
+                         :rates => [stub(:service_name => 'Super Fast', :price => 999)], :xml => "<rate>Super Fast</rate>") }
 
     before(:each) do
       Spree::ActiveShipping::Config.set(:units => "imperial")
@@ -45,6 +47,42 @@ module ActiveShipping
         carrier.should_not_receive(:find_rates)
         calculator.compute(order)
       end
+
+      it "should get rate based on calculator's service_name" do
+        carrier.should_receive(:find_rates).and_return(response)
+        calculator.class.should_receive(:service_name).and_return("Super Fast")
+        rate = calculator.compute(order)
+        rate.should == 9.99
+      end
+    end
+
+    describe "service_name" do
+      it "should return description when not defined" do
+        calculator.class.service_name.should == calculator.description
+      end
+    end
+
+    describe "retrive_rates" do
+      let(:origin) { Location.new(:country => Spree::ActiveShipping::Config[:origin_country],
+                            :city => Spree::ActiveShipping::Config[:origin_city],
+                            :state => Spree::ActiveShipping::Config[:origin_state],
+                            :zip => Spree::ActiveShipping::Config[:origin_zip]) }
+
+      let(:destination) { Location.new(:country => address.country.iso,
+                            :state => (address.state ? address.state.abbr : address.state_name),
+                            :city => address.city,
+                            :zip => address.zipcode) }
+
+      let(:packages) { Package.new(400, [], :units => Spree::ActiveShipping::Config[:units].to_sym) }
+
+      before {  carrier.should_receive(:find_rates).and_return(response) }
+
+      it "should return rate hash" do
+        rate_hash = calculator.send :retrieve_rates ,origin, destination, packages
+        rate_hash.class.should == Hash
+        rate_hash["Super Fast"].should == 999
+      end
+
     end
 end
 
