@@ -19,6 +19,7 @@ class ActiveShippingConfiguration < Configuration
 
   preference :units, :string, :default => "imperial"
   preference :unit_multiplier, :integer, :default => 16 # 16 oz./lb - assumes variant weights are in lbs
+  preference :default_weight, :integer, :default => 0 # 16 oz./lb - assumes variant weights are in lbs
 
   validates_presence_of :name
   validates_uniqueness_of :name
