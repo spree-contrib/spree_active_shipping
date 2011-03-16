@@ -18,6 +18,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency('spree_core', '>= 0.30.1')
-  s.add_dependency('active_shipping', '0.9.3')
+  s.add_dependency('active_shipping', '0.9.10')
   s.add_dependency('activemerchant', '1.9.0')
 end
