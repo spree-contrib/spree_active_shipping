@@ -1,1 +1,3 @@
 "0.50.x" => { :branch => "master" }
+"0.50.x" => { :version => '1.0.0', :href => '40254f450ab1e4057c3693ed9dfadc0d678fea35' }
+"0.40.x" => { :version => '1.0.0', :href => '40254f450ab1e4057c3693ed9dfadc0d678fea35' }
