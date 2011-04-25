@@ -38,7 +38,8 @@ class Calculator::ActiveShipping < Calculator
     end
 
     return nil if rates.empty?
-    rate = rates[self.class.service_name]
+    # rate = rates[self.class.service_name]
+    rate = rates[self.class.description]
     return nil unless rate
     rate = rate.to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
 
@@ -71,7 +72,9 @@ class Calculator::ActiveShipping < Calculator
     begin
       response = carrier.find_rates(origin, destination, packages)
       # turn this beastly array into a nice little hash
-      rate_hash = Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
+      rate_hash = Hash[*response.rates.collect { |rate| [rate.description rate.price] }.flatten]
+      # TODO: Remove service_name from Calculators
+      # rate_hash = Hash[*response.rates.collect { |rate| [rate.service_name rate.price] }.flatten]
       return rate_hash
     rescue ActiveMerchant::ActiveMerchantError => e
 
