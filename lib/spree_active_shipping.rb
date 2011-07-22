@@ -5,6 +5,12 @@ module ActiveShippingExtension
   class Engine < Rails::Engine
     
     def self.activate
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/active_shipping.rb")) do |c|
+        Rails.env.production? ? require(c) : load(c)
+      end
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/usps/base.rb")) do |c|
+        Rails.env.production? ? require(c) : load(c)
+      end
       Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/**/*.rb")) do |c|
         Rails.env.production? ? require(c) : load(c)
       end
