@@ -21,8 +21,8 @@ CheckoutController.class_eval do
           bill_address.update_attribute(:zipcode, nil)
           bill_address.update_attribute(:state, nil)
         end
-          ship_address.update_attribute(:zipcode, nil)
-          ship_address.update_attribute(:state, nil)
+        ship_address.update_attribute(:zipcode, nil)
+        ship_address.update_attribute(:state, nil)
       end
       redirect_to checkout_state_path(:address)
     end
