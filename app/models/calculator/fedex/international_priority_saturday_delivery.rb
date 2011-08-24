@@ -1,5 +1,5 @@
 class Calculator::Fedex::InternationalPrioritySaturdayDelivery < Calculator::Fedex::Base
   def self.description
-    "FedEx International Priority Saturday Delivery"
+    I18n.t("fedex.intl_priority_saturday_delivery")
   end
 end

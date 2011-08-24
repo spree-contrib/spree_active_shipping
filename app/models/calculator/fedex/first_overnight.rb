@@ -1,5 +1,5 @@
 class Calculator::Fedex::FirstOvernight < Calculator::Fedex::Base
   def self.description
-    "FedEx First Overnight"
+    I18n.t("fedex.first_overnight")
   end
 end

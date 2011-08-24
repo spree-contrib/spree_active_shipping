@@ -1,9 +1,9 @@
 class Calculator::Usps::PriorityMail < Calculator::Usps::Base
   def self.description
-    "USPS Priority Mail"
+    I18n.t("usps.priority_mail.description")
   end
 
   def self.service_name
-    "USPS Priority Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt;"
+    I18n.t("usps.priority_mail.service_name")
   end
 end

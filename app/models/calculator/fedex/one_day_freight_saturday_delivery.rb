@@ -1,5 +1,5 @@
 class Calculator::Fedex::OneDayFreightSaturdayDelivery < Calculator::Fedex::Base
   def self.description
-    "FedEx 1 Day Freight Saturday Delivery"
+    I18n.t("fedex.one_day_freight_saturday_delivery")
   end
 end

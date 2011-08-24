@@ -1,9 +1,9 @@
 class Calculator::Usps::PriorityMailRegularMediumFlatRateBoxes < Calculator::Usps::Base
   def self.description
-    "USPS Priority Mail Regular/Medium Flat-Rate Boxes"
+    I18n.t("usps.priority_mail_regular_medium_flat_rate_boxes.description")
   end
 
   def self.service_name
-    "USPS Priority Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt; Medium Flat Rate Box"
+    I18n.t("usps.priority_mail_regular_medium_flat_rate_boxes.service_name")
   end
 end

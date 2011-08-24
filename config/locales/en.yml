@@ -1,3 +1,61 @@
 ---
 en:
-  shipping_error: Shipping Error
+  fedex:
+    express_saver: "FedEx Express Saver"
+    first_overnight: "FedEx First Overnight"
+    ground: "FedEx Ground"
+    ground_home_delivery: "FedEx Ground Home Delivery"
+    intl_economy: "FedEx International Economy"
+    intl_economy_freight: "FedEx International Economy Freight"
+    intl_first: "FedEx International First"
+    intl_ground: "FedEx International Ground"
+    intl_priority: "FedEx International Priority"
+    intl_priority_freight: "FedEx International Priority Freight"
+    intl_priority_saturday_delivery: "FedEx International Priority Saturday Delivery"
+    one_day_freight: "FedEx 1 Day Freight"
+    one_day_freight_saturday_delivery: "FedEx 1 Day Freight Saturday Delivery"
+    priority_overnight: "FedEx Priority Overnight"
+    priority_overnight_saturday_delivery: "FedEx Priority Overnight Saturday Delivery"
+    saver: "FedEx Saver"
+    standard_overnight: "FedEx Standard Overnight"
+    three_day_freight: "FedEx 3 Day Freight"
+    three_day_freight_saturday_delivery: "FedEx 3 Day Freight Saturday Delivery"
+    two_day: "FedEx 2 Day"
+    two_day_freight: "FedEx 2 Day Freight"
+    two_day_freight_saturday_delivery: "FedEx 2 Day Freight Saturday Delivery"
+    two_day_saturday_delivery: "FedEx 2 Day Saturday Delivery"
+  ups:
+    ground: "UPS Ground"
+    next_day_air: "UPS Next Day Air"
+    next_day_air_early_am: "UPS Next Day Air Early A.M."
+    next_day_air_saver: "UPS Next Day Air Saver"
+    saver: "UPS Saver"
+    second_day_air: "UPS Second Day Air"
+    three_day_select: "UPS Three-Day Select"
+    worldwide_expedited: "UPS Worldwide Expedited"
+  usps:
+    express_mail:
+      description: "USPS Express Mail"
+      service_name: "USPS Express Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt;" 
+    express_mail_intl:
+      description: "USPS Express Mail International"
+      service_name: "USPS Express Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt; International"
+    media_mail:
+      description: "USPS Media Mail"
+      service_name: "USPS Media Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt;"
+    priority_mail:
+      description: "USPS Priority Mail"
+      service_name: "USPS Priority Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt;"
+    priority_mail_intl:
+      description: "USPS Priority Mail International"
+      service_name: "USPS Priority Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt; International"
+    priority_mail_large_flat_rate:
+      description: "USPS Priority Mail Large Flat-Rate Box"
+      service_name: "USPS Priority Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt; Large Flat Rate Box"
+    priority_mail_regular_medium_flat_rate_boxes:
+      description: "USPS Priority Mail Regular/Medium Flat-Rate Boxes"
+      service_name: "USPS Priority Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt; Medium Flat Rate Box"
+    priority_mail_small_flat_rate_box:
+      description: "USPS Priority Mail Small Flat-Rate Box"
+      service_name: "USPS Priority Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt; Small Flat Rate Box"
+  shipping_error: "Shipping Error"

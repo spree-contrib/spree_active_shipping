@@ -1,5 +1,5 @@
 class Calculator::Fedex::Ground < Calculator::Fedex::Base
   def self.description
-    "FedEx Ground"
+    I18n.t("fedex.ground")
   end
 end

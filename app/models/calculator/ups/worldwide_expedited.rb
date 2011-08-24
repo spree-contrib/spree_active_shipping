@@ -1,5 +1,5 @@
 class Calculator::Ups::WorldwideExpedited < Calculator::Ups::Base
   def self.description
-    "UPS Worldwide Expedited"
+    I18n.t("ups.worldwide_expedited")
   end
 end

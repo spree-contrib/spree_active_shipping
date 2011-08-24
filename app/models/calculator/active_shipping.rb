@@ -89,7 +89,7 @@ class Calculator::ActiveShipping < Calculator
 
       Rails.cache.write @cache_key, {} #write empty hash to cache to prevent constant re-lookups
 
-      raise Spree::ShippingError.new("#{I18n.t('shipping_error')}: #{message}")
+      raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
     end
 
   end
@@ -109,7 +109,7 @@ class Calculator::ActiveShipping < Calculator
         message = re.message
       end
       Rails.cache.write @cache_key+'-', {} #write empty hash to cache to prevent constant re-lookups
-      raise Spree::ShippingError.new("#{I18n.t('shipping_error')}: #{message}")
+      raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
     end
   end
 

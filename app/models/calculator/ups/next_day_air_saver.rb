@@ -1,5 +1,5 @@
 class Calculator::Ups::NextDayAirSaver < Calculator::Ups::Base
   def self.description
-    "UPS Next Day Air Saver"
+    I18n.t("ups.next_day_air_saver")
   end
 end

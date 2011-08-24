@@ -1,9 +1,9 @@
 class Calculator::Usps::PriorityMailLargeFlatRateBox < Calculator::Usps::Base
   def self.description
-    "USPS Priority Mail Large Flat-Rate Box"
+    I18n.t("usps.priority_mail_large_flat_rate.description")
   end
 
   def self.service_name
-    "USPS Priority Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt; Large Flat Rate Box"
+    I18n.t("usps.priority_mail_large_flat_rate.service_name")
   end
 end

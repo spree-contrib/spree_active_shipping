@@ -1,5 +1,5 @@
 class Calculator::Fedex::InternationalPriorityFreight < Calculator::Fedex::Base
   def self.description
-    "FedEx International Priority Freight"
+    I18n.t("fedex.intl_priority_freight")
   end
 end

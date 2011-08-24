@@ -1,5 +1,5 @@
 class Calculator::Fedex::InternationalFirst < Calculator::Fedex::Base
   def self.description
-    "FedEx International First"
+    I18n.t("fedex.intl_first")
   end
 end

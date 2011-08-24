@@ -1,9 +1,9 @@
 class Calculator::Usps::PriorityMailInternational < Calculator::Usps::Base
   def self.description
-    "USPS Priority Mail International"
+    I18n.t("usps.priority_mail_intl.description")
   end
 
   def self.service_name
-    "USPS Priority Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt; International"
+    I18n.t("usps.priority_mail_intl.service_name")
   end
 end

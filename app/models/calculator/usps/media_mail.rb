@@ -1,9 +1,9 @@
 class Calculator::Usps::MediaMail < Calculator::Usps::Base
   def self.description
-    "USPS Media Mail"
+    I18n.t("usps.media_mail.description")
   end
 
   def self.service_name
-    "USPS Media Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt;"
+    I18n.t("usps.media_mail.service_name")
   end
 end

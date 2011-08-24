@@ -1,5 +1,5 @@
-class Calculator::Fedex::Saver < Calculator::Fedex::Base  
+class Calculator::Fedex::Saver < Calculator::Fedex::Base
   def self.description
-    "FedEx Saver"
+    I18n.t("fedex.saver")
   end
 end

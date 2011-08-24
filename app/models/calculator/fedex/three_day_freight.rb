@@ -1,5 +1,5 @@
 class Calculator::Fedex::ThreeDayFreight < Calculator::Fedex::Base
   def self.description
-    "FedEx 3 Day Freight"
+    I18n.t("fedex.three_day_freight")
   end
 end

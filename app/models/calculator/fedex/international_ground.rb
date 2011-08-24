@@ -1,5 +1,5 @@
 class Calculator::Fedex::InternationalGround < Calculator::Fedex::Base
   def self.description
-    "FedEx International Ground"
+    I18n.t("fedex.intl_ground")
   end
 end

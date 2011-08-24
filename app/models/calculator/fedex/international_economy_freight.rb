@@ -1,5 +1,5 @@
 class Calculator::Fedex::InternationalEconomyFreight < Calculator::Fedex::Base
   def self.description
-    "FedEx International Economy Freight"
+    I18n.t("fedex.intl_economy_freight")
   end
 end
