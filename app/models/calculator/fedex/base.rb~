@@ -1,7 +1,0 @@
-class Calculator::Fedex::Base < Calculator::ActiveShipping
-  def carrier
-    ActiveMerchant::Shipping::FEDEX.new(:login => Spree::ActiveShipping::Config[:fedex_login], 
-                                      :password => Spree::ActiveShipping::Config[:fedex_password], 
-                                      :key => Spree::ActiveShipping::Config[:fedex_key])      
-  end
-end
