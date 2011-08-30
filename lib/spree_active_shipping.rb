@@ -59,7 +59,8 @@ module ActiveShippingExtension
         Calculator::Usps::PriorityMailInternational,
         Calculator::Usps::PriorityMailSmallFlatRateBox,
         Calculator::Usps::PriorityMailRegularMediumFlatRateBoxes,
-        Calculator::Usps::PriorityMailLargeFlatRateBox
+        Calculator::Usps::PriorityMailLargeFlatRateBox,
+        Calculator::Usps::PriorityMailFlatRateEnvelope,
       ].each(&:register)
       
       Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
