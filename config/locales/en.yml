@@ -33,6 +33,8 @@ en:
     second_day_air: "UPS Second Day Air"
     three_day_select: "UPS Three-Day Select"
     worldwide_expedited: "UPS Worldwide Expedited"
+    standard: "UPS Standard"
+    express: "UPS Express"
   usps:
     express_mail: "USPS Express Mail"
     express_mail_intl: "USPS Express Mail International"
