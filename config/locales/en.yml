@@ -58,4 +58,7 @@ en:
     priority_mail_small_flat_rate_box:
       description: "USPS Priority Mail Small Flat-Rate Box"
       service_name: "USPS Priority Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt; Small Flat Rate Box"
+    priority_mail_flat_rate_envelope:
+      description: "USPS Priority Mail Flat Rate Envelope"
+      service_name: "USPS Priority Mail&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt; Flat Rate Envelope"
   shipping_error: "Shipping Error"
