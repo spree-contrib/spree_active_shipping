@@ -56,11 +56,14 @@ module ActiveShippingExtension
         Calculator::Usps::ExpressMail,
         Calculator::Usps::ExpressMailInternational,
         Calculator::Usps::PriorityMail,
-        Calculator::Usps::PriorityMailInternational,
         Calculator::Usps::PriorityMailSmallFlatRateBox,
-        Calculator::Usps::PriorityMailRegularMediumFlatRateBoxes,
+        Calculator::Usps::PriorityMailMediumFlatRateBox,
         Calculator::Usps::PriorityMailLargeFlatRateBox,
         Calculator::Usps::PriorityMailFlatRateEnvelope,
+        Calculator::Usps::PriorityMailInternational,
+        Calculator::Usps::PriorityMailInternationalSmallFlatRateBox,
+        Calculator::Usps::PriorityMailInternationalMediumFlatRateBox,
+        Calculator::Usps::PriorityMailInternationalLargeFlatRateBox,
       ].each(&:register)
       
       Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
