@@ -38,7 +38,6 @@ class Calculator::ActiveShipping < Calculator
     end
 
     return nil if rates.empty?
-    # rate = rates[self.class.service_name] #TODO - Remove the service_name from the USPS calculators (no longer needed)
     rate = rates[self.class.description]
     return nil unless rate
     rate = rate.to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
