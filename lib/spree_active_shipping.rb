@@ -3,16 +3,21 @@ require 'active_shipping'
 
 module ActiveShippingExtension
   class Engine < Rails::Engine
-    
     def self.activate
+      #next two globs are workarounds for production issues with Passenger/Unicorn
+      #anyone care to offer something a little cleaner?
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/active_shipping.rb")) do |c|
+        Rails.env.production? ? require(c) : load(c)
+      end 
+
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/usps/base.rb")) do |c|
+        Rails.env.production? ? require(c) : load(c)
+      end 
+
       Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/**/*.rb")) do |c|
         Rails.env.production? ? require(c) : load(c)
       end
-      
-      Dir.glob(File.join(File.dirname(__FILE__), "spree/**/*.rb")) do |c|
-        Rails.env.production? ? require(c) : load(c)
-      end
-      
+
       [
         Calculator::Ups::Ground,
         Calculator::Ups::NextDayAir,
