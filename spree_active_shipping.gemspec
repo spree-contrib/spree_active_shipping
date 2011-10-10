@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
 
   s.name        = 'spree_active_shipping'
-  s.version     = '1.0.3'
+  s.version     = '1.1.0'
   s.authors     = ["Sean Schofield"]
   s.email       = 'sean@railsdog.com'
   s.homepage    = 'http://github.com/spree/spree_active_shipping'
@@ -17,6 +17,6 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib"]
 
-  s.add_dependency('spree_core', '>= 0.30.1')
+  s.add_dependency('spree_core', '>= 0.70.0')
   s.add_dependency('active_shipping', '0.9.13')
 end
