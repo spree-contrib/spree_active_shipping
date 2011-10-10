@@ -1,4 +1,4 @@
-class Calculator::Fedex::Base < Calculator::ActiveShipping
+class Calculator::Fedex::Base < Calculator::ActiveShipping::Base
   def carrier
     ActiveMerchant::Shipping::FedEx.new(:key => Spree::ActiveShipping::Config[:fedex_key], 
                                         :password => Spree::ActiveShipping::Config[:fedex_password], 

@@ -4,27 +4,7 @@ require 'active_shipping'
 module ActiveShippingExtension
   class Engine < Rails::Engine
     def self.activate
-      #next two globs are workarounds for production issues with Passenger/Unicorn
-      #anyone care to offer something a little cleaner?
-      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/active_shipping.rb")) do |c|
-        Rails.env.production? ? require(c) : load(c)
-      end 
-
-      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/usps/base.rb")) do |c|
-        Rails.env.production? ? require(c) : load(c)
-      end 
-
-      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/**/*.rb")) do |c|
-        Rails.env.production? ? require(c) : load(c)
-      end
-
-      (
-        Calculator::Fedex::Base.descendants +
-        Calculator::Ups::Base.descendants +
-        Calculator::Usps::Base.descendants
-      ).each(&:register)
-
-      Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/**/base.rb")) do |c|
         Rails.env.production? ? require(c) : load(c)
       end
 
@@ -36,5 +16,17 @@ module ActiveShippingExtension
     config.autoload_paths += %W(#{config.root}/lib)
     config.to_prepare &method(:activate).to_proc
 
+    initializer "spree_active_shipping.register.calculators" do |app|
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/**/*.rb")) do |c|
+        Rails.env.production? ? require(c) : load(c)
+      end
+
+      app.config.spree.calculators.shipping_methods.concat( 
+        Calculator::Fedex::Base.descendants +
+        Calculator::Ups::Base.descendants +
+        Calculator::Usps::Base.descendants
+      )
+    end
   end
+
 end
