@@ -56,6 +56,9 @@ Installation
 
     gem 'spree_active_shipping'
 
+    #only required until gem 0.9.13 is released
+    gem 'active_shipping', :git => 'git://github.com/Shopify/active_shipping.git'
+
 2. Run bundler
 
     bundle install
