@@ -1,15 +1,15 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'spec_helper'
 include ActiveMerchant::Shipping
 
 module ActiveShipping
-  describe Calculator do
+  describe Spree::Calculator do
     # NOTE: All specs will use the bogus calculator (no login information needed)
 
-    let(:country) { mock_model Country, :iso => "US", :state => mock_model(State, :abbr => "MD") }
-    let(:address) { mock_model Address, :country => country, :state => country.state, :city => "Chevy Chase", :zipcode => "20815" }
-    let(:line_item_1) { mock_model(LineItem, :variant_id => 1, :quantity => 2, :variant => mock_model(Variant, :weight => 10)) }
-    let(:line_item_2) { mock_model(LineItem, :variant_id => 2, :quantity => 1, :variant => mock_model(Variant, :weight => 5.25)) }
-    let(:order) { mock_model Order, :number => "R12345", :ship_address => address, :line_items =>  [ line_item_1, line_item_2 ] }
+    let(:country) { mock_model Spree::Country, :iso => "US", :state => mock_model(Spree::State, :abbr => "MD") }
+    let(:address) { mock_model Spree::Address, :country => country, :state => country.state, :city => "Chevy Chase", :zipcode => "20815" }
+    let(:line_item_1) { mock_model(Spree::LineItem, :variant_id => 1, :quantity => 2, :variant => mock_model(Spree::Variant, :weight => 10)) }
+    let(:line_item_2) { mock_model(Spree::LineItem, :variant_id => 2, :quantity => 1, :variant => mock_model(Spree::Variant, :weight => 5.25)) }
+    let(:order) { mock_model Spree::Order, :number => "R12345", :ship_address => address, :line_items =>  [ line_item_1, line_item_2 ] }
 
     let(:carrier) { Spree::ActiveShipping::BogusCarrier.new }
     let(:calculator) {  Spree::ActiveShipping::BogusCalculator.new }
