@@ -54,20 +54,20 @@ module ActiveShipping
         end
 
         it "should return rate based on calculator's service_name" do
-          calculator.class.should_receive(:service_name).and_return("Super Fast")
+          calculator.class.should_receive(:description).and_return("Super Fast")
           rate = calculator.compute(order)
           rate.should == 9.99
         end
 
         it "should include handling_fee when configured" do
-          calculator.class.should_receive(:service_name).and_return("Super Fast")
+          calculator.class.should_receive(:description).and_return("Super Fast")
           Spree::ActiveShipping::Config.set(:handling_fee => 100)
           rate = calculator.compute(order)
           rate.should == 10.99
         end
 
         it "should return nil if service_name is not found in rate_hash" do
-          calculator.class.should_receive(:service_name).and_return("Extra-Super Fast")
+          calculator.class.should_receive(:description).and_return("Extra-Super Fast")
           rate = calculator.compute(order)
           rate.should be_nil
         end
