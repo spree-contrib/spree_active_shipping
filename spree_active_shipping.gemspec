@@ -17,6 +17,5 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib"]
 
-  s.add_dependency('spree', '0.7.3')
   s.add_dependency('active_shipping', '0.9.13')
 end
