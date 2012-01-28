@@ -3,7 +3,7 @@ end
 module SpreeActiveShippingExtension
   class Engine < Rails::Engine
 
-    initializer "spree.active_shipping.preferences", :after => "spree.environment" do |app|
+    initializer "spree.active_shipping.preferences", :before => :load_config_initializers do |app|
       Spree::ActiveShipping::Config = Spree::ActiveShippingConfiguration.new
     end
 
