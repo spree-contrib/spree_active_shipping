@@ -6,7 +6,7 @@ Status](https://secure.travis-ci.org/spree/spree_active_shipping.png)](http://tr
 
 This is a Spree extension that wraps the popular [active_shipping](http://github.com/Shopify/active_shipping/tree/master) plugin.
 
-UPS 
+UPS
 ---
 
 You will need a UPS developer account to get rate quotes (even in development and test mode.)  The UPS calculators also require that you set the following configuration properties. You will also need a USPS account to use USPS rate quote system. Note: acquiring the USPS developer account is easy but has a confusion activation step. Look for related sicussion in ActiveShipping's original discussion group as well as carefully read your USPS confirmation email. 
