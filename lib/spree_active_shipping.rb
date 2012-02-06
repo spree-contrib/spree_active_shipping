@@ -1,11 +1,21 @@
 require 'spree_core'
 require 'active_shipping'
 
-module ActiveShippingExtension
-  class Engine < Rails::Engine
+module SpreeActiveShipping
+  class Engine < Rails::Engine    
+    engine_name 'spree_active_shipping'
+    
     def self.activate
-      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/**/base.rb")) do |c|
-        Rails.env.production? ? require(c) : load(c)
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
+        Rails.application.config.cache_classes ? require(c) : load(c)
+      end
+
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/overrides/**/*.rb")) do |c|
+        Rails.application.config.cache_classes ? require(c) : load(c)
+      end
+      
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/**/*.rb")) do |c|
+        Rails.application.config.cache_classes ? require(c) : load(c)
       end
 
       #Only required until following active_shipping commit is merged (add negotiated rates).
