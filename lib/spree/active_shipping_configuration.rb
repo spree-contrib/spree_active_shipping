@@ -21,4 +21,6 @@ class Spree::ActiveShippingConfiguration < Spree::Preferences::Configuration
   preference :unit_multiplier, :integer, :default => 16 # 16 oz./lb - assumes variant weights are in lbs
   preference :default_weight, :integer, :default => 0 # 16 oz./lb - assumes variant weights are in lbs
   preference :handling_fee, :integer
+  
+  preference :test_mode, :boolean, :default => false
 end
