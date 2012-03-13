@@ -1,5 +1,8 @@
 # This is a base calculator for shipping calcualations using the ActiveShipping plugin.  It is not intended to be
 # instantiated directly.  Create sublcass for each specific shipping method you wish to support instead.
+#
+# Digest::MD5 is used for cache_key generation.
+require 'digest/md5'
 module Spree
   module Calculator::ActiveShipping
 
@@ -124,7 +127,8 @@ module Spree
 
       def cache_key(order)
         addr = order.ship_address
-        @cache_key = "#{carrier.name}-#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{order.line_items.map {|li| li.variant_id.to_s + "_" + li.quantity.to_s }.join("|")}".gsub(" ","")
+        line_items_hash = Digest::MD5.hexdigest(order.line_items.map {|li| li.variant_id.to_s + "_" + li.quantity.to_s }.join("|"))
+        @cache_key = "#{carrier.name}-#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items_hash}".gsub(" ","")
       end
     end
   end
