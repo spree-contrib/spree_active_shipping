@@ -1,5 +1,5 @@
 # This is a base calculator for shipping calcualations using the ActiveShipping plugin.  It is not intended to be
-# instantiated directly.  Create sublcass for each specific shipping method you wish to support instead.
+# instantiated directly.  Create subclass for each specific shipping method you wish to support instead.
 #
 # Digest::MD5 is used for cache_key generation.
 require 'digest/md5'
