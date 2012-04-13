@@ -1,6 +1,6 @@
 module Spree
   class Calculator
-    class Fedex
+    module Fedex
       class InternationalPriorityFreight < Calculator::Fedex::Base
         def self.description
           I18n.t("fedex.intl_priority_freight")

@@ -1,6 +1,6 @@
 module Spree
   class Calculator
-    class Fedex
+    module Fedex
       class TwoDaySaturdayDelivery < Calculator::Fedex::Base
         def self.description
           I18n.t("fedex.two_day_saturday_delivery")
