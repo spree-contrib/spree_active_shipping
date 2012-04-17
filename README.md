@@ -43,6 +43,15 @@ Spree::ActiveShipping::Config[:handling_fee]
 
 This property allows you to set a global handling fee that will be added to all calculated shipping rates.  Specify the number of cents, not dollars.
 
+Global Weight Default
+---------------------
+
+For products lacking defined weights, there is a fallback value you're invited to set:
+
+```ruby
+Spree::ActiveShipping::Config[:default_weight]
+```
+
 Using Migrations
 ----------------
 
