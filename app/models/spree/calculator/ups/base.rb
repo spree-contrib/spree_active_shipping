@@ -1,18 +1,18 @@
 module Spree
-  class Calculator::Ups::Base < ActiveMerchant::Shipping::Base
+  class Calculator::Ups::Base < Spree::Calculator::ActiveShipping::Base
     def carrier
-      if Spree::ActiveShipping::Config[:shipper_number].nil?
-        ActiveMerchant::Shipping::UPS.new(:login => Spree::ActiveShipping::Config[:ups_login],
-                                          :password => Spree::ActiveShipping::Config[:ups_password],
-                                          :key => Spree::ActiveShipping::Config[:ups_key],
-                                          :test => Spree::ActiveShipping::Config[:test_mode])
-      else
-        ActiveMerchant::Shipping::UPS.new(:login => Spree::ActiveShipping::Config[:ups_login],
-                                          :password => Spree::ActiveShipping::Config[:ups_password],
-                                          :key => Spree::ActiveShipping::Config[:ups_key],
-                                          :origin_account => Spree::ActiveShipping::Config[:shipper_number],
-                                          :test => Spree::ActiveShipping::Config[:test_mode])
+      carrier_details = {
+        :login => Spree::ActiveShipping::Config[:ups_login],
+        :password => Spree::ActiveShipping::Config[:ups_password],
+        :key => Spree::ActiveShipping::Config[:ups_key],
+        :test => Spree::ActiveShipping::Config[:test_mode]
+      }
+
+      if shipper_number = Spree::Activeshipping::Config[:shipper_number]
+        carrier_details.merge(:origin_account => shipper_number)
       end
+
+      ActiveMerchant::Shipping::Carriers::UPS.new(carrier_details)
     end
   end
 end

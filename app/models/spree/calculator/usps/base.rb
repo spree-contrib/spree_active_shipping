@@ -1,8 +1,12 @@
 module Spree
-  class Calculator::Usps::Base < ActiveMerchant::Shipping::Base
+  class Calculator::Usps::Base < Spree::Calculator::ActiveShipping::Base
     def carrier
-      ActiveMerchant::Shipping::USPS.new( :login => Spree::ActiveShipping::Config[:usps_login],
-                                          :test => Spree::ActiveShipping::Config[:test_mode])
+      carrier_details = {
+        :login => Spree::ActiveShipping::Config[:usps_login],
+        :test => Spree::ActiveShipping::Config[:test_mode]
+      }
+
+      ActiveMerchant::Shipping::Carriers::USPS.new(carrier_details)
     end
   end
 end
