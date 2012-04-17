@@ -6,6 +6,16 @@ Status](https://secure.travis-ci.org/spree/spree_active_shipping.png)](http://tr
 
 This is a Spree extension that wraps the popular [active_shipping](http://github.com/Shopify/active_shipping/tree/master) plugin.
 
+Installation
+------------
+
+To install this extension, place these two lines inside your application's Gemfile:
+
+```ruby
+gem 'active_shipping', :git => "git://github.com/Shopify/active_shipping"
+gem 'spree_active_shipping', :git => "git://github.com/spree/spree_active_shipping"
+```
+
 UPS
 ---
 
