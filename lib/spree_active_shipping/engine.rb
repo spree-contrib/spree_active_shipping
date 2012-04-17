@@ -8,9 +8,7 @@ module SpreeActiveShippingExtension
     end
 
     def self.activate
-      puts "ACTIVATING SPREE ACTIVE SHIPPING!!11"
-      Dir.glob(File.join(File.dirname(__FILE__), "../../app/models/spree/calculator/**/base.rb")) do |c|
-        p c
+      Dir[File.join(File.dirname(__FILE__), "../../app/models/spree/calculator/**/base.rb")].sort.each do |c|
         Rails.env.production? ? require(c) : load(c)
       end
 
