@@ -11,7 +11,7 @@ module Spree
             :test => Spree::ActiveShipping::Config[:test_mode]
           }
 
-          ActiveMerchant::Shipping::Carriers::FedEx.new(carrier_details)
+          ActiveMerchant::Shipping::FedEx.new(carrier_details)
         end
       end
     end

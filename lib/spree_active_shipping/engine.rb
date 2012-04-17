@@ -14,7 +14,7 @@ module SpreeActiveShippingExtension
 
       #Only required until following active_shipping commit is merged (add negotiated rates).
       #http://github.com/BDQ/active_shipping/commit/2f2560d53aa7264383e5a35deb7264db60eb405a
-      ActiveMerchant::Shipping::Carriers::UPS.send(:include, Spree::ActiveShipping::UpsOverride)
+      ActiveMerchant::Shipping::UPS.send(:include, Spree::ActiveShipping::UpsOverride)
     end
 
     config.autoload_paths += %W(#{config.root}/lib)

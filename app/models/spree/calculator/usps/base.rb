@@ -6,7 +6,7 @@ module Spree
         :test => Spree::ActiveShipping::Config[:test_mode]
       }
 
-      ActiveMerchant::Shipping::Carriers::USPS.new(carrier_details)
+      ActiveMerchant::Shipping::USPS.new(carrier_details)
     end
   end
 end
