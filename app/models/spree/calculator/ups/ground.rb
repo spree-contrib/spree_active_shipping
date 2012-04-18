@@ -1,7 +1,11 @@
 module Spree
-  class Calculator::Ups::Ground < Calculator::Ups::Base
-    def self.description
-      I18n.t("ups.ground")
+  class Calculator
+    module Ups
+      class Ground < Calculator::Ups::Base
+        def self.description
+          I18n.t("ups.ground")
+        end
+      end
     end
   end
 end

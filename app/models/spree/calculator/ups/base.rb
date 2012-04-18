@@ -1,18 +1,22 @@
 module Spree
-  class Calculator::Ups::Base < Spree::Calculator::ActiveShipping::Base
-    def carrier
-      carrier_details = {
-        :login => Spree::ActiveShipping::Config[:ups_login],
-        :password => Spree::ActiveShipping::Config[:ups_password],
-        :key => Spree::ActiveShipping::Config[:ups_key],
-        :test => Spree::ActiveShipping::Config[:test_mode]
-      }
+  class Calculator
+    module Ups
+      class Base < Spree::Calculator::ActiveShipping::Base
+        def carrier
+          carrier_details = {
+            :login => Spree::ActiveShipping::Config[:ups_login],
+            :password => Spree::ActiveShipping::Config[:ups_password],
+            :key => Spree::ActiveShipping::Config[:ups_key],
+            :test => Spree::ActiveShipping::Config[:test_mode]
+          }
 
-      if shipper_number = Spree::Activeshipping::Config[:shipper_number]
-        carrier_details.merge(:origin_account => shipper_number)
+          if shipper_number = Spree::Activeshipping::Config[:shipper_number]
+            carrier_details.merge(:origin_account => shipper_number)
+          end
+
+          ActiveMerchant::Shipping::UPS.new(carrier_details)
+        end
       end
-
-      ActiveMerchant::Shipping::UPS.new(carrier_details)
     end
   end
 end

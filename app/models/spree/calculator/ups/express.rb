@@ -1,7 +1,11 @@
 module Spree
-  class Calculator::Ups::Express < Calculator::Ups::Base
-    def self.description
-      I18n.t("ups.express")
+  class Calculator
+    module Ups
+      class Express < Calculator::Ups::Base
+        def self.description
+          I18n.t("ups.express")
+        end
+      end
     end
   end
 end

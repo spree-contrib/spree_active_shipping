@@ -1,7 +1,11 @@
 module Spree
-  class Calculator::Usps::ExpressMail < Calculator::Usps::Base
-    def self.description
-      I18n.t("usps.express_mail")
+  class Calculator
+    module Usps
+      class ExpressMail < Calculator::Usps::Base
+        def self.description
+          I18n.t("usps.express_mail")
+        end
+      end
     end
   end
 end
