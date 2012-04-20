@@ -10,7 +10,7 @@ module Spree
             :test => Spree::ActiveShipping::Config[:test_mode]
           }
 
-          if shipper_number = Spree::Activeshipping::Config[:shipper_number]
+          if shipper_number = Spree::ActiveShipping::Config[:shipper_number]
             carrier_details.merge(:origin_account => shipper_number)
           end
 
