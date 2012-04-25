@@ -2,9 +2,9 @@ require 'spree_core'
 require 'active_shipping'
 
 module SpreeActiveShipping
-  class Engine < Rails::Engine    
+  class Engine < Rails::Engine
     engine_name 'spree_active_shipping'
-    
+
     def self.activate
       Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
         Rails.application.config.cache_classes ? require(c) : load(c)
@@ -13,8 +13,8 @@ module SpreeActiveShipping
       Dir.glob(File.join(File.dirname(__FILE__), "../app/overrides/**/*.rb")) do |c|
         Rails.application.config.cache_classes ? require(c) : load(c)
       end
-      
-      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/**/*.rb")) do |c|
+
+      Dir[File.join(File.dirname(__FILE__), "../app/models/calculator/**/*.rb")].sort.each do |c|
         Rails.application.config.cache_classes ? require(c) : load(c)
       end
 
@@ -27,7 +27,7 @@ module SpreeActiveShipping
     config.to_prepare &method(:activate).to_proc
 
     initializer "spree_active_shipping.register.calculators" do |app|
-      Dir[File.join(File.dirname(__FILE__), "../../app/models/spree/calculator/**/*.rb")].sort.each do |c|
+      Dir[File.join(File.dirname(__FILE__), "../app/models/calculator/**/*.rb")].sort.each do |c|
         Rails.env.production? ? require(c) : load(c)
       end
 
@@ -37,6 +37,7 @@ module SpreeActiveShipping
         Calculator::Usps::Base.descendants
       )
     end
+
   end
 
 end
