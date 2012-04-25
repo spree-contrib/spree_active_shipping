@@ -14,20 +14,20 @@ module SpreeActiveShipping
         Rails.application.config.cache_classes ? require(c) : load(c)
       end
       
-      Dir.glob(File.join(File.dirname(__FILE__), "../app/models/calculator/**/*.rb")) do |c|
+      Dir[File.join(File.dirname(__FILE__), "../app/models/calculator/**/*.rb")].sort.each do |c|
         Rails.application.config.cache_classes ? require(c) : load(c)
       end
 
       #Only required until following active_shipping commit is merged (add negotiated rates).
       #http://github.com/BDQ/active_shipping/commit/2f2560d53aa7264383e5a35deb7264db60eb405a
-      ActiveMerchant::Shipping::UPS.send(:include, Spree::ActiveShipping::UpsOverride)
+      ActiveMerchant::Shipping::UPS.send(:include, Spree::ActiveShipping::UpsOverride)      
     end
-
+    
     config.autoload_paths += %W(#{config.root}/lib)
     config.to_prepare &method(:activate).to_proc
-
+    
     initializer "spree_active_shipping.register.calculators" do |app|
-      Dir[File.join(File.dirname(__FILE__), "../../app/models/spree/calculator/**/*.rb")].sort.each do |c|
+      Dir[File.join(File.dirname(__FILE__), "../app/models/calculator/**/*.rb")].sort.each do |c|
         Rails.env.production? ? require(c) : load(c)
       end
 
@@ -37,6 +37,7 @@ module SpreeActiveShipping
         Calculator::Usps::Base.descendants
       )
     end
+    
   end
 
 end
