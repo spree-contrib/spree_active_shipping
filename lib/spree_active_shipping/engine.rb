@@ -12,6 +12,10 @@ module SpreeActiveShippingExtension
         Rails.env.production? ? require(c) : load(c)
       end
 
+      Dir.glob(File.join(File.dirname(__FILE__), "../../app/**/*_decorator*.rb")) do |c|
+        Rails.configuration.cache_classes ? require(c) : load(c)
+      end
+
       #Only required until following active_shipping commit is merged (add negotiated rates).
       #http://github.com/BDQ/active_shipping/commit/2f2560d53aa7264383e5a35deb7264db60eb405a
       ActiveMerchant::Shipping::UPS.send(:include, Spree::ActiveShipping::UpsOverride)
