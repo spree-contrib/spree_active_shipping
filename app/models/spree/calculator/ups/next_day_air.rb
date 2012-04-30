@@ -1,5 +1,5 @@
 module Spree
-  class Calculator
+  class Calculator < ActiveRecord::Base
     module Ups
       class NextDayAir < Calculator::Ups::Base
         def self.description

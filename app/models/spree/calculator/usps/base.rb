@@ -1,5 +1,5 @@
 module Spree
-  class Calculator
+  class Calculator < ActiveRecord::Base
     module Usps
       class Base < Spree::Calculator::ActiveShipping::Base
         def carrier

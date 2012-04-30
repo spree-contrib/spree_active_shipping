@@ -1,5 +1,5 @@
 module Spree
-  class Calculator
+  class Calculator < ActiveRecord::Base
     module Fedex
       class ExpressSaver < Calculator::Fedex::Base
         def self.description

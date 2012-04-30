@@ -1,5 +1,5 @@
 module Spree
-  class Calculator
+  class Calculator < ActiveRecord::Base
     module Usps
       class PriorityMailLargeFlatRateBox < Calculator::Usps::Base
         def self.description

@@ -4,7 +4,7 @@
 # Digest::MD5 is used for cache_key generation.
 require 'digest/md5'
 module Spree
-  class Calculator
+  class Calculator < ActiveRecord::Base
     module ActiveShipping
       class Base < Calculator
         include ActiveMerchant::Shipping
