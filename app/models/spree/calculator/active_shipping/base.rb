@@ -58,7 +58,7 @@ module Spree
                                      :state => (addr.state ? addr.state.abbr : addr.state_name),
                                      :city => addr.city,
                                      :zip => addr.zipcode)
-          timings = Rails.cache.fetch(cache_key(line_items)+"-timings") do
+          timings = Rails.cache.fetch(cache_key(order)+"-timings") do
             timings = retrieve_timings(origin, destination, packages(order))
           end
           return nil if timings.nil? || !timings.is_a?(Hash) || timings.empty?
