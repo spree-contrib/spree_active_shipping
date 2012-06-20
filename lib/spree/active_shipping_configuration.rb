@@ -12,6 +12,8 @@ class Spree::ActiveShippingConfiguration < Spree::Preferences::Configuration
 
   preference :usps_login, :string, :default => "aunt_judy"
 
+  preference :canada_post_login, :string, :default => "canada_post_login"
+
   preference :origin_country, :string, :default => "US"
   preference :origin_state, :string, :default => "PA"
   preference :origin_city, :string, :default => "University Park"
