@@ -79,6 +79,9 @@ module Spree
               params = e.response.params
               if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
                 message = params["Response"]["Error"]["ErrorDescription"]
+              # Canada Post specific error message
+              elsif params.has_key?("eparcel") && params["eparcel"].has_key("error") && params["eparcel"]["error"].has_key("statusMessage")
+                message = e.response.params["eparcel"]["error"]["statusMessage"]
               else
                 message = e.message
               end
@@ -119,7 +122,7 @@ module Spree
         def packages(order)
           multiplier = Spree::ActiveShipping::Config[:unit_multiplier]
           default_weight = Spree::ActiveShipping::Config[:default_weight]
-          
+
           weight = order.line_items.inject(0) do |weight, line_item|
             item_weight = line_item.variant.weight.present? ? line_item.variant.weight : default_weight
             weight + (line_item.quantity * item_weight * multiplier)
