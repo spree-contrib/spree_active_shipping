@@ -5,10 +5,11 @@ module Spree
     module CanadaPost
       class Base < Spree::Calculator::ActiveShipping::Base
         def carrier
-          carrier_details = {
-            :login => Spree::ActiveShipping::Config[:canada_post_login],
+          canada_post_options = {
+            :login  => Spree::ActiveShipping::Config[:canada_post_login],
+            :french => (I18n.locale.to_sym == :fr)
           }
-          ActiveMerchant::Shipping::CanadaPost.new(carrier_details)
+          ActiveMerchant::Shipping::CanadaPost.new(canada_post_options)
         end
       end
     end
