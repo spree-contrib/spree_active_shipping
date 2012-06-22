@@ -87,6 +87,9 @@ module Spree
               params = e.response.params
               if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
                 message = params["Response"]["Error"]["ErrorDescription"]
+              # Canada Post specific error message
+              elsif params.has_key?("eparcel") && params["eparcel"].has_key?("error") && params["eparcel"]["error"].has_key?("statusMessage")
+                message = e.response.params["eparcel"]["error"]["statusMessage"]
               else
                 message = e.message
               end
