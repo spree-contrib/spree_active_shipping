@@ -1,3 +1,5 @@
+require_dependency 'spree/calculator'
+
 module Spree
   class Calculator < ActiveRecord::Base
     module Ups
