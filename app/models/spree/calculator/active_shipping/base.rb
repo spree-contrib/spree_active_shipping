@@ -79,7 +79,11 @@ module Spree
           begin
             response = carrier.find_rates(origin, destination, packages)
             # turn this beastly array into a nice little hash
-            rate_hash = Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
+            # decode html entities for xml-based APIs, ie Canada Post
+            rates = response.rates.collect do |rate|
+              [CGI.unescape_html(rate.service_name.encode("UTF-8")), rate.price]
+            end
+            rate_hash = Hash[*rates.flatten]
             return rate_hash
           rescue ActiveMerchant::ActiveMerchantError => e
 
