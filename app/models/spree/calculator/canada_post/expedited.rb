@@ -3,8 +3,7 @@ module Spree
     module CanadaPost
       class Expedited < Calculator::CanadaPost::Base
         def self.description
-          "Canada Post Expedited"
-          #I18n.t("canada_post.priority")
+          I18n.t("canada_post.expedited")
         end
       end
    end

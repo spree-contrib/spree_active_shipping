@@ -1,6 +1,7 @@
 ---
 fr:
   canada_post:
-    priority: "Poste Canada Priorité"
+    regular: "Postes Canada Colis standard"
+    expedited: "Postes Canada Colis accélérés"
+    xpresspost: "Postes Canada Xpresspost"
   shipping_error: "Erreur de livraison"
-

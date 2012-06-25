@@ -3,8 +3,7 @@ module Spree
     module CanadaPost
       class Regular < Calculator::CanadaPost::Base
         def self.description
-          "Canada Post Regular"
-          #I18n.t("canada_post.regular")
+          I18n.t("canada_post.regular")
         end
       end
    end
