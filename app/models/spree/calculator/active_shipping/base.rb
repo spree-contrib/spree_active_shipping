@@ -36,7 +36,12 @@ module Spree
                                      :zip => addr.zipcode)
 
           rates = Rails.cache.fetch(cache_key(order)) do
-            rates = retrieve_rates(origin, destination, packages(order))
+            order_packages = packages(order)
+            if order_packages.empty?
+              nil
+            else
+              retrieve_rates(origin, destination, order_packages)
+            end
           end
 
           return nil if rates.empty?
