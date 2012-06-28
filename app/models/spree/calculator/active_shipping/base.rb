@@ -38,13 +38,12 @@ module Spree
           rates = Rails.cache.fetch(cache_key(order)) do
             order_packages = packages(order)
             if order_packages.empty?
-              nil
+              {}
             else
               retrieve_rates(origin, destination, order_packages)
             end
           end
 
-          return nil if rates.empty?
           rate = rates[self.class.description]
           return nil unless rate
           rate = rate.to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
