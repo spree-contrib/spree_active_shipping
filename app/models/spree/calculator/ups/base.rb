@@ -13,7 +13,7 @@ module Spree
           }
 
           if shipper_number = Spree::ActiveShipping::Config[:shipper_number]
-            carrier_details.merge(:origin_account => shipper_number)
+            carrier_details.merge!(:origin_account => shipper_number)
           end
 
           ActiveMerchant::Shipping::UPS.new(carrier_details)
