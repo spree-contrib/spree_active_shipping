@@ -13,10 +13,16 @@ module Spree
           }
 
           if shipper_number = Spree::ActiveShipping::Config[:shipper_number]
-            carrier_details.merge(:origin_account => shipper_number)
+            carrier_details.merge!(:origin_account => shipper_number)
           end
 
           ActiveMerchant::Shipping::UPS.new(carrier_details)
+        end
+        
+        protected
+        # weight limit in ounces http://www.ups.com/content/us/en/resources/prepare/oversize.html
+        def max_weight_for_country(country)
+          150*Spree::ActiveShipping::Config[:unit_multiplier]
         end
       end
     end
