@@ -35,12 +35,15 @@ module Spree
                                      :city => addr.city,
                                      :zip => addr.zipcode)
 
-          rates = Rails.cache.fetch(cache_key(order)) do
-            rates = retrieve_rates(origin, destination, packages(order))
+          rates_result = Rails.cache.fetch(cache_key(order)) do
+            retrieve_rates(origin, destination, packages(order))
           end
 
-          return nil if rates.empty?
-          rate = rates[self.class.description]
+
+          raise rates_result if rates_result.kind_of?(Spree::ShippingError)
+          return nil if rates_result.empty?
+          rate = rates_result[self.class.description]
+
           return nil unless rate
           rate = rate.to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
 
@@ -79,7 +82,11 @@ module Spree
           begin
             response = carrier.find_rates(origin, destination, packages)
             # turn this beastly array into a nice little hash
-            rate_hash = Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
+            # decode html entities for xml-based APIs, ie Canada Post
+            rates = response.rates.collect do |rate|
+              [CGI.unescape_html(rate.service_name.encode("UTF-8")), rate.price]
+            end
+            rate_hash = Hash[*rates.flatten]
             return rate_hash
           rescue ActiveMerchant::ActiveMerchantError => e
 
@@ -87,6 +94,9 @@ module Spree
               params = e.response.params
               if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
                 message = params["Response"]["Error"]["ErrorDescription"]
+              # Canada Post specific error message
+              elsif params.has_key?("eparcel") && params["eparcel"].has_key?("error") && params["eparcel"]["error"].has_key?("statusMessage")
+                message = e.response.params["eparcel"]["error"]["statusMessage"]
               else
                 message = e.message
               end
@@ -94,9 +104,9 @@ module Spree
               message = e.to_s
             end
 
-            Rails.cache.write @cache_key, {} #write empty hash to cache to prevent constant re-lookups
-
-            raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
+            error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
+            Rails.cache.write @cache_key, error #write error to cache to prevent constant re-lookups
+            raise error
           end
 
         end
@@ -115,8 +125,10 @@ module Spree
             else
               message = re.message
             end
-            Rails.cache.write @cache_key+'-', {} #write empty hash to cache to prevent constant re-lookups
-            raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
+
+            error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
+            Rails.cache.write @cache_key+"-timings", error #write error to cache to prevent constant re-lookups
+            raise error
           end
         end
 
@@ -185,7 +197,7 @@ module Spree
         def cache_key(order)
           addr = order.ship_address
           line_items_hash = Digest::MD5.hexdigest(order.line_items.map {|li| li.variant_id.to_s + "_" + li.quantity.to_s }.join("|"))
-          @cache_key = "#{carrier.name}-#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items_hash}".gsub(" ","")
+          @cache_key = "#{carrier.name}-#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items_hash}-#{I18n.locale}".gsub(" ","")
         end
       end
     end
