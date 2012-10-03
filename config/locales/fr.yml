@@ -1,0 +1,12 @@
+---
+fr:
+  canada_post:
+    regular: "Postes Canada Colis standard"
+    expedited: "Postes Canada Colis accélérés"
+    xpresspost: "Postes Canada Xpresspost"
+    priority_worldwide_intl: "Postes Canada Priorité Mondial INTL"
+    xpresspost_international: "Postes Canada XPressPost International"
+    small_packets_air: "Postes Canada Petits Colis - Air"
+    parcel_surface: "Postes Canada Colis Postaux - Surface"
+    small_packets_surface: "Postes Canada Petits Colis - Surface"
+  shipping_error: "Erreur de livraison"
