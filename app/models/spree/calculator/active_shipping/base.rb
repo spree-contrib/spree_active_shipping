@@ -63,11 +63,12 @@ module Spree
                                      :state => (addr.state ? addr.state.abbr : addr.state_name),
                                      :city => addr.city,
                                      :zip => addr.zipcode)
-          timings = Rails.cache.fetch(cache_key(order)+"-timings") do
-            timings = retrieve_timings(origin, destination, packages(order))
+          timings_result = Rails.cache.fetch(cache_key(order)+"-timings") do
+            retrieve_timings(origin, destination, packages(order))
           end
-          return nil if timings.nil? || !timings.is_a?(Hash) || timings.empty?
-          return timings[self.description]
+          raise timings_result if timings_result.kind_of?(Spree::ShippingError)
+          return nil if timings_result.nil? || !timings_result.is_a?(Hash) || timings_result.empty?
+          return timings_result[self.description]
 
         end
 
