@@ -12,6 +12,12 @@ module Spree
 
           ActiveMerchant::Shipping::USPS.new(carrier_details)
         end
+        
+        protected
+        # weight limit in ounces or zero (if there is no limit)
+        def max_weight_for_country(country)
+          70*Spree::ActiveShipping::Config[:unit_multiplier]
+        end
       end
     end
   end
