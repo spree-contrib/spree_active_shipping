@@ -3,6 +3,7 @@
 #
 # Digest::MD5 is used for cache_key generation.
 require 'digest/md5'
+require 'iconv' if RUBY_VERSION.to_f < 1.9
 require_dependency 'spree/calculator'
 
 module Spree
@@ -83,9 +84,14 @@ module Spree
           begin
             response = carrier.find_rates(origin, destination, packages)
             # turn this beastly array into a nice little hash
-            # decode html entities for xml-based APIs, ie Canada Post
             rates = response.rates.collect do |rate|
-              [CGI.unescape_html(rate.service_name.encode("UTF-8")), rate.price]
+              # decode html entities for xml-based APIs, ie Canada Post
+              if RUBY_VERSION.to_f < 1.9
+                service_name = Iconv.iconv('UTF-8//IGNORE', 'UTF-8', rate.service_name).first
+              else
+                service_name = rate.service_name.encode("UTF-8")
+              end
+              [CGI.unescapeHTML(service_name), rate.price]
             end
             rate_hash = Hash[*rates.flatten]
             return rate_hash
