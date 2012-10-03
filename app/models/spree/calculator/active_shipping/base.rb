@@ -132,7 +132,7 @@ module Spree
             else
               message = re.message
             end
-            Rails.cache.write @cache_key+'-', {} #write empty hash to cache to prevent constant re-lookups
+            Rails.cache.write @cache_key+"-timings", {} #write error to cache to prevent constant re-lookups
             raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
           end
         end
