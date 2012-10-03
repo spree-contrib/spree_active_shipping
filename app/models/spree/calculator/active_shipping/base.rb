@@ -106,7 +106,7 @@ module Spree
             params = re.response.params
             if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
               message = params["Response"]["Error"]["ErrorDescription"]
-              elsee
+            else
               message = re.message
             end
             Rails.cache.write @cache_key+'-', {} #write empty hash to cache to prevent constant re-lookups
