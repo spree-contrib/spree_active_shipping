@@ -18,6 +18,12 @@ module Spree
 
           ActiveMerchant::Shipping::UPS.new(carrier_details)
         end
+        
+        protected
+        # weight limit in ounces http://www.ups.com/content/us/en/resources/prepare/oversize.html
+        def max_weight_for_country(country)
+          150*Spree::ActiveShipping::Config[:unit_multiplier]
+        end
       end
     end
   end

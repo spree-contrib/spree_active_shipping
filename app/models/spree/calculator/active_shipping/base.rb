@@ -68,6 +68,12 @@ module Spree
 
         end
 
+        protected
+        # weight limit in ounces or zero (if there is no limit)
+        def max_weight_for_country(country)
+          0
+        end
+
         private
         def retrieve_rates(origin, destination, packages)
           begin
@@ -115,20 +121,65 @@ module Spree
         end
 
 
+        
         private
+        
+        def convert_order_to_weights_array(order)
+          multiplier = Spree::ActiveShipping::Config[:unit_multiplier]
+          default_weight = Spree::ActiveShipping::Config[:default_weight]
+          max_weight = max_weight_for_country(order.ship_address.country)
+          
+          weights = order.line_items.map do |line_item|
+            item_weight = line_item.variant.weight.present? ? line_item.variant.weight : default_weight
+            item_weight *= multiplier
+            quantity = line_item.quantity
+            if max_weight <= 0
+              item_weight * quantity
+            else
+              if item_weight < max_weight
+                max_quantity = (max_weight/item_weight).floor
+                if quantity < max_quantity
+                  item_weight * quantity
+                else
+                  new_items = []
+                  while quantity > 0 do
+                    new_quantity = [max_quantity, quantity].min
+                    new_items << (item_weight * new_quantity)
+                    quantity -= new_quantity
+                  end
+                  new_items
+                end
+              else
+                raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: The maximum per package weight for the selected service from the selected country is #{max_weight} ounces.")
+              end
+            end
+          end
+          weights.flatten.sort
+        end
 
         # Generates an array of Package objects based on the quantities and weights of the variants in the line items
         def packages(order)
-          multiplier = Spree::ActiveShipping::Config[:unit_multiplier]
-          default_weight = Spree::ActiveShipping::Config[:default_weight]
+          units = Spree::ActiveShipping::Config[:units].to_sym
+          packages = []
+          weights = convert_order_to_weights_array(order)
+          max_weight = max_weight_for_country(order.ship_address.country)
           
-          weight = order.line_items.inject(0) do |weight, line_item|
-            item_weight = line_item.variant.weight.present? ? line_item.variant.weight : default_weight
-            weight + (line_item.quantity * item_weight * multiplier)
+          if max_weight <= 0
+            packages << Package.new(weights.sum, [], :units => units)
+          else
+            package_weight = 0
+            weights.each do |li_weight|
+              if package_weight + li_weight <= max_weight
+                package_weight += li_weight
+              else
+                packages << Package.new(package_weight, [], :units => units)
+                package_weight = li_weight
+              end
+            end
+            packages << Package.new(package_weight, [], :units => units) if package_weight > 0
           end
           
-          package = Package.new(weight, [], :units => Spree::ActiveShipping::Config[:units].to_sym)
-          [package]
+          packages
         end
 
         def cache_key(order)
