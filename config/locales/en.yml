@@ -48,4 +48,13 @@ en:
     priority_mail_international_small_flat_rate_box: "USPS Priority Mail International Small Flat Rate Box"
     priority_mail_international_medium_flat_rate_box: "USPS Priority Mail International Medium Flat Rate Box"
     priority_mail_international_large_flat_rate_box: "USPS Priority Mail International Large Flat Rate Box"
+  canada_post:
+    regular: "Canada Post Regular"
+    expedited: "Canada Post Expedited"
+    xpresspost: "Canada Post Xpresspost"
+    priority_worldwide_intl: "Canada Post Priority Worldwide INTL"
+    xpresspost_international: "Canada Post XPressPost International"
+    small_packets_air: "Canada Post Small Packets Air"
+    parcel_surface: "Canada Post Parcel Surface"
+    small_packets_surface: "Canada Post Small Packets Surface"
   shipping_error: "Shipping Error"
