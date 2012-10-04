@@ -3,6 +3,7 @@
 #
 # Digest::MD5 is used for cache_key generation.
 require 'digest/md5'
+require 'iconv' if RUBY_VERSION.to_f < 1.9
 require_dependency 'spree/calculator'
 
 module Spree
@@ -36,10 +37,14 @@ module Spree
                                      :zip => addr.zipcode)
 
           rates = Rails.cache.fetch(cache_key(order)) do
-            rates = retrieve_rates(origin, destination, packages(order))
+            order_packages = packages(order)
+            if order_packages.empty?
+              {}
+            else
+              retrieve_rates(origin, destination, order_packages)
+            end
           end
 
-          return nil if rates.empty?
           rate = rates[self.class.description]
           return nil unless rate
           rate = rate.to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
@@ -79,7 +84,16 @@ module Spree
           begin
             response = carrier.find_rates(origin, destination, packages)
             # turn this beastly array into a nice little hash
-            rate_hash = Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
+            rates = response.rates.collect do |rate|
+              # decode html entities for xml-based APIs, ie Canada Post
+              if RUBY_VERSION.to_f < 1.9
+                service_name = Iconv.iconv('UTF-8//IGNORE', 'UTF-8', rate.service_name).first
+              else
+                service_name = rate.service_name.encode("UTF-8")
+              end
+              [CGI.unescapeHTML(service_name), rate.price]
+            end
+            rate_hash = Hash[*rates.flatten]
             return rate_hash
           rescue ActiveMerchant::ActiveMerchantError => e
 
@@ -87,6 +101,9 @@ module Spree
               params = e.response.params
               if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
                 message = params["Response"]["Error"]["ErrorDescription"]
+              # Canada Post specific error message
+              elsif params.has_key?("eparcel") && params["eparcel"].has_key?("error") && params["eparcel"]["error"].has_key?("statusMessage")
+                message = e.response.params["eparcel"]["error"]["statusMessage"]
               else
                 message = e.message
               end
@@ -185,7 +202,7 @@ module Spree
         def cache_key(order)
           addr = order.ship_address
           line_items_hash = Digest::MD5.hexdigest(order.line_items.map {|li| li.variant_id.to_s + "_" + li.quantity.to_s }.join("|"))
-          @cache_key = "#{carrier.name}-#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items_hash}".gsub(" ","")
+          @cache_key = "#{carrier.name}-#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items_hash}-#{I18n.locale}".gsub(" ","")
         end
       end
     end
