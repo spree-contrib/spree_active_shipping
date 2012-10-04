@@ -36,7 +36,7 @@ module Spree
                                      :city => addr.city,
                                      :zip => addr.zipcode)
 
-          rates = Rails.cache.fetch(cache_key(order)) do
+          rates_result = Rails.cache.fetch(cache_key(order)) do
             order_packages = packages(order)
             if order_packages.empty?
               {}
@@ -45,7 +45,11 @@ module Spree
             end
           end
 
-          rate = rates[self.class.description]
+
+          raise rates_result if rates_result.kind_of?(Spree::ShippingError)
+          return nil if rates_result.empty?
+          rate = rates_result[self.class.description]
+
           return nil unless rate
           rate = rate.to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
 
@@ -65,11 +69,12 @@ module Spree
                                      :state => (addr.state ? addr.state.abbr : addr.state_name),
                                      :city => addr.city,
                                      :zip => addr.zipcode)
-          timings = Rails.cache.fetch(cache_key(order)+"-timings") do
-            timings = retrieve_timings(origin, destination, packages(order))
+          timings_result = Rails.cache.fetch(cache_key(order)+"-timings") do
+            retrieve_timings(origin, destination, packages(order))
           end
-          return nil if timings.nil? || !timings.is_a?(Hash) || timings.empty?
-          return timings[self.description]
+          raise timings_result if timings_result.kind_of?(Spree::ShippingError)
+          return nil if timings_result.nil? || !timings_result.is_a?(Hash) || timings_result.empty?
+          return timings_result[self.description]
 
         end
 
@@ -111,9 +116,9 @@ module Spree
               message = e.to_s
             end
 
-            Rails.cache.write @cache_key, {} #write empty hash to cache to prevent constant re-lookups
-
-            raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
+            error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
+            Rails.cache.write @cache_key, error #write error to cache to prevent constant re-lookups
+            raise error
           end
 
         end
@@ -132,8 +137,10 @@ module Spree
             else
               message = re.message
             end
-            Rails.cache.write @cache_key+'-', {} #write empty hash to cache to prevent constant re-lookups
-            raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
+
+            error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
+            Rails.cache.write @cache_key+"-timings", error #write error to cache to prevent constant re-lookups
+            raise error
           end
         end
 
