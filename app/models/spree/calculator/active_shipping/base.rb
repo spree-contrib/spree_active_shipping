@@ -154,8 +154,10 @@ module Spree
           max_weight = max_weight_for_country(order.ship_address.country)
           
           weights = order.line_items.map do |line_item|
-            item_weight = line_item.variant.weight.present? ? line_item.variant.weight : default_weight
+            item_weight = line_item.variant.weight.to_f
+            item_weight = default_weight if item_weight <= 0
             item_weight *= multiplier
+            
             quantity = line_item.quantity
             if max_weight <= 0
               item_weight * quantity

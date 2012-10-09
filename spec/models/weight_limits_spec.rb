@@ -12,9 +12,12 @@ module ActiveShipping
     let(:line_item_2) { mock_model(Spree::LineItem, :variant_id => 2, :quantity => 4, :variant => mock_model(Spree::Variant, :weight => 5.25)) }
     let(:line_item_3) { mock_model(Spree::LineItem, :variant_id => 3, :quantity => 1, :variant => mock_model(Spree::Variant, :weight => 29.0)) }
     let(:line_item_4) { mock_model(Spree::LineItem, :variant_id => 4, :quantity => 1, :variant => mock_model(Spree::Variant, :weight => 100.0)) }
+    let(:line_item_5) { mock_model(Spree::LineItem, :variant_id => 5, :quantity => 1, :variant => mock_model(Spree::Variant, :weight => 0.0)) }
+    let(:line_item_6) { mock_model(Spree::LineItem, :variant_id => 5, :quantity => 1, :variant => mock_model(Spree::Variant, :weight => -1.0)) }
     let(:order) { mock_model Spree::Order, :number => "R12345", :ship_address => address, :line_items =>  [ line_item_1, line_item_2, line_item_3 ] }
     let(:us_order) { mock_model Spree::Order, :number => "R12347", :ship_address => us_address, :line_items =>  [ line_item_1, line_item_2, line_item_3 ] }
     let(:too_heavy_order) { mock_model Spree::Order, :number => "R12349", :ship_address => us_address, :line_items =>  [ line_item_3, line_item_4 ] }
+    let(:order_with_invalid_weights) { mock_model Spree::Order, :number => "R12350", :ship_address => us_address, :line_items =>  [ line_item_5, line_item_6 ] }
     
     
     let(:international_calculator) {  Spree::Calculator::Usps::PriorityMailInternational.new }
@@ -24,6 +27,7 @@ module ActiveShipping
       Rails.cache.clear
       Spree::ActiveShipping::Config.set(:units => "imperial")
       Spree::ActiveShipping::Config.set(:unit_multiplier => 16)
+      Spree::ActiveShipping::Config.set(:default_weight => 1)
     end
     
     describe "compute" do
@@ -66,6 +70,14 @@ module ActiveShipping
       it "should be set for USPS calculators" do
         international_calculator.send(:max_weight_for_country, country).should == 70.0*Spree::ActiveShipping::Config[:unit_multiplier]
         domestic_calculator.send(:max_weight_for_country, country).should == 70.0*Spree::ActiveShipping::Config[:unit_multiplier]
+      end
+    end
+    
+    describe "validation of line item weight" do
+      it "should avoid zero weight or negative weight" do
+        weights = domestic_calculator.send :convert_order_to_weights_array, order_with_invalid_weights
+        default_weight = Spree::ActiveShipping::Config[:default_weight] * Spree::ActiveShipping::Config[:unit_multiplier]
+        weights.should == [default_weight, default_weight]
       end
     end
   end
