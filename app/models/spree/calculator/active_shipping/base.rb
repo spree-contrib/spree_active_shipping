@@ -102,7 +102,7 @@ module Spree
             return rate_hash
           rescue ActiveMerchant::ActiveMerchantError => e
 
-            if [ActiveMerchant::ResponseError, ActiveMerchant::Shipping::ResponseError].include? e.class
+            if [ActiveMerchant::ResponseError, ActiveMerchant::Shipping::ResponseError].include?(e.class) && e.response.is_a?(ActiveMerchant::Shipping::Response)
               params = e.response.params
               if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
                 message = params["Response"]["Error"]["ErrorDescription"]
@@ -113,7 +113,7 @@ module Spree
                 message = e.message
               end
             else
-              message = e.to_s
+              message = e.message
             end
 
             error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
@@ -131,13 +131,17 @@ module Spree
               return response
             end
           rescue ActiveMerchant::Shipping::ResponseError => re
-            params = re.response.params
-            if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
-              message = params["Response"]["Error"]["ErrorDescription"]
+            if re.response.is_a?(ActiveMerchant::Shipping::Response)
+              params = re.response.params
+              if params.has_key?("Response") && params["Response"].has_key?("Error") && params["Response"]["Error"].has_key?("ErrorDescription")
+                message = params["Response"]["Error"]["ErrorDescription"]
+              else
+                message = re.message
+              end
             else
               message = re.message
             end
-
+            
             error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
             Rails.cache.write @cache_key+"-timings", error #write error to cache to prevent constant re-lookups
             raise error
