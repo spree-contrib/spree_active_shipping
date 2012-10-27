@@ -32,15 +32,15 @@ module ActiveShipping
     
     describe "compute" do
       context "for international calculators" do
-        it "should convert order line items to weights array for non-US countries" do
+        it "should convert order line items to weights array for non-US countries (ex. Canada [limit = 66 lbs])" do
           weights = international_calculator.send :convert_order_to_weights_array, order
           weights.should == [20.0, 21.0, 29.0, 60.0, 60.0, 60.0].map{|x| x*Spree::ActiveShipping::Config[:unit_multiplier]}
         end
         
         it "should create array of packages" do
           packages = international_calculator.send :packages, order
-          packages.size.should == 4
-          packages.map{|package| package.weight.amount}.should == [70.0, 60.0, 60.0, 60.0].map{|x| x*Spree::ActiveShipping::Config[:unit_multiplier]}
+          packages.size.should == 5
+          packages.map{|package| package.weight.amount}.should == [41.0, 29.0, 60.0, 60.0, 60.0].map{|x| x*Spree::ActiveShipping::Config[:unit_multiplier]}
           packages.map{|package| package.weight.unit}.uniq.should == [:ounces]
         end
         
@@ -68,7 +68,7 @@ module ActiveShipping
     
     describe "weight limits" do
       it "should be set for USPS calculators" do
-        international_calculator.send(:max_weight_for_country, country).should == 70.0*Spree::ActiveShipping::Config[:unit_multiplier]
+        international_calculator.send(:max_weight_for_country, country).should == 66.0*Spree::ActiveShipping::Config[:unit_multiplier] # Canada
         domestic_calculator.send(:max_weight_for_country, country).should == 70.0*Spree::ActiveShipping::Config[:unit_multiplier]
       end
     end
