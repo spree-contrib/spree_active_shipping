@@ -30,7 +30,8 @@ module Spree
           if AVAILABLE_COUNTRIES.include?(country.iso)
             4*Spree::ActiveShipping::Config[:unit_multiplier]
           else
-            0 # ex. North Korea, Somalia, etc.
+            # ex. North Korea, Somalia, etc.
+            raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: This shipping method isn't available for #{country.name}") 
           end
         end
       end

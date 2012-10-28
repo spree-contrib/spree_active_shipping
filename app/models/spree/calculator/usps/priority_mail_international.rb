@@ -6,7 +6,7 @@ module Spree
       class PriorityMailInternational < Calculator::Usps::Base
         # http://pe.usps.com/text/imm/ab_001.htm .. http://pe.usps.com/text/imm/tz_028.htm
         WEIGHT_LIMITS = {
-          "BO"=>0, "CU"=>0, "FK"=>0, "KP"=>0, "SO"=>0, "AI"=>22, "AG"=>22, "BS"=>22, "MM"=>22, "GQ"=>22, "JM"=>22, "PN"=>22, 
+          "AI"=>22, "AG"=>22, "BS"=>22, "MM"=>22, "GQ"=>22, "JM"=>22, "PN"=>22, 
           "VC"=>22, "AL"=>44, "DZ"=>44, "AO"=>44, "AR"=>44, "AM"=>44, "AW"=>44, "BH"=>44, "BD"=>44, "BB"=>44, "BZ"=>44, 
           "BM"=>44, "BA"=>44, "VG"=>44, "BN"=>44, "CV"=>44, "KY"=>44, "TD"=>44, "CL"=>44, "KM"=>44, "CG"=>44, "DJ"=>44, 
           "DM"=>44, "DO"=>44, "SV"=>44, "ER"=>44, "FJ"=>44, "GA"=>44, "GE"=>44, "GI"=>44, "GR"=>44, "GD"=>44, "GT"=>44, 
@@ -35,7 +35,10 @@ module Spree
         protected
         # weight limit in ounces or zero (if there is no limit)
         def max_weight_for_country(country)
-          limit = WEIGHT_LIMITS[country.iso].to_i
+          limit = WEIGHT_LIMITS[country.iso]
+          if limit.nil?
+            raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: This shipping method isn't available for #{country.name}")
+          end
           limit*Spree::ActiveShipping::Config[:unit_multiplier]
         end
       end

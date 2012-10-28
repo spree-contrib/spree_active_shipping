@@ -32,7 +32,10 @@ module Spree
         protected
         # weight limit in ounces or zero (if there is no limit)
         def max_weight_for_country(country)
-          limit = WEIGHT_LIMITS[country.iso].to_i
+          limit = WEIGHT_LIMITS[country.iso]
+          if limit.nil?
+            raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: This shipping method isn't available for #{country.name}")
+          end
           limit*Spree::ActiveShipping::Config[:unit_multiplier]
         end
       end
