@@ -141,7 +141,7 @@ module Spree
             else
               message = re.message
             end
-            
+
             error = Spree::ShippingError.new("#{I18n.t(:shipping_error)}: #{message}")
             Rails.cache.write @cache_key+"-timings", error #write error to cache to prevent constant re-lookups
             raise error
@@ -149,22 +149,24 @@ module Spree
         end
 
 
-        
+
         private
-        
+
         def convert_order_to_weights_array(order)
           multiplier = Spree::ActiveShipping::Config[:unit_multiplier]
           default_weight = Spree::ActiveShipping::Config[:default_weight]
           max_weight = max_weight_for_country(order.ship_address.country)
-          
+
           weights = order.line_items.map do |line_item|
             item_weight = line_item.variant.weight.to_f
             item_weight = default_weight if item_weight <= 0
             item_weight *= multiplier
-            
+
             quantity = line_item.quantity
             if max_weight <= 0
               item_weight * quantity
+            elsif item_weight == 0
+              0
             else
               if item_weight < max_weight
                 max_quantity = (max_weight/item_weight).floor
@@ -193,7 +195,7 @@ module Spree
           packages = []
           weights = convert_order_to_weights_array(order)
           max_weight = max_weight_for_country(order.ship_address.country)
-          
+
           if max_weight <= 0
             packages << Package.new(weights.sum, [], :units => units)
           else
@@ -208,7 +210,7 @@ module Spree
             end
             packages << Package.new(package_weight, [], :units => units) if package_weight > 0
           end
-          
+
           packages
         end
 
