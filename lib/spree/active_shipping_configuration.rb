@@ -23,6 +23,7 @@ class Spree::ActiveShippingConfiguration < Spree::Preferences::Configuration
   preference :unit_multiplier, :integer, :default => 16 # 16 oz./lb - assumes variant weights are in lbs
   preference :default_weight, :integer, :default => 0 # 16 oz./lb - assumes variant weights are in lbs
   preference :handling_fee, :integer
-  
+  preference :max_weight_per_package, :integer, :default => 0 # 0 means no limit
+
   preference :test_mode, :boolean, :default => false
 end

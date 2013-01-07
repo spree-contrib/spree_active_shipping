@@ -76,6 +76,10 @@
       <%= form.label(:handling_fee, "Handling Fee: ") + tag(:br) %>
       <%= preference_field_tag(:handling_fee,  @config[:handling_fee], :type => :integer) %>
     <% end %>
+    <%= form.field_container :max_weight_per_package do %>
+      <%= form.label(:max_weight_per_package, "Max Weight Per Package: ") + tag(:br) %>
+      <%= preference_field_tag(:max_weight_per_package,  @config[:max_weight_per_package], :type => :integer) %>
+    <% end %>
     <%= form.field_container :test_mode do %>
       <%= form.label(:test_mode, "Test Mode: ") + tag(:br) %>
       <%= preference_field_tag(:test_mode,  @config[:test_mode], :type => :boolean) %>
