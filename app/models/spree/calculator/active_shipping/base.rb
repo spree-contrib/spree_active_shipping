@@ -192,13 +192,8 @@ module Spree
           units = Spree::ActiveShipping::Config[:units].to_sym
           packages = []
           weights = convert_order_to_weights_array(order)
-<<<<<<< HEAD
-          max_weight = max_weight_for_country(order.ship_address.country)
-          
-=======
           max_weight = get_max_weight(order)
 
->>>>>>> 01b98fd... Added the ability to define a max weight per package.
           if max_weight <= 0
             packages << Package.new(weights.sum, [], :units => units)
           else
