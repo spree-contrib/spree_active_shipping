@@ -71,6 +71,17 @@ module ActiveShipping
         international_calculator.send(:max_weight_for_country, country).should == 66.0*Spree::ActiveShipping::Config[:unit_multiplier] # Canada
         domestic_calculator.send(:max_weight_for_country, country).should == 70.0*Spree::ActiveShipping::Config[:unit_multiplier]
       end
+
+      it "should respect the max weight per package" do
+        Spree::ActiveShipping::Config.set(:max_weight_per_package => 30)
+        weights = international_calculator.send :convert_order_to_weights_array, order
+        weights.should == [20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 21.0, 29.0].map{|x| x*Spree::ActiveShipping::Config[:unit_multiplier]}
+
+        packages = international_calculator.send :packages, order
+        packages.size.should == 12
+        packages.map{|package| package.weight.amount}.should == [20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 21.0, 29.0].map{|x| x*Spree::ActiveShipping::Config[:unit_multiplier]}
+        packages.map{|package| package.weight.unit}.uniq.should == [:ounces]
+      end
     end
     
     describe "validation of line item weight" do

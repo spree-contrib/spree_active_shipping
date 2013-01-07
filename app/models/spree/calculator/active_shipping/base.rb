@@ -155,8 +155,8 @@ module Spree
         def convert_order_to_weights_array(order)
           multiplier = Spree::ActiveShipping::Config[:unit_multiplier]
           default_weight = Spree::ActiveShipping::Config[:default_weight]
-          max_weight = max_weight_for_country(order.ship_address.country)
-          
+          max_weight = get_max_weight(order)
+
           weights = order.line_items.map do |line_item|
             item_weight = line_item.variant.weight.to_f
             item_weight = default_weight if item_weight <= 0
@@ -192,8 +192,13 @@ module Spree
           units = Spree::ActiveShipping::Config[:units].to_sym
           packages = []
           weights = convert_order_to_weights_array(order)
+<<<<<<< HEAD
           max_weight = max_weight_for_country(order.ship_address.country)
           
+=======
+          max_weight = get_max_weight(order)
+
+>>>>>>> 01b98fd... Added the ability to define a max weight per package.
           if max_weight <= 0
             packages << Package.new(weights.sum, [], :units => units)
           else
@@ -210,6 +215,18 @@ module Spree
           end
           
           packages
+        end
+
+        def get_max_weight(order)
+          max_weight = max_weight_for_country(order.ship_address.country)
+          max_weight_per_package = Spree::ActiveShipping::Config[:max_weight_per_package] * Spree::ActiveShipping::Config[:unit_multiplier]
+          if max_weight == 0 and max_weight_per_package > 0
+            max_weight = max_weight_per_package
+          elsif max_weight > 0 and max_weight_per_package < max_weight and max_weight_per_package > 0
+            max_weight = max_weight_per_package
+          end
+
+          max_weight
         end
 
         def cache_key(order)
