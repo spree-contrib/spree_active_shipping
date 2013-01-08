@@ -12,7 +12,6 @@ Installation
 To install this extension, place these two lines inside your application's Gemfile:
 
 ```ruby
-gem 'active_shipping', :git => "git://github.com/Shopify/active_shipping"
 gem 'spree_active_shipping', :git => "git://github.com/spree/spree_active_shipping"
 ```
 
