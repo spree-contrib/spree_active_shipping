@@ -7,8 +7,8 @@ module ActiveShipping
 
     let(:country) { mock_model Spree::Country, :iso => "US", :state => mock_model(Spree::State, :abbr => "MD") }
     let(:address) { mock_model Spree::Address, :country => country, :state => country.state, :city => "Chevy Chase", :zipcode => "20815" }
-    let(:line_item_1) { mock_model(Spree::LineItem, :variant_id => 1, :quantity => 2, :variant => mock_model(Spree::Variant, :weight => 10)) }
-    let(:line_item_2) { mock_model(Spree::LineItem, :variant_id => 2, :quantity => 1, :variant => mock_model(Spree::Variant, :weight => 5.25)) }
+    let(:line_item_1) { mock_model(Spree::LineItem, :variant_id => 1, :quantity => 2, :variant => mock_model(Spree::Variant, :weight => 10), :product_packages => []) }
+    let(:line_item_2) { mock_model(Spree::LineItem, :variant_id => 2, :quantity => 1, :variant => mock_model(Spree::Variant, :weight => 5.25), :product_packages => []) }
     let(:order) { mock_model Spree::Order, :number => "R12345", :ship_address => address, :line_items =>  [ line_item_1, line_item_2 ] }
 
     let(:carrier) { Spree::ActiveShipping::BogusCarrier.new }
