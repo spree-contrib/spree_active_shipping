@@ -9,10 +9,24 @@ This is a Spree extension that wraps the popular [active_shipping](http://github
 Installation
 ------------
 
-To install this extension, place these two lines inside your application's Gemfile:
+1. Add the following to your applications Gemfile:
 
-```ruby
-gem 'spree_active_shipping', :git => "git://github.com/spree/spree_active_shipping"
+    a. To use the latest edge code in master branch:
+
+    ```ruby
+    gem 'spree_active_shipping', :git => "git://github.com/spree/spree_active_shipping"
+    ```
+
+    b. To use a specific branch specified in the Versionfile for your version of Spree:
+
+    ```ruby
+    gem 'spree_active_shipping', :git => "git://github.com/spree/spree_active_shipping", :branch => '1-3-stable'
+    ```
+
+2. Run bundler:
+
+```
+$ bundle
 ```
 
 UPS
@@ -68,21 +82,6 @@ class AddUpsConfiguration < ActiveRecord::Migration
   def self.down
   end
 end
-```
-
-Installation
-------------
-
-1. Add the following to your applications Gemfile
-
-```ruby
-gem 'spree_active_shipping'
-```
-
-2. Run bundler
-
-```
-bundle install
 ```
 
 Further Reading
