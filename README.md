@@ -32,7 +32,7 @@ $ bundle
 UPS
 ---
 
-You will need a UPS developer account to get rate quotes (even in development and test mode.)  The UPS calculators also require that you set the following configuration properties. You will also need a USPS account to use USPS rate quote system. Note: acquiring the USPS developer account is easy but has a confusion activation step. Look for related sicussion in ActiveShipping's original discussion group as well as carefully read your USPS confirmation email. 
+You will need a UPS developer account to get rate quotes (even in development and test mode.)  The UPS calculators also require that you set the following configuration properties. You will also need a USPS account to use USPS rate quote system. Note: acquiring the USPS developer account is easy but has a confusion activation step. Look for related discussion in ActiveShipping's original discussion group as well as carefully read your USPS confirmation email. 
 
 ```ruby
 Spree::ActiveShipping::Config[:origin_country]
