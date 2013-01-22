@@ -3,3 +3,4 @@ spec/dummy
 *.swp
 Gemfile.lock
 .rvmrc
+.DS_Store
