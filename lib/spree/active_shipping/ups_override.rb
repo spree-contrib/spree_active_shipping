@@ -88,7 +88,7 @@ module Spree
                  #                   * Shipment/RateInformation element
 
                  #SPREE OVERRIDE Negotiated Rates
-                 if (origin_account = @options[:origin_account] || options[:origin_account])
+                 if (origin_account = @options[:origin_account].presence || options[:origin_account].presence)
                    shipment << XmlNode.new("RateInformation") do |rate_information|
                      rate_information << XmlNode.new("NegotiatedRatesIndicator", '')
                    end
@@ -157,7 +157,7 @@ module Spree
               location_node << XmlNode.new('PhoneNumber', location.phone.gsub(/[^\d]/,'')) unless location.phone.blank?
               location_node << XmlNode.new('FaxNumber', location.fax.gsub(/[^\d]/,'')) unless location.fax.blank?
 
-              if name == 'Shipper' and (origin_account = @options[:origin_account] || options[:origin_account])
+              if name == 'Shipper' and (origin_account = @options[:origin_account].presence || options[:origin_account].presence)
                 location_node << XmlNode.new('ShipperNumber', origin_account)
               elsif name == 'ShipTo' and (destination_account = @options[:destination_account] || options[:destination_account])
                 location_node << XmlNode.new('ShipperAssignedIdentificationNumber', destination_account)
