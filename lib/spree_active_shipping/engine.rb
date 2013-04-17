@@ -33,10 +33,10 @@ module SpreeActiveShippingExtension
       end
 
       app.config.spree.calculators.shipping_methods.concat(
-        Spree::Calculator::Fedex::Base.descendants +
-        Spree::Calculator::Ups::Base.descendants +
-        Spree::Calculator::Usps::Base.descendants +
-        Spree::Calculator::CanadaPost::Base.descendants
+        Spree::Calculator::Shipping::Fedex::Base.descendants +
+        Spree::Calculator::Shipping::CanadaPost::Base.descendants +
+        Spree::Calculator::Shipping::Ups::Base.descendants +
+        Spree::Calculator::Shipping::Usps::Base.descendants
       )
     end
   end
