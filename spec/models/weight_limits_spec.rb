@@ -2,7 +2,7 @@ require 'spec_helper'
 include ActiveMerchant::Shipping
 
 module ActiveShipping
-  describe Spree::Calculator do
+  describe Spree::ShippingCalculator do
 
     let(:country) { mock_model Spree::Country, :iso => "CA", :state_name => "Quebec", :state => nil }
     let(:address) { mock_model Spree::Address, :country => country, :state_name => country.state_name, :city => "Montreal", :zipcode => "H2B", :state => nil }
@@ -24,8 +24,8 @@ module ActiveShipping
     let(:order_with_packages) { mock_model Spree::Order, :number => "R12345", :ship_address => address, :line_items =>  [ line_item_2, line_item_7 ] }
 
 
-    let(:international_calculator) {  Spree::Calculator::Usps::PriorityMailInternational.new }
-    let(:domestic_calculator) {  Spree::Calculator::Usps::PriorityMail.new }
+    let(:international_calculator) {  Spree::Calculator::Shipping::Usps::PriorityMailInternational.new }
+    let(:domestic_calculator) {  Spree::Calculator::Shipping::Usps::PriorityMail.new }
 
     before(:each) do
       Rails.cache.clear
