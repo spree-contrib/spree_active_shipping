@@ -23,11 +23,18 @@ Installation
     gem 'spree_active_shipping', :git => "git://github.com/spree/spree_active_shipping", :branch => '1-3-stable'
     ```
 
-2. Run bundler:
+2. Install migrations and migrate database:
 
-```
-$ bundle
-```
+    ```
+    $ bundle exec rake railties:install:migrations
+    $ bundle exec rake db:migrate
+    ```
+
+3. Run bundler:
+
+    ```
+    $ bundle
+    ```
 
 UPS
 ---
