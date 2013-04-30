@@ -25,16 +25,16 @@ Installation
 
 2. Install migrations and migrate database:
 
-```
-$ bundle exec rake railties:install:migrations
-$ bundle exec rake db:migrate
-```
+    ```
+    $ bundle exec rake railties:install:migrations
+    $ bundle exec rake db:migrate
+    ```
 
 3. Run bundler:
 
-```
-$ bundle
-```
+    ```
+    $ bundle
+    ```
 
 UPS
 ---
