@@ -19,7 +19,7 @@ module Spree
         def compute(object)
           if object.is_a?(Array)
             order = object.first.order
-          elsif object.is_a?(Spree::Stock::Package)
+          elsif object.is_a?(Spree::Stock::Package) || object.is_a?(Spree::Shipment)
             order = object.order
           else
             order = object
