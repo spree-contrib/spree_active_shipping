@@ -8,11 +8,11 @@
   <table class="index">
     <thead>
       <tr data-hook="product_packages_header">
-        <th><%= t(:length) %></th>
-        <th><%= t(:width) %></th>
-        <th><%= t(:height) %></th>
-        <th><%= t(:weight) %></th>
-        <th><%= t(:action) %></th>
+        <th><%= Spree.t(:length) %></th>
+        <th><%= Spree.t(:width) %></th>
+        <th><%= Spree.t(:height) %></th>
+        <th><%= Spree.t(:weight) %></th>
+        <th><%= Spree.t(:action) %></th>
       </tr>
     </thead>
     <tbody id="product_packages" data-hook>
@@ -32,10 +32,10 @@
           </td>
           <td class="actions">
             <% url = [:admin, @product, pp_form.object] %>
-            <%= link_to_with_icon('icon-trash', t(:remove), url,
+            <%= link_to_with_icon('icon-trash', Spree.t(:remove), url,
               :class => "remove_fields",
               :data => {:action => 'remove'},
-              :title => t(:remove)) %>
+              :title => Spree.t(:remove)) %>
           </td>
         </tr>
       <% end %>
@@ -43,7 +43,7 @@
   </table>
 
   <p class="add_product_packages" data-hook="add_product_packages">
-  <%= link_to_add_fields t(:add_product_packages), 'tbody#product_packages' %>
+  <%= link_to_add_fields Spree.t(:add_product_packages), 'tbody#product_packages' %>
   </p>
   <div id="prototypes" data-hook></div>
     <%= image_tag 'spinner.gif', :plugin => 'spree', :style => 'display:none;', :id => 'busy_indicator' %>
