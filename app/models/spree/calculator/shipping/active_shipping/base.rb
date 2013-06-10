@@ -41,7 +41,6 @@ module Spree
             if order_packages.empty?
               {}
             else
-              binding.pry
               retrieve_rates(origin, destination, order_packages)
             end
           end
