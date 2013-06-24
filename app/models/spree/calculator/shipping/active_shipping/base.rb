@@ -17,13 +17,16 @@ module Spree
         end
 
         def compute(object)
-          if object.is_a?(Array)
-            order = object.first.order
-          elsif object.is_a?(Spree::Stock::Package) || object.is_a?(Spree::Shipment)
-            order = object.order
+          return nil unless object.is_a?(Spree::Shipment) || object.is_a?(Spree::Stock::Package)
+
+          order = object.order
+
+          if object.is_a?(Spree::Shipment)
+            @stock_location_id = object.stock_location_id
           else
-            order = object
+            @stock_location_id = object.stock_location.id
           end
+
           origin= Location.new(:country => Spree::ActiveShipping::Config[:origin_country],
                                :city => Spree::ActiveShipping::Config[:origin_city],
                                :state => Spree::ActiveShipping::Config[:origin_state],
@@ -158,6 +161,7 @@ module Spree
           max_weight = get_max_weight(order)
 
           weights = order.line_items.map do |line_item|
+            next unless line_item.variant.stock_items.map(&:stock_location_id).include? @stock_location_id
             item_weight = line_item.variant.weight.to_f
             item_weight = default_weight if item_weight <= 0
             item_weight *= multiplier
@@ -186,7 +190,7 @@ module Spree
               end
             end
           end
-          weights.flatten.sort
+          weights.flatten.compact.sort
         end
 
         def convert_order_to_item_packages_array(order)
@@ -196,7 +200,7 @@ module Spree
 
           order.line_items.each do |line_item|
             line_item.product_packages.each do |product_package|
-              if product_package.weight <= max_weight or max_weight == 0
+              if product_package.weight.to_f <= max_weight or max_weight == 0
                 line_item.quantity.times do |idx|
                   packages << [product_package.weight * multiplier, product_package.length, product_package.width, product_package.height]
                 end
