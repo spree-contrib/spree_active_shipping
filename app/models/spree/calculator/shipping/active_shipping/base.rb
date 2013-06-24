@@ -17,9 +17,15 @@ module Spree
         end
 
         def compute(object)
-          return nil unless object.is_a?(Spree::Shipment) || object.is_a?(Spree::Stock::Package)
+          return nil unless object.is_a?(Spree::Shipment) ||
+                            object.is_a?(Spree::Stock::Package) ||
+                            object.is_a?(Spree::Order)
 
-          order = object.order
+          if object.is_a?(Spree::Order)
+            order = object
+          else
+            order = object.order
+          end
 
           if object.is_a?(Spree::Shipment)
             @stock_location_id = object.stock_location_id
