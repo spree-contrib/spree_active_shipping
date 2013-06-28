@@ -55,7 +55,7 @@ module Spree
           end
 
 
-          raise rates_result if rates_result.kind_of?(Spree::ShippingError)
+          return nil if rates_result.kind_of?(Spree::ShippingError)
           return nil if rates_result.empty?
           rate = rates_result[self.class.description]
 
