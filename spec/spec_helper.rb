@@ -15,7 +15,7 @@ Dir["#{File.dirname(__FILE__)}/lib/**/*.rb"].each {|f| require f}
 #require 'spree/url_helpers'
 
 # Requires factories defined in spree_core
-require 'spree/core/testing_support/factories'
+require 'spree/testing_support/factories'
 
 RSpec.configure do |config|
   # == Mock Framework
