@@ -2,7 +2,7 @@ require 'spec_helper'
 include ActiveMerchant::Shipping
 
 module ActiveShipping
-  describe Spree::Calculator do
+  describe Spree::Calculator::Shipping do
     # NOTE: All specs will use the bogus calculator (no login information needed)
 
     let(:country) { mock_model Spree::Country, :iso => "US", :state => mock_model(Spree::State, :abbr => "MD") }
@@ -12,7 +12,7 @@ module ActiveShipping
     let(:order) { mock_model Spree::Order, :number => "R12345", :ship_address => address, :line_items =>  [ line_item_1, line_item_2 ] }
 
     let(:carrier) { Spree::ActiveShipping::BogusCarrier.new }
-    let(:calculator) {  Spree::ActiveShipping::BogusCalculator.new }
+    let(:calculator) { Spree::Calculator::Shipping::ActiveShipping::BogusCalculator.new }
     let(:response) { ActiveMerchant::Shipping::RateResponse.new(true, "success!", {:rate => 'Super Fast'},
                          :rates => [stub(:service_name => 'Super Fast', :price => 999)], :xml => "<rate>Super Fast</rate>") }
 
