@@ -28,8 +28,10 @@ module Spree
           end
 
           if object.is_a?(Spree::Shipment)
+            return nil unless defined? object.stock_location_id
             @stock_location_id = object.stock_location_id
           else
+            return nil unless defined? object.stock_location
             @stock_location_id = object.stock_location.id
           end
 
