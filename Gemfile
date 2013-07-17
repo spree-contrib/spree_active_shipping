@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'sqlite3'
 
 # TODO: Add to gemspec once gem is released
-gem 'spree', '~> 2.1.0.beta', :git => 'git://github.com/spree/spree.git'
+gem 'spree', :github => 'spree/spree', :branch => 'master'
 
 gem 'factory_girl_rails', '~> 4.2.1', :group => :test
 gem 'rspec-rails', :group => [:development, :test]
