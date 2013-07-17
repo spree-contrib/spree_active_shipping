@@ -17,6 +17,7 @@ module Spree
 
         def compute(package)
           order = package.order
+          @stock_location_id = package.stock_location.id
 
           origin= Location.new(:country => Spree::ActiveShipping::Config[:origin_country],
                                :city => Spree::ActiveShipping::Config[:origin_city],
