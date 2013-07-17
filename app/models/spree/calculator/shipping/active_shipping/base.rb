@@ -16,22 +16,8 @@ module Spree
           self.description
         end
 
-        def compute(object)
-          return nil unless object.is_a?(Spree::Shipment) ||
-                            object.is_a?(Spree::Stock::Package) ||
-                            object.is_a?(Spree::Order)
-
-          if object.is_a?(Spree::Order)
-            order = object
-          else
-            order = object.order
-          end
-
-          if object.is_a?(Spree::Shipment)
-            @stock_location_id = object.stock_location_id
-          else
-            @stock_location_id = object.stock_location.id
-          end
+        def compute(package)
+          order = package.order
 
           origin= Location.new(:country => Spree::ActiveShipping::Config[:origin_country],
                                :city => Spree::ActiveShipping::Config[:origin_city],
