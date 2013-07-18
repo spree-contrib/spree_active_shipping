@@ -3,7 +3,6 @@
 #
 # Digest::MD5 is used for cache_key generation.
 require 'digest/md5'
-require 'iconv' if RUBY_VERSION.to_f < 1.9
 require_dependency 'spree/calculator'
 
 module Spree
@@ -39,7 +38,6 @@ module Spree
               retrieve_rates(origin, destination, order_packages)
             end
           end
-
 
           return nil if rates_result.kind_of?(Spree::ShippingError)
           return nil if rates_result.empty?
@@ -85,12 +83,7 @@ module Spree
             response = carrier.find_rates(origin, destination, packages)
             # turn this beastly array into a nice little hash
             rates = response.rates.collect do |rate|
-              # decode html entities for xml-based APIs, ie Canada Post
-              if RUBY_VERSION.to_f < 1.9
-                service_name = Iconv.iconv('UTF-8//IGNORE', 'UTF-8', rate.service_name).first
-              else
-                service_name = rate.service_name.encode("UTF-8")
-              end
+              service_name = rate.service_name.encode("UTF-8")
               [CGI.unescapeHTML(service_name), rate.price]
             end
             rate_hash = Hash[*rates.flatten]
@@ -153,7 +146,7 @@ module Spree
           max_weight = get_max_weight(order)
 
           weights = order.line_items.map do |line_item|
-            next unless line_item.variant.stock_items.map(&:stock_location_id).include? @stock_location_id
+            # next unless line_item.variant.stock_items.map(&:stock_location_id).include? @stock_location_id
             item_weight = line_item.variant.weight.to_f
             item_weight = default_weight if item_weight <= 0
             item_weight *= multiplier
