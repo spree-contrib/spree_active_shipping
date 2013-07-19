@@ -17,7 +17,6 @@ module Spree
 
         def compute(package)
           order = package.order
-          @stock_location_id = package.stock_location.id
 
           origin= Location.new(:country => Spree::ActiveShipping::Config[:origin_country],
                                :city => Spree::ActiveShipping::Config[:origin_city],
@@ -147,7 +146,6 @@ module Spree
           max_weight = get_max_weight(order)
 
           weights = order.line_items.map do |line_item|
-            # next unless line_item.variant.stock_items.map(&:stock_location_id).include? @stock_location_id
             item_weight = line_item.variant.weight.to_f
             item_weight = default_weight if item_weight <= 0
             item_weight *= multiplier
