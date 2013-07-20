@@ -37,7 +37,7 @@ module Spree
           if limit.nil?
             raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: This shipping method isn't available for #{country.name}")
           end
-          limit*Spree::ActiveShipping::Config[:unit_multiplier]
+          limit * 16	# weights are operated on in ounces
         end
       end
     end
