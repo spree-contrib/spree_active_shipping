@@ -20,6 +20,10 @@ module Spree
           "VE", "VG", "VN", "VU", "WF", "WS", "YE", "ZA", "ZM", "ZW"
         ]
 
+        def self.service_code
+          11 #Priority Mail International® Large Flat Rate Box
+        end
+
         def self.description
           I18n.t("usps.priority_mail_international_large_flat_rate_box")
         end
