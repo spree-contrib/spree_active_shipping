@@ -19,7 +19,11 @@ module Spree
           "TD", "TG", "TH", "TJ", "TM", "TN", "TO", "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "UY", "UZ", "VA", "VC", 
           "VE", "VG", "VN", "VU", "WF", "WS", "YE", "ZA", "ZM", "ZW"
         ]
-        
+
+        def self.service_code
+          9 #Priority Mail International® Medium Flat Rate Box
+        end
+
         def self.description
           I18n.t("usps.priority_mail_international_medium_flat_rate_box")
         end
