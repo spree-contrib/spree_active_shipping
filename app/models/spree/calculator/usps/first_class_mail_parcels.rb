@@ -5,6 +5,10 @@ module Spree
     module Usps
       class FirstClassMailParcels < Calculator::Usps::Base
 
+        def self.service_code
+          0 #First-Class Mail® Parcel
+        end
+
         def self.description
           "USPS First-Class Mail Parcel"
         end
