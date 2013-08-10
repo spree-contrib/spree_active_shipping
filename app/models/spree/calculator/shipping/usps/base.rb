@@ -14,7 +14,7 @@ module Spree
         protected
         # weight limit in ounces or zero (if there is no limit)
         def max_weight_for_country(country)
-          70*Spree::ActiveShipping::Config[:unit_multiplier]
+          1120	# 70 lbs
         end
       end
     end
