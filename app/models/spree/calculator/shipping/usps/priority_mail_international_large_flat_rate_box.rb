@@ -26,7 +26,7 @@ module Spree
         # weight limit in ounces http://pe.usps.com/text/imm/immc2_011.htm
         def max_weight_for_country(country)
           if AVAILABLE_COUNTRIES.include?(country.iso)
-            20*Spree::ActiveShipping::Config[:unit_multiplier]
+            320		# 20 lbs
           else
             # ex. AC, BO, CU, FK, KP, SO
             raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: This shipping method isn't available for #{country.name}")
