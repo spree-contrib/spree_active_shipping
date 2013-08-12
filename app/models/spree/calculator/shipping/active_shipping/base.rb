@@ -21,7 +21,7 @@ module Spree
 
           origin= Location.new(:country => stock_location.country.iso,
                                :city => stock_location.city,
-                               :state => stock_location.state_name || stock_location.state.name,
+                               :state => stock_location.state.abbr || stock_location.state.name,
                                :zip => stock_location.zipcode)
 
           addr = order.ship_address
