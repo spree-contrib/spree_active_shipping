@@ -31,7 +31,7 @@ module Spree
                                      :city => addr.city,
                                      :zip => addr.zipcode)
 
-          rates_result = Rails.cache.fetch(cache_key(order)) do
+          rates_result = Rails.cache.fetch(cache_key(order, package.stock_location)) do
             order_packages = packages(order)
             if order_packages.empty?
               {}
@@ -240,10 +240,11 @@ module Spree
           max_weight
         end
 
-        def cache_key(order)
+        def cache_key(order,stock_location = nil)
+          sl = stock_location.nil? ? "" : "#{stock_location.id}-"
           addr = order.ship_address
           line_items_hash = Digest::MD5.hexdigest(order.line_items.map {|li| li.variant_id.to_s + "_" + li.quantity.to_s }.join("|"))
-          @cache_key = "#{carrier.name}-#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items_hash}-#{I18n.locale}".gsub(" ","")
+          @cache_key = "#{sl}#{carrier.name}-#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items_hash}-#{I18n.locale}".gsub(" ","")
         end
       end
     end
