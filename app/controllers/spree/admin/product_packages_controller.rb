@@ -13,6 +13,14 @@ module Spree
         def setup_package
           @product.product_packages.build
         end
+
+        def permitted_product_package_attributes
+          [:rating, :title, :review]
+        end
+
+        def permitted_resource_params
+          params.require(:product_package).permit(permitted_product_package_attributes)
+        end
     end
   end
 end
