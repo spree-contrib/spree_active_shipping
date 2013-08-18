@@ -5,6 +5,11 @@ module Spree
       before_filter :find_packages
       before_filter :setup_package, :only => [:index]
 
+      protected
+        def permitted_resource_params
+          params.require(:product_package).permit(permitted_product_package_attributes)
+        end
+
       private
         def find_packages
           @packages = @product.product_packages
@@ -15,11 +20,7 @@ module Spree
         end
 
         def permitted_product_package_attributes
-          [:rating, :title, :review]
-        end
-
-        def permitted_resource_params
-          params.require(:product_package).permit(permitted_product_package_attributes)
+          [:length, :width, :height, :weight]
         end
     end
   end

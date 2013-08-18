@@ -5,6 +5,7 @@ require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 
 require 'rspec/rails'
 require 'webmock/rspec'
+require 'factory_girl'
 
 # Run any available migration
 ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__)
@@ -17,8 +18,16 @@ Dir["#{File.dirname(__FILE__)}/lib/**/*.rb"].each {|f| require f}
 
 # Requires factories defined in spree_core
 require 'spree/testing_support/factories'
+require 'spree/testing_support/controller_requests'
+require 'spree/testing_support/authorization_helpers'
+require 'spree/testing_support/url_helpers'
+
+Dir[File.join(File.dirname(__FILE__), "factories/*.rb")].each {|f| require f }
 
 RSpec.configure do |config|
+  config.include Spree::TestingSupport::ControllerRequests
+  config.include FactoryGirl::Syntax::Methods
+  config.include Spree::TestingSupport::UrlHelpers
   config.include WebFixtures
   # == Mock Framework
   #
