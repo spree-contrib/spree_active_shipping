@@ -6,8 +6,9 @@ module ActiveShipping
 
     let(:country) { mock_model Spree::Country, :iso => "CA", :state_name => "Quebec", :state => nil }
     let(:address) { mock_model Spree::Address, :country => country, :state_name => country.state_name, :city => "Montreal", :zipcode => "H2B", :state => nil }
-    let(:usa) { mock_model Spree::Country, :iso => "US", :state => mock_model(Spree::State, :abbr => "MD") }
-    let(:us_address) { mock_model Spree::Address, :country => usa, :state => usa.state, :city => "Chevy Chase", :zipcode => "20815" }
+    let(:usa) { FactoryGirl.create(:country, :name => "USA", :iso => "US") }
+    let(:state) { FactoryGirl.create(:state, country: usa, abbr: 'MD', name: 'Maryland')}
+    let(:us_address) { FactoryGirl.create(:address, :country => usa, :state => state, :city => "Chevy Chase", :zipcode => "20815") }
     let(:line_item_1) { mock_model(Spree::LineItem, :variant_id => 1, :quantity => 10, :variant => mock_model(Spree::Variant, :weight => 20.0), :product_packages => []) }
     let(:line_item_2) { mock_model(Spree::LineItem, :variant_id => 2, :quantity => 4, :variant => mock_model(Spree::Variant, :weight => 5.25), :product_packages => []) }
     let(:line_item_3) { mock_model(Spree::LineItem, :variant_id => 3, :quantity => 1, :variant => mock_model(Spree::Variant, :weight => 29.0), :product_packages => []) }
@@ -19,7 +20,28 @@ module ActiveShipping
     let(:line_item_7) { mock_model(Spree::LineItem, :variant_id => 3, :quantity => 2, :variant => mock_model(Spree::Variant, :weight => 29.0), :product_packages => [ package_1, package_2 ]) }
     let(:order) { mock_model Spree::Order, :number => "R12345", :ship_address => address, :line_items =>  [ line_item_1, line_item_2, line_item_3 ] }
     let(:us_order) { mock_model Spree::Order, :number => "R12347", :ship_address => us_address, :line_items =>  [ line_item_1, line_item_2, line_item_3 ] }
-    let(:too_heavy_order) { mock_model Spree::Order, :number => "R12349", :ship_address => us_address, :line_items =>  [ line_item_3, line_item_4 ] }
+    let(:too_heavy_order) { 
+      order = FactoryGirl.create(:order_with_line_items, :number => "R12349", 
+                                 :ship_address => us_address, :line_items_count => 2)
+      order.line_items.first.tap do |line_item|
+        line_item.quantity = 2
+        line_item.variant.save
+        line_item.variant.weight = 29.0
+        line_item.variant.save
+        line_item.save
+        # product packages?
+      end
+      order.line_items.last.tap do |line_item|
+        line_item.quantity = 2
+        line_item.variant.save
+        line_item.variant.weight = 100.0
+        line_item.variant.save
+        line_item.save
+        # product packages?
+      end
+      order
+    }
+
     let(:order_with_invalid_weights) { mock_model Spree::Order, :number => "R12350", :ship_address => us_address, :line_items =>  [ line_item_5, line_item_6 ] }
     let(:order_with_packages) { mock_model Spree::Order, :number => "R12345", :ship_address => address, :line_items =>  [ line_item_2, line_item_7 ] }
 
@@ -50,7 +72,8 @@ module ActiveShipping
 
         context "raise exception if max weight exceeded" do
           it "should get Spree::ShippingError" do
-            expect { international_calculator.compute(too_heavy_order) }.to raise_error(Spree::ShippingError)
+            too_heavy_package = too_heavy_order.shipments.first.to_package
+            expect { international_calculator.compute(too_heavy_package) }.to raise_error(Spree::ShippingError)
           end
         end
       end
