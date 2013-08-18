@@ -22,7 +22,7 @@ module Spree
         protected
         # weight limit in ounces http://www.ups.com/content/us/en/resources/prepare/oversize.html
         def max_weight_for_country(country)
-          2400		# 150 lbs
+          2400    # 150 lbs
         end
       end
     end

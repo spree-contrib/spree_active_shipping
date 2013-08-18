@@ -18,6 +18,10 @@ module Spree
           "UY", "UZ", "VA", "VC", "VE", "VG", "VN", "VU", "WF", "WS", "YE", "ZA", "ZM", "ZW"
         ]
 
+        def self.service_code
+          16 #Priority Mail International® Small Flat Rate Box**
+        end
+
         def self.description
           I18n.t("usps.priority_mail_international_small_flat_rate_box")
         end

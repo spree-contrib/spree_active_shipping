@@ -26,6 +26,10 @@ module Spree
           "AE"=>70, "UZ"=>70, "VN"=>70
         }
 
+        def self.service_code
+          2 #Priority Mail International®
+        end
+
         def self.description
           I18n.t("usps.priority_mail_international")
         end
