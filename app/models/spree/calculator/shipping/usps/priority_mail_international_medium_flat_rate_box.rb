@@ -18,6 +18,10 @@ module Spree
           "VE", "VG", "VN", "VU", "WF", "WS", "YE", "ZA", "ZM", "ZW"
         ]
 
+        def self.service_code
+          9 #Priority Mail International® Medium Flat Rate Box
+        end
+
         def self.description
           I18n.t("usps.priority_mail_international_medium_flat_rate_box")
         end
@@ -26,7 +30,7 @@ module Spree
         # weight limit in ounces http://pe.usps.com/text/imm/immc2_011.htm
         def max_weight_for_country(country)
           if AVAILABLE_COUNTRIES.include?(country.iso)
-            320		# 20 lbs
+            320			# 20 lbs
           else
             # ex. AC, BO, CU, FK, KP, SO
             raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: This shipping method isn't available for #{country.name}")
