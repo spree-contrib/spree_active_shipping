@@ -6,10 +6,11 @@ module Spree
         def compute(package)
           order = package.order
 
-          origin = Location.new(:country => Spree::ActiveShipping::Config[:origin_country],
-                               :city => Spree::ActiveShipping::Config[:origin_city],
-                               :state => Spree::ActiveShipping::Config[:origin_state],
-                               :zip => Spree::ActiveShipping::Config[:origin_zip])
+          origin= Location.new(:country => stock_location.country.iso,
+                               :city => stock_location.city,
+                               :state => (stock_location.state ? stock_location.state.abbr : stock_location.state_name),
+                               :zip => stock_location.zipcode)
+
           addr = order.ship_address
 
           destination = Location.new(:country => addr.country.iso,
