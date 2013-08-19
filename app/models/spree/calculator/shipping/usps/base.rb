@@ -5,6 +5,7 @@ module Spree
 
         def compute(package)
           order = package.order
+          stock_location = package.stock_location
 
           origin= Location.new(:country => stock_location.country.iso,
                                :city => stock_location.city,
