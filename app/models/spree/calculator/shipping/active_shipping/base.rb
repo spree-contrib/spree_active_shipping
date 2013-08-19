@@ -54,6 +54,7 @@ module Spree
 
         def timing(line_items)
           order = line_items.first.order
+          # TODO: Figure out where stock_location is supposed to come from.
           origin= Location.new(:country => stock_location.country.iso,
                                :city => stock_location.city,
                                :state => (stock_location.state ? stock_location.state.abbr : stock_location.state_name),
