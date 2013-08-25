@@ -4,3 +4,4 @@ spec/dummy
 Gemfile.lock
 .rvmrc
 .DS_Store
+coverage
