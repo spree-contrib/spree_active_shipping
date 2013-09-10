@@ -5,7 +5,7 @@ module Spree
     module Ups
       class FreightLtl < Calculator::Ups::Base
         def self.description
-          "UPS Freight LTL"
+          I18n.t("ups.freight_ltl")
         end
       end
     end
