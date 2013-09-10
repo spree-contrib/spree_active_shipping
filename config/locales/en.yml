@@ -27,6 +27,7 @@ en:
   ups:
     ground: "UPS Ground"
     next_day_air: "UPS Next Day Air"
+    freight_ltl: "UPS Freight LTL"
     next_day_air_early_am: "UPS Next Day Air Early A.M."
     next_day_air_saver: "UPS Next Day Air Saver"
     saver: "UPS Saver"
