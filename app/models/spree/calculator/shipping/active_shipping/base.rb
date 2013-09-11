@@ -51,7 +51,6 @@ module Spree
           return rate/100.0
         end
 
-
         def timing(line_items)
           order = line_items.first.order
           # TODO: Figure out where stock_location is supposed to come from.
