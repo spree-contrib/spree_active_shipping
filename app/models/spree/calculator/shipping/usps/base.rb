@@ -3,7 +3,7 @@ module Spree
     module Usps
       class Base < Spree::Calculator::Shipping::ActiveShipping::Base
 
-        def compute(package)
+        def compute_package(package)
           order = package.order
           stock_location = package.stock_location
 
