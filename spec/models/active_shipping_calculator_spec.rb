@@ -31,6 +31,7 @@ module ActiveShipping
 
     let(:carrier) { ActiveMerchant::Shipping::USPS.new(:login => "FAKEFAKEFAKE") }
     let(:calculator) { Spree::Calculator::Shipping::Usps::ExpressMail.new }
+    let(:response) { double('response', :rates => rates) }
     let(:package) { order.shipments.first.to_package }
 
     before(:each) do
@@ -40,6 +41,44 @@ module ActiveShipping
       Spree::ActiveShipping::Config.set(:unit_multiplier => 1)
       calculator.stub(:carrier).and_return(carrier)
       Rails.cache.clear
+    end
+
+    describe "available" do
+      context "when rates are available" do
+        let(:rates) do
+          [ double('rate', :service_name => 'Service', :service_code => 3, :price => 1) ]
+        end
+
+        before do
+          carrier.should_receive(:find_rates).and_return(response)
+        end
+
+        it "should return true" do
+          calculator.available?(package).should be(true)
+        end
+      end
+
+      context "when rates are not available" do
+        let(:rates) { [] }
+
+        before do
+          carrier.should_receive(:find_rates).and_return(response)
+        end
+
+        it "should return false" do
+          calculator.available?(package).should be(false)
+        end
+      end
+
+      context "when there is an error retrieving the rates" do
+        before do
+          carrier.should_receive(:find_rates).and_raise(ActiveMerchant::ActiveMerchantError)
+        end
+
+        it "should return false" do
+          calculator.available?(package).should be(false)
+        end
+      end
     end
 
     describe "compute" do
