@@ -15,7 +15,13 @@ module Spree
           self.description
         end
 
-        def compute(package)
+        def available?(package)
+          !compute(package).nil?
+        rescue Spree::ShippingError
+          false
+        end
+
+        def compute_package(package)
           order = package.order
           stock_location = package.stock_location
 
