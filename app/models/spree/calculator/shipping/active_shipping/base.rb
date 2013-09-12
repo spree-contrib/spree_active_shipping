@@ -15,7 +15,13 @@ module Spree
           self.description
         end
 
-        def compute(package)
+        def available?(package)
+          !compute(package).nil?
+        rescue Spree::ShippingError
+          false
+        end
+
+        def compute_package(package)
           order = package.order
           stock_location = package.stock_location
 
@@ -50,7 +56,6 @@ module Spree
           # divide by 100 since active_shipping rates are expressed as cents
           return rate/100.0
         end
-
 
         def timing(line_items)
           order = line_items.first.order
