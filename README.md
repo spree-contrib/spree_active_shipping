@@ -26,8 +26,7 @@ Installation
 2. Install migrations and migrate database:
 
     ```
-    $ bundle exec rake railties:install:migrations
-    $ bundle exec rake db:migrate
+    $ bundle exec rails g spree_active_shipping:install
     ```
 
 3. Run bundler:
