@@ -35,11 +35,11 @@ module Spree
           end
 
 
-          return nil if rates_result.kind_of?(Spree::ShippingError)
-          return nil if rates_result.empty?
+          return 0.0 if rates_result.kind_of?(Spree::ShippingError)
+          return 0.0 if rates_result.empty?
           rate = rates_result[self.class.service_code]
 
-          return nil unless rate
+          return 0.0 unless rate
           rate = rate.to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
 
           # divide by 100 since active_shipping rates are expressed as cents
