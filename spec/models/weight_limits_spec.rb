@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'pry'
 include ActiveMerchant::Shipping
 
 module ActiveShipping
@@ -9,43 +10,41 @@ module ActiveShipping
     let(:usa) { FactoryGirl.create(:country, :name => "USA", :iso => "US") }
     let(:state) { FactoryGirl.create(:state, country: usa, abbr: 'MD', name: 'Maryland')}
     let(:us_address) { FactoryGirl.create(:address, :country => usa, :state => state, :city => "Chevy Chase", :zipcode => "20815") }
-    let(:line_item_1) { mock_model(Spree::LineItem, :variant_id => 1, :quantity => 10, :variant => mock_model(Spree::Variant, :weight => 20.0), :product_packages => []) }
-    let(:line_item_2) { mock_model(Spree::LineItem, :variant_id => 2, :quantity => 4, :variant => mock_model(Spree::Variant, :weight => 5.25), :product_packages => []) }
-    let(:line_item_3) { mock_model(Spree::LineItem, :variant_id => 3, :quantity => 1, :variant => mock_model(Spree::Variant, :weight => 29.0), :product_packages => []) }
-    let(:line_item_4) { mock_model(Spree::LineItem, :variant_id => 4, :quantity => 1, :variant => mock_model(Spree::Variant, :weight => 100.0), :product_packages => []) }
-    let(:line_item_5) { mock_model(Spree::LineItem, :variant_id => 5, :quantity => 1, :variant => mock_model(Spree::Variant, :weight => 0.0), :product_packages => []) }
-    let(:line_item_6) { mock_model(Spree::LineItem, :variant_id => 5, :quantity => 1, :variant => mock_model(Spree::Variant, :weight => -1.0), :product_packages => []) }
-    let(:package_1) { mock_model(Spree::ProductPackage, :length => 12, :width => 24, :height => 47, :weight => 36) }
-    let(:package_2) { mock_model(Spree::ProductPackage, :length => 6, :width => 6, :height => 51, :weight => 43) }
-    let(:line_item_7) { mock_model(Spree::LineItem, :variant_id => 3, :quantity => 2, :variant => mock_model(Spree::Variant, :weight => 29.0), :product_packages => [ package_1, package_2 ]) }
-    let(:order) { mock_model Spree::Order, :number => "R12345", :ship_address => address, :line_items =>  [ line_item_1, line_item_2, line_item_3 ] }
-    let(:us_order) { mock_model Spree::Order, :number => "R12347", :ship_address => us_address, :line_items =>  [ line_item_1, line_item_2, line_item_3 ] }
-    let(:too_heavy_order) { 
-      order = FactoryGirl.create(:order_with_line_items, :number => "R12349", 
-                                 :ship_address => us_address, :line_items_count => 2)
-      order.line_items.first.tap do |line_item|
-        line_item.quantity = 2
-        line_item.variant.save
-        line_item.variant.weight = 29.0
-        line_item.variant.save
-        line_item.save
-        # product packages?
-      end
-      order.line_items.last.tap do |line_item|
-        line_item.quantity = 2
-        line_item.variant.save
-        line_item.variant.weight = 100.0
-        line_item.variant.save
-        line_item.save
-        # product packages?
-      end
-      order
-    }
-
-    let(:order_with_invalid_weights) { mock_model Spree::Order, :number => "R12350", :ship_address => us_address, :line_items =>  [ line_item_5, line_item_6 ] }
-    let(:order_with_packages) { mock_model Spree::Order, :number => "R12345", :ship_address => address, :line_items =>  [ line_item_2, line_item_7 ] }
-
-
+    let(:package1) { mock_model(Spree::ProductPackage, :length => 12, :width => 24, :height => 47, :weight => 36) }
+    let(:package2) { mock_model(Spree::ProductPackage, :length => 6, :width => 6, :height => 51, :weight => 43) }
+    let(:variant1) { build(:variant, :weight => 20.0) }
+    let(:variant2) { build(:variant, :weight => 5.25) }
+    let(:variant3) { build(:variant, :weight => 29.0) }
+    let(:variant4) { build(:variant, :weight => 100.0) }
+    let(:variant5) { build(:variant, :weight => 0) }
+    let(:variant6) { build(:variant, :weight => -1.0) }
+    let(:variant7) { double(Spree::Variant, :weight => 29.0, :product => mock_model(Spree::Product, :product_packages => [package1, package2])) }
+    let(:variant8) { double(Spree::Variant, :weight => 5.25, :product => mock_model(Spree::Product, :product_packages => [])) }
+    let(:california) { FactoryGirl.create(:state, country: usa, abbr: 'CA', name: 'California') }
+    let(:stock_location) { FactoryGirl.create(:stock_location, :address1 => '1313 S Harbor Blvd', :address2 => '', :city => 'Anaheim', :state => california, :country => usa, :phone => '7147814000', :active => 1) }
+    let(:package) { double(Spree::Stock::Package,
+          order: mock_model(Spree::Order, :ship_address => address),
+          contents: [Spree::Stock::Package::ContentItem.new(variant1, 10),
+                    Spree::Stock::Package::ContentItem.new(variant2, 4),
+                    Spree::Stock::Package::ContentItem.new(variant3, 1)]) }
+    let(:too_heavy_package) { double(Spree::Stock::Package,
+          order: mock_model(Spree::Order, :ship_address => us_address),
+          stock_location: stock_location,
+          contents: [Spree::Stock::Package::ContentItem.new(variant3, 2),
+                    Spree::Stock::Package::ContentItem.new(variant4, 2)]) }
+    let(:us_package) { double(Spree::Stock::Package,
+          order: mock_model(Spree::Order, :ship_address => us_address),
+          contents: [Spree::Stock::Package::ContentItem.new(variant1, 10),
+                    Spree::Stock::Package::ContentItem.new(variant2, 4),
+                    Spree::Stock::Package::ContentItem.new(variant3, 1)]) }
+    let(:package_with_invalid_weights) { double(Spree::Stock::Package,
+          order: mock_model(Spree::Order, :ship_address => us_address),
+          contents: [Spree::Stock::Package::ContentItem.new(variant5, 1),
+                    Spree::Stock::Package::ContentItem.new(variant6, 1)]) }
+    let(:package_with_packages) { double(Spree::Stock::Package,
+          order: mock_model(Spree::Order, :ship_address => us_address),
+          contents: [Spree::Stock::Package::ContentItem.new(variant8, 4),
+                    Spree::Stock::Package::ContentItem.new(variant7, 2)]) }
     let(:international_calculator) {  Spree::Calculator::Shipping::Usps::PriorityMailInternational.new }
     let(:domestic_calculator) {  Spree::Calculator::Shipping::Usps::PriorityMail.new }
 
@@ -58,21 +57,20 @@ module ActiveShipping
 
     describe "compute" do
       context "for international calculators" do
-        it "should convert order line items to weights array for non-US countries (ex. Canada [limit = 66 lbs])" do
-          weights = international_calculator.send :convert_order_to_weights_array, order
-          weights.should == [20.0, 21.0, 29.0, 60.0, 60.0, 60.0].map{|x| x*Spree::ActiveShipping::Config[:unit_multiplier]}
+        it "should convert package contents to weights array for non-US countries (ex. Canada [limit = 66lbs])" do
+          weights = international_calculator.send :convert_package_to_weights_array, package
+          weights.should == [20.0, 21.0, 29.0, 60.0, 60.0, 60.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
         end
 
         it "should create array of packages" do
-          packages = international_calculator.send :packages, order
+          packages = international_calculator.send :packages, package
           packages.size.should == 5
-          packages.map{|package| package.weight.amount}.should == [41.0, 29.0, 60.0, 60.0, 60.0].map{|x| x*Spree::ActiveShipping::Config[:unit_multiplier]}
+          packages.map{|package| package.weight.amount}.should == [41.0, 29.0, 60.0, 60.0, 60.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
           packages.map{|package| package.weight.unit}.uniq.should == [:ounces]
         end
 
         context "raise exception if max weight exceeded" do
           it "should get Spree::ShippingError" do
-            too_heavy_package = too_heavy_order.shipments.first.to_package
             expect { international_calculator.compute(too_heavy_package) }.to raise_error(Spree::ShippingError)
           end
         end
@@ -80,14 +78,14 @@ module ActiveShipping
 
       context "for domestic calculators" do
         it "should not convert order line items to weights array for US" do
-          weights = domestic_calculator.send :convert_order_to_weights_array, us_order
-          weights.should == [20.0, 21.0, 29.0, 60.0, 60.0, 60.0].map{|x| x*Spree::ActiveShipping::Config[:unit_multiplier]}
+          weights = domestic_calculator.send :convert_package_to_weights_array, us_package
+          weights.should == [20.0, 21.0, 29.0, 60.0, 60.0, 60.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
         end
 
         it "should create array with one package for US" do
-          packages = domestic_calculator.send :packages, us_order
+          packages = domestic_calculator.send :packages, us_package
           packages.size.should == 4
-          packages.map{|package| package.weight.amount}.should == [70.0, 60.0, 60.0, 60.0].map{|x| x*Spree::ActiveShipping::Config[:unit_multiplier]}
+          packages.map{|package| package.weight.amount}.should == [70.0, 60.0, 60.0, 60.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
           packages.map{|package| package.weight.unit}.uniq.should == [:ounces]
         end
       end
@@ -95,25 +93,25 @@ module ActiveShipping
 
     describe "weight limits" do
       it "should be set for USPS calculators" do
-        international_calculator.send(:max_weight_for_country, country).should == 66.0*Spree::ActiveShipping::Config[:unit_multiplier] # Canada
-        domestic_calculator.send(:max_weight_for_country, country).should == 70.0*Spree::ActiveShipping::Config[:unit_multiplier]
+        international_calculator.send(:max_weight_for_country, country).should == 66.0 * Spree::ActiveShipping::Config[:unit_multiplier] # Canada
+        domestic_calculator.send(:max_weight_for_country, country).should == 70.0 * Spree::ActiveShipping::Config[:unit_multiplier]
       end
 
       it "should respect the max weight per package" do
         Spree::ActiveShipping::Config.set(:max_weight_per_package => 30)
-        weights = international_calculator.send :convert_order_to_weights_array, order
-        weights.should == [20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 21.0, 29.0].map{|x| x*Spree::ActiveShipping::Config[:unit_multiplier]}
+        weights = international_calculator.send :convert_package_to_weights_array, package
+        weights.should == [20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 21.0, 29.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
 
-        packages = international_calculator.send :packages, order
+        packages = international_calculator.send :packages, package
         packages.size.should == 12
-        packages.map{|package| package.weight.amount}.should == [20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 21.0, 29.0].map{|x| x*Spree::ActiveShipping::Config[:unit_multiplier]}
+        packages.map{|package| package.weight.amount}.should == [20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 21.0, 29.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
         packages.map{|package| package.weight.unit}.uniq.should == [:ounces]
       end
     end
 
     describe "validation of line item weight" do
       it "should avoid zero weight or negative weight" do
-        weights = domestic_calculator.send :convert_order_to_weights_array, order_with_invalid_weights
+        weights = domestic_calculator.send :convert_package_to_weights_array, package_with_invalid_weights
         default_weight = Spree::ActiveShipping::Config[:default_weight] * Spree::ActiveShipping::Config[:unit_multiplier]
         weights.should == [default_weight, default_weight]
       end
@@ -122,16 +120,16 @@ module ActiveShipping
     describe "validation of default weight of zero" do
       it "should accept zero default weight" do
         Spree::ActiveShipping::Config.set(:default_weight => 0)
-        weights = domestic_calculator.send :convert_order_to_weights_array, order_with_invalid_weights
+        weights = domestic_calculator.send :convert_package_to_weights_array, package_with_invalid_weights
         weights.should == [0, 0]
       end
     end
 
     describe "adds item packages" do
       it "should add item packages to weight calculation" do
-        packages = domestic_calculator.send :packages, order_with_packages
+        packages = domestic_calculator.send :packages, package_with_packages
         packages.size.should == 6
-        packages.map{|package| package.weight.amount}.should == [21, 58, 36, 36, 43, 43].map{|x| x*Spree::ActiveShipping::Config[:unit_multiplier]}
+        packages.map{|package| package.weight.amount}.should == [21, 58, 36, 36, 43, 43].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
         packages.map{|package| package.weight.unit}.uniq.should == [:ounces]
       end
     end
