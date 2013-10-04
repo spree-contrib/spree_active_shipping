@@ -7,26 +7,10 @@ module Spree
           order = package.order
           stock_location = package.stock_location
 
-          origin= Location.new(:country => stock_location.country.iso,
-                               :city => stock_location.city,
-                               :state => (stock_location.state ? stock_location.state.abbr : stock_location.state_name),
-                               :zip => stock_location.zipcode)
+          origin = build_location(stock_location)
+          destination = build_location(order.ship_address)
 
-          addr = order.ship_address
-
-          destination = Location.new(:country => addr.country.iso,
-                                     :state => (addr.state ? addr.state.abbr : addr.state_name),
-                                     :city => addr.city,
-                                     :zip => addr.zipcode)
-
-          rates_result = Rails.cache.fetch(cache_key(order)) do
-            order_packages = packages(order)
-            if order_packages.empty?
-              {}
-            else
-              retrieve_rates(origin, destination, order_packages)
-            end
-          end
+          rates_result = retrieve_rates_from_cache(package, origin, destination)
 
           return nil if rates_result.kind_of?(Spree::ShippingError)
           return nil if rates_result.empty?
@@ -50,15 +34,12 @@ module Spree
 
         private
 
-        def retrieve_rates(origin, destination, packages)
+        def retrieve_rates(origin, destination, shipment_packages)
           begin
-            response = carrier.find_rates(origin, destination, packages)
+            response = carrier.find_rates(origin, destination, shipment_packages)
             # turn this beastly array into a nice little hash
             rates = response.rates.collect do |rate|
               service_code = rate.service_code.to_i
-              # leaving this here, since there should be a way to pass
-              # lead times back to spree
-              #service_name = rate.service_name.encode("UTF-8")
               [service_code, rate.price]
             end
             rate_hash = Hash[*rates.flatten]
