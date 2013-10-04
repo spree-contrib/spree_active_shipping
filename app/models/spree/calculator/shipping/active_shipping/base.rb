@@ -25,26 +25,10 @@ module Spree
           order = package.order
           stock_location = package.stock_location
 
-          origin= Location.new(:country => stock_location.country.iso,
-                               :city => stock_location.city,
-                               :state => (stock_location.state ? stock_location.state.abbr : stock_location.state_name),
-                               :zip => stock_location.zipcode)
+          origin = build_location(stock_location)
+          destination = build_location(order.ship_address)
 
-          addr = order.ship_address
-
-          destination = Location.new(:country => addr.country.iso,
-                                     :state => (addr.state ? addr.state.abbr : addr.state_name),
-                                     :city => addr.city,
-                                     :zip => addr.zipcode)
-
-          rates_result = Rails.cache.fetch(cache_key(order, package.stock_location)) do
-            order_packages = packages(order)
-            if order_packages.empty?
-              {}
-            else
-              retrieve_rates(origin, destination, order_packages)
-            end
-          end
+          rates_result = retrieve_rates_from_cache(package, origin, destination)
 
           return nil if rates_result.kind_of?(Spree::ShippingError)
           return nil if rates_result.empty?
@@ -69,7 +53,7 @@ module Spree
                                      :state => (addr.state ? addr.state.abbr : addr.state_name),
                                      :city => addr.city,
                                      :zip => addr.zipcode)
-          timings_result = Rails.cache.fetch(cache_key(order)+"-timings") do
+          timings_result = Rails.cache.fetch(cache_key(package)+"-timings") do
             retrieve_timings(origin, destination, packages(order))
           end
           raise timings_result if timings_result.kind_of?(Spree::ShippingError)
@@ -85,9 +69,9 @@ module Spree
         end
 
         private
-        def retrieve_rates(origin, destination, packages)
+        def retrieve_rates(origin, destination, shipment_packages)
           begin
-            response = carrier.find_rates(origin, destination, packages)
+            response = carrier.find_rates(origin, destination, shipment_packages)
             # turn this beastly array into a nice little hash
             rates = response.rates.collect do |rate|
               service_name = rate.service_name.encode("UTF-8")
@@ -143,21 +127,17 @@ module Spree
           end
         end
 
-
-
-        private
-
-        def convert_order_to_weights_array(order)
+        def convert_package_to_weights_array(package)
           multiplier = Spree::ActiveShipping::Config[:unit_multiplier]
           default_weight = Spree::ActiveShipping::Config[:default_weight]
-          max_weight = get_max_weight(order)
+          max_weight = get_max_weight(package)
 
-          weights = order.line_items.map do |line_item|
-            item_weight = line_item.variant.weight.to_f
+          weights = package.contents.map do |content_item|
+            item_weight = content_item.variant.weight.to_f
             item_weight = default_weight if item_weight <= 0
             item_weight *= multiplier
 
-            quantity = line_item.quantity
+            quantity = content_item.quantity
             if max_weight <= 0
               item_weight * quantity
             elsif item_weight == 0
@@ -184,15 +164,19 @@ module Spree
           weights.flatten.compact.sort
         end
 
-        def convert_order_to_item_packages_array(order)
+        def convert_package_to_item_packages_array(package)
           multiplier = Spree::ActiveShipping::Config[:unit_multiplier]
-          max_weight = get_max_weight(order)
+          max_weight = get_max_weight(package)
           packages = []
 
-          order.line_items.each do |line_item|
-            line_item.product_packages.each do |product_package|
+          package.contents.each do |content_item|
+            variant  = content_item.variant
+            quantity = content_item.quantity
+            product  = variant.product
+
+            product.product_packages.each do |product_package|
               if product_package.weight.to_f <= max_weight or max_weight == 0
-                line_item.quantity.times do |idx|
+                quantity.times do
                   packages << [product_package.weight * multiplier, product_package.length, product_package.width, product_package.height]
                 end
               else
@@ -205,23 +189,23 @@ module Spree
         end
 
         # Generates an array of Package objects based on the quantities and weights of the variants in the line items
-        def packages(order)
+        def packages(package)
           units = Spree::ActiveShipping::Config[:units].to_sym
           packages = []
-          weights = convert_order_to_weights_array(order)
-          max_weight = get_max_weight(order)
-          item_specific_packages = convert_order_to_item_packages_array(order)
+          weights = convert_package_to_weights_array(package)
+          max_weight = get_max_weight(package)
+          item_specific_packages = convert_package_to_item_packages_array(package)
 
           if max_weight <= 0
             packages << Package.new(weights.sum, [], :units => units)
           else
             package_weight = 0
-            weights.each do |li_weight|
-              if package_weight + li_weight <= max_weight
-                package_weight += li_weight
+            weights.each do |content_weight|
+              if package_weight + content_weight <= max_weight
+                package_weight += content_weight
               else
                 packages << Package.new(package_weight, [], :units => units)
-                package_weight = li_weight
+                package_weight = content_weight
               end
             end
             packages << Package.new(package_weight, [], :units => units) if package_weight > 0
@@ -234,7 +218,8 @@ module Spree
           packages
         end
 
-        def get_max_weight(order)
+        def get_max_weight(package)
+          order = package.order
           max_weight = max_weight_for_country(order.ship_address.country)
           max_weight_per_package = Spree::ActiveShipping::Config[:max_weight_per_package] * Spree::ActiveShipping::Config[:unit_multiplier]
           if max_weight == 0 and max_weight_per_package > 0
@@ -246,11 +231,34 @@ module Spree
           max_weight
         end
 
-        def cache_key(order,stock_location = nil)
-          sl = stock_location.nil? ? "" : "#{stock_location.id}-"
-          addr = order.ship_address
-          line_items_hash = Digest::MD5.hexdigest(order.line_items.map {|li| li.variant_id.to_s + "_" + li.quantity.to_s }.join("|"))
-          @cache_key = "#{sl}#{carrier.name}-#{order.number}-#{addr.country.iso}-#{addr.state ? addr.state.abbr : addr.state_name}-#{addr.city}-#{addr.zipcode}-#{line_items_hash}-#{I18n.locale}".gsub(" ","")
+        def cache_key(package)
+          stock_location = package.stock_location.nil? ? "" : "#{package.stock_location.id}-"
+          order = package.order
+          ship_address = package.order.ship_address
+          contents_hash = Digest::MD5.hexdigest(package.contents.map {|content_item| content_item.variant.id.to_s + "_" + content_item.quantity.to_s }.join("|"))
+          @cache_key = "#{stock_location}#{carrier.name}-#{order.number}-#{ship_address.country.iso}-#{fetch_best_state_from_address(ship_address)}-#{ship_address.city}-#{ship_address.zipcode}-#{contents_hash}-#{I18n.locale}".gsub(" ","")
+        end
+
+        def fetch_best_state_from_address address
+          address.state ? address.state.abbr : address.state_name
+        end
+
+        def build_location address
+          Location.new(:country => address.country.iso,
+                       :state   => fetch_best_state_from_address(address),
+                       :city    => address.city,
+                       :zip     => address.zipcode)
+        end
+
+        def retrieve_rates_from_cache package, origin, destination
+          Rails.cache.fetch(cache_key(package)) do
+            shipment_packages = packages(package)
+            if shipment_packages.empty?
+              {}
+            else
+              retrieve_rates(origin, destination, shipment_packages)
+            end
+          end
         end
       end
     end
