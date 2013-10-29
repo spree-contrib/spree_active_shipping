@@ -30,8 +30,9 @@ module Spree
         # weight limit in ounces http://pe.usps.com/text/imm/immc2_011.htm
         def max_weight_for_country(country)
           # https://www.usps.com/ship/priority-mail-international-flat.htm?
-          return 64 if WEIGHT_LIMITS[country.iso].present? # 4lbs
-          nil # ex. North Korea, Somalia, etc.
+          # ex. North Korea, Somalia, etc.
+          return 64 unless WEIGHT_LIMITS[country.iso].nil? # 4lbs
+          raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: This shipping method isn't available for #{country.name}")
         end
       end
     end
