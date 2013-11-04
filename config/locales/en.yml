@@ -58,5 +58,6 @@ en:
     parcel_surface: "Canada Post Parcel Surface"
     small_packets_surface: "Canada Post Small Packets Surface"
   shipping_error: "Shipping Error"
-  product_packages: "Product Packages"
-  add_product_packages: "Add Product Packages"
+  spree:
+    product_packages: "Product Packages"
+    add_product_packages: "Add Product Packages"
