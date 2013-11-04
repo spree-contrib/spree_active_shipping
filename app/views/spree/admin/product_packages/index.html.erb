@@ -31,11 +31,7 @@
             <%= pp_form.text_field :weight %>
           </td>
           <td class="actions">
-            <% url = [:admin, @product, pp_form.object] %>
-            <%= link_to_with_icon('icon-trash', Spree.t(:remove), url,
-              :class => "remove_fields",
-              :data => {:action => 'remove'},
-              :title => Spree.t(:remove)) %>
+            <%= link_to_delete pp_form.object, { :url => [:admin, @product, pp_form.object], :no_text => true } %>
           </td>
         </tr>
       <% end %>
