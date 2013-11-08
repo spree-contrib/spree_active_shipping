@@ -1,50 +1,45 @@
-<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
+<% content_for :page_actions do %>
+  <li><%= link_to_with_icon('icon-plus', t(:new_package), new_admin_product_product_package_url(@product), :id => 'new_product_package_link', :class => 'button') %></li>
+<% end %>
 
+<% content_for :head do %>
+  <%= javascript_include_tag 'admin/product_packages/index.js' %>
+<% end %>
+
+<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Product Packages' } %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
+<div id="product_packages" data-hook></div>
 
-<%= form_for @product, :url => admin_product_url(@product), :method => :put do |f| %>
+<% unless @product.product_packages.any? %>
+  <div class="no-objects-found">
+    <%= t(:no_packages_found) %>.
+  </div>
+<% else %>
   <table class="index">
-    <thead>
+    <thead data-hook="option_header">
       <tr data-hook="product_packages_header">
         <th><%= t(:length) %></th>
         <th><%= t(:width) %></th>
         <th><%= t(:height) %></th>
         <th><%= t(:weight) %></th>
-        <th><%= t(:action) %></th>
+        <th class="actions"></th>
       </tr>
     </thead>
     <tbody id="product_packages" data-hook>
-      <%= f.fields_for :product_packages do |pp_form| %>
-        <tr class="product_package fields"  data-hook="product_package">
-          <td class='length'>
-            <%= pp_form.text_field :length %>
-          </td>
-          <td class='width'>
-            <%= pp_form.text_field :width %>
-          </td>
-          <td class='height'>
-            <%= pp_form.text_field :height %>
-          </td>
-          <td class='weight'>
-            <%= pp_form.text_field :weight %>
-          </td>
+      <% @product.product_packages.each do |package| %>
+        <tr id="<%= dom_id(package) %>" data-hook="product_package_row">
+          <td><%= package.length %></td>
+          <td><%= package.width %></td>
+          <td><%= package.height %></td>
+          <td><%= package.weight %></td>
           <td class="actions">
-            <%= link_to_remove_fields t(:remove), pp_form %>
+            <%= link_to_with_icon 'icon-edit', t(:edit), edit_admin_product_product_package_url(@product, package), :class => "edit", :no_text => true, :data => {:action => 'edit'} %>
+            &nbsp;
+            <%= link_to_delete package, { :url => admin_product_product_package_url(@product, package), :no_text => true }%>
           </td>
         </tr>
       <% end %>
     </tbody>
   </table>
-
-  <%= hidden_field_tag 'clear_product_packages', 'true' %>
-
-  <p class="add_product_packages" data-hook="add_product_packages">
-  <%= link_to_add_fields t(:add_product_packages), 'tbody#product_packages' %>
-  </p>
-  <div id="prototypes" data-hook></div>
-    <%= image_tag 'spinner.gif', :plugin => 'spree', :style => 'display:none;', :id => 'busy_indicator' %>
-    <br />
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
 <% end %>
