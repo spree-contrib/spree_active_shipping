@@ -1,5 +1,4 @@
 Deface::Override.new(:virtual_path => "spree/admin/shared/_configuration_menu",
-                     :name => "add_active_shipping_settings_tab",
+                     :name => "add_active_shipping_settings_link",
                      :insert_bottom => "[data-hook='admin_configurations_sidebar_menu'], #admin_configurations_sidebar_menu[data-hook]",
-                     :text => "<li<%== ' class=\"active\"' if controller.controller_name == 'theme_settings' %>><%= link_to \"Active Shipping\", admin_active_shipping_settings_path %></li>",
-                     :original => "191af30ee9446f6ed95654122a6180b37929eb9c")
+                     :text => "<%= configurations_sidebar_menu_item t(:active_shipping_settings), edit_admin_active_shipping_settings_path %>")
