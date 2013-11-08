@@ -61,3 +61,6 @@ en:
   spree:
     product_packages: "Product Packages"
     add_product_packages: "Add Product Packages"
+    length: "Length"
+    new_package: "New Package"
+    edit_package: "Edit Package"
