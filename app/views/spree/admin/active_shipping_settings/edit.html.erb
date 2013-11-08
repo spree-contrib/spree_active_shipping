@@ -1,92 +1,106 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1>Active Shipping Settings</h1>
+<% content_for :page_title do %>
+  <%= t(:active_shipping_settings) %>
+<% end %>
 
-<%= form_for(@config, :as => "active_shipping_configuration", :url => admin_active_shipping_settings_path, :method => :put) do |form| %>
-  <fieldset id="preferences">
-    <%= form.field_container :ups_login do %>
-      <%= form.label(:ups_login, "UPS Login: ") + tag(:br) %>
-      <%= preference_field_tag(:ups_login,  @config[:ups_login], :type => :string) %>
-    <% end %>
-    <%= form.field_container :ups_password do %>
-      <%= form.label(:ups_password,"UPS Password: ") + tag(:br) %>
-      <%= preference_field_tag(:ups_password,  @config[:ups_password], :type => :string) %>
-    <% end %>
-    <%= form.field_container :ups_key do %>
-      <%= form.label(:ups_key, "UPS Key: ") + tag(:br) %>
-      <%= preference_field_tag(:ups_key,  @config[:ups_key], :type => :string) %>
-    <% end %>
-    <%= form.field_container :shipper_number do %>
-      <%= form.label(:shipper_number, "UPS Shipper Number: ") + tag(:br) %>
-      <%= preference_field_tag(:shipper_number,  @config[:shipper_number], :type => :string) %>
-    <% end %>
-    <%= form.field_container :fedex_login do %>
-      <%= form.label(:fedex_login, "FedEx Login: ") + tag(:br) %>
-      <%= preference_field_tag(:fedex_login,  @config[:fedex_login], :type => :string) %>
-    <% end %>
-    <%= form.field_container :fedex_password do %>
-      <%= form.label(:fedex_password, "FedEx Password: ") + tag(:br) %>
-      <%= preference_field_tag(:fedex_password,  @config[:fedex_password], :type => :string) %>
-    <% end %>
-    <%= form.field_container :fedex_account do %>
-      <%= form.label(:fedex_account, "FedEx Account: ") + tag(:br) %>
-      <%= preference_field_tag(:fedex_account,  @config[:fedex_account], :type => :string) %>
-    <% end %>
-    <%= form.field_container :fedex_key do %>
-      <%= form.label(:fedex_key, "FedEx Key: ") + tag(:br) %>
-      <%= preference_field_tag(:fedex_key,  @config[:fedex_key], :type => :string) %>
-    <% end %>
-    <%= form.field_container :usps_login do %>
-      <%= form.label(:usps_login, "USPS Login: ") + tag(:br) %>
-      <%= preference_field_tag(:usps_login,  @config[:usps_login], :type => :string) %>
-    <% end %>
-    <%= form.field_container :canada_post_login do %>
-      <%= form.label(:canada_post_login, "Canada Post Login: ") + tag(:br) %>
-      <%= preference_field_tag(:canada_post_login,  @config[:canada_post_login], :type => :string) %>
-    <% end %>
-    <%= form.field_container :origin_country do %>
-      <%= form.label(:origin_country, "Origin Country: ") + tag(:br) %>
-      <%= preference_field_tag(:origin_country,  @config[:origin_country], :type => :string) %>
-    <% end %>
-    <%= form.field_container :origin_state do %>
-      <%= form.label(:origin_state, "Origin State: ") + tag(:br) %>
-      <%= preference_field_tag(:origin_state,  @config[:origin_state], :type => :string) %>
-    <% end %>
-    <%= form.field_container :origin_city do %>
-      <%= form.label(:origin_city, "Origin City: ") + tag(:br) %>
-      <%= preference_field_tag(:origin_city,  @config[:origin_city], :type => :string) %>
-    <% end %>
-    <%= form.field_container :origin_zip do %>
-      <%= form.label(:origin_zip, "Origin Zip Code: ") + tag(:br) %>
-      <%= preference_field_tag(:origin_zip,  @config[:origin_zip], :type => :string) %>
-    <% end %>
-    <%= form.field_container :units do %>
-      <%= form.label(:units, "Units: ") + tag(:br) %>
-      <%= preference_field_tag(:units,  @config[:units], :type => :string) %>
-    <% end %>
-    <%= form.field_container :unit_multiplier do %>
-      <%= form.label(:unit_multiplier, "unit_multiplier: ") + tag(:br) %>
-      <%= preference_field_tag(:unit_multiplier,  @config[:unit_multiplier], :type => :integer) %>
-    <% end %>
-    <%= form.field_container :default_weight do %>
-      <%= form.label(:default_weight, "Default Weight: ") + tag(:br) %>
-      <%= preference_field_tag(:default_weight,  @config[:default_weight], :type => :integer) %>
-    <% end %>
-    <%= form.field_container :handling_fee do %>
-      <%= form.label(:handling_fee, "Handling Fee: ") + tag(:br) %>
-      <%= preference_field_tag(:handling_fee,  @config[:handling_fee], :type => :integer) %>
-    <% end %>
-    <%= form.field_container :max_weight_per_package do %>
-      <%= form.label(:max_weight_per_package, "Max Weight Per Package: ") + tag(:br) %>
-      <%= preference_field_tag(:max_weight_per_package,  @config[:max_weight_per_package], :type => :integer) %>
-    <% end %>
-    <%= form.field_container :test_mode do %>
-      <%= form.label(:test_mode, "Test Mode: ") + tag(:br) %>
-      <%= preference_field_tag(:test_mode,  @config[:test_mode], :type => :boolean) %>
-    <% end %>
-  </fieldset>
-  <p class="form-buttons">
-    <%= button t('update') %>
-    <%= t("or") %> <%= link_to t("cancel"), admin_active_shipping_settings_url %>
-  </p>
+<%= form_tag admin_active_shipping_settings_path, :method => :put  do |form| %>
+  <div id="preferences" data-hook>
+    <fieldset class="general no-border-top">
+      <div class="row">
+        <div class="alpha six columns">
+          <fieldset class="security no-border-bottom">
+            <legend align="center"><%= t(:ups_settings)%></legend>
+            <% @preferences_UPS.each do |key|
+                type = @config.preference_type(key) %>
+                <div class="field">
+                  <%= label_tag(key, t(key) + ': ') + tag(:br) if type != :boolean %>
+                  <%= preference_field_tag(key, @config[key], :type => type) %>
+                  <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
+                </div>
+            <% end %>
+          </fieldset>
+        </div>
+        <div class="omega six columns">
+          <fieldset class="currency no-border-bottom">
+            <legend align="center"><%= t(:fedex_settings)%></legend>
+            <% @preferences_FedEx.each do |key|
+                type = @config.preference_type(key) %>
+                <div class="field">
+                  <%= label_tag(key, t(key) + ': ') + tag(:br) if type != :boolean %>
+                  <%= preference_field_tag(key, @config[key], :type => type) %>
+                  <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
+                </div>
+            <% end %>
+          </fieldset>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="alpha six columns">
+          <fieldset class="security no-border-bottom">
+            <legend align="center"><%= t(:usps_settings)%></legend>
+            <% @preferences_USPS.each do |key|
+                type = @config.preference_type(key) %>
+                <div class="field">
+                  <%= label_tag(key, t(key) + ': ') + tag(:br) if type != :boolean %>
+                  <%= preference_field_tag(key, @config[key], :type => type) %>
+                  <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
+                </div>
+            <% end %>
+          </fieldset>
+        </div>
+        <div class="omega six columns">
+          <fieldset class="currency no-border-bottom">
+            <legend align="center"><%= t(:canada_post_settings)%></legend>
+            <% @preferences_CanadaPost.each do |key|
+                type = @config.preference_type(key) %>
+                <div class="field">
+                  <%= label_tag(key, t(key) + ': ') + tag(:br) if type != :boolean %>
+                  <%= preference_field_tag(key, @config[key], :type => type) %>
+                  <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
+                </div>
+            <% end %>
+          </fieldset>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="alpha six columns">
+          <fieldset class="security no-border-bottom">
+            <legend align="center"><%= t(:origin_address_settings)%></legend>
+            <% @preferences_OriginAddress.each do |key|
+                type = @config.preference_type(key) %>
+                <div class="field">
+                  <%= label_tag(key, t(key) + ': ') + tag(:br) if type != :boolean %>
+                  <%= preference_field_tag(key, @config[key], :type => type) %>
+                  <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
+                </div>
+            <% end %>
+          </fieldset>
+        </div>
+        <div class="omega six columns">
+          <fieldset class="currency no-border-bottom">
+            <legend align="center"><%= t(:general_settings)%></legend>
+            <% @preferences_GeneralSettings.each do |key|
+                type = @config.preference_type(key) %>
+                <div class="field">
+                  <%= label_tag(key, t(key) + ': ') + tag(:br) if type != :boolean %>
+                  <%= preference_field_tag(key, @config[key], :type => type) %>
+                  <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
+                </div>
+            <% end %>
+          </fieldset>
+        </div>
+      </div>
+
+      <div class="form-buttons filter-actions actions" data-hook="buttons">
+        <%= button t(:update), 'icon-refresh' %>
+        <span class="or"><%= t(:or) %></span>
+        <%= link_to_with_icon 'icon-remove', t(:cancel), edit_admin_active_shipping_settings_url, :class => 'button' %>
+      </div>
+
+    </fieldset>
+
+  </div>
 <% end %>
