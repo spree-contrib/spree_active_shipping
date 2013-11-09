@@ -9,16 +9,24 @@ This is a Spree extension that wraps the popular [active_shipping](http://github
 Installation
 ------------
 
-To install this extension, place these two lines inside your application's Gemfile:
+We highly recommend using the stable branches of this gem. If you were using version 1.3, you can place this line inside your application's Gemfile:
+
+```ruby
+gem 'spree_active_shipping', :git => "git://github.com/spree/spree_active_shipping", :branch => "1-3-stable"
+```
+
+To install the latest edge version of this extension, place this line inside your application's Gemfile:
 
 ```ruby
 gem 'spree_active_shipping', :git => "git://github.com/spree/spree_active_shipping"
 ```
 
-UPS
+Rate quotes from carriers
 ---
 
-You will need a UPS developer account to get rate quotes (even in development and test mode.)  The UPS calculators also require that you set the following configuration properties. You will also need a USPS account to use USPS rate quote system. Note: acquiring the USPS developer account is easy but has a confusion activation step. Look for related sicussion in ActiveShipping's original discussion group as well as carefully read your USPS confirmation email. 
+So far, this gem supports getting quotes from UPS, USPS, Canada Post, and FedEx. In general, you will need a developer account to get rates. Please contact the shipping vendor that you wish to use about generating a developer account.
+
+Once you have an account, you can go to the active shipping settings admin configuration screen to set the right fields. You need to set all of the Orgin Address fields and the fields for the carrier you wish to use. To set the settings through a config file, you can assign values to the settings like so:
 
 ```ruby
 Spree::ActiveShipping::Config[:origin_country]
@@ -31,8 +39,6 @@ Spree::ActiveShipping::Config[:ups_key]
 Spree::ActiveShipping::Config[:usps_login]
 ```
 
-It will soon be possible to set these properties through a new admin configuration screen (even sooner if someone else writes the patch!)  
-
 Global Handling Fee
 -------------------
 
@@ -40,34 +46,15 @@ Global Handling Fee
 Spree::ActiveShipping::Config[:handling_fee]
 ```
 
-This property allows you to set a global handling fee that will be added to all calculated shipping rates.  Specify the number of cents, not dollars.
+This property allows you to set a global handling fee that will be added to all calculated shipping rates.  Specify the number of cents, not dollars. You can either set it manually or through the admin interface.
 
 Global Weight Default
 ---------------------
 
-For products lacking defined weights, there is a fallback value you're invited to set:
+This property allows you to set a default weight that will be substituted for products lacking defined weights. You can either set it manually or through the admin interface.
 
 ```ruby
 Spree::ActiveShipping::Config[:default_weight]
-```
-
-Using Migrations
-----------------
-
-If you'd like to set your shipping configuration as part of a migration you could add something like this to your site extension.
-
-```ruby
-class AddUpsConfiguration < ActiveRecord::Migration
-  def self.up
-    Spree::ActiveShipping::Config.set(:ups_login => "dpbrowning")
-    Spree::ActiveShipping::Config.set(:ups_password => "doublewide")
-    Spree::ActiveShipping::Config.set(:ups_key => "5B8DDE509EFDA5D6")
-    Spree::ActiveShipping::Config.set(:usps_login => "13658997AOE2568XOE")
-  end
-
-  def self.down
-  end
-end
 ```
 
 Installation
@@ -85,7 +72,16 @@ gem 'spree_active_shipping'
 bundle install
 ```
 
+Testing
+-------
+
+Be sure to bundle your dependencies and then create a dummy test app for the specs to run against.
+
+    $ bundle
+    $ bundle exec rake test_app
+    $ bundle exec rspec spec
+
 Further Reading
 ---------------
 
-Andrea Singh has also written an excellent [blog post](http://blog.madebydna.com/all/code/2010/05/26/setting-up-usps-shipping-with-spree.html) covering the use of this extension in detail.
+Andrea Singh has also written an excellent [blog post](http://blog.madebydna.com/all/code/2010/05/26/setting-up-usps-shipping-with-spree.html) covering the use of this extension in detail. It is rather old and somewhat outdated.
