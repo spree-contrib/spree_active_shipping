@@ -27,7 +27,7 @@ module ActiveShipping
                     Spree::Stock::Package::ContentItem.new(variant2, 4),
                     Spree::Stock::Package::ContentItem.new(variant3, 1)]) }
     let(:too_heavy_package) { double(Spree::Stock::Package,
-          order: mock_model(Spree::Order, :ship_address => us_address),
+          order: mock_model(Spree::Order, :ship_address => address),
           stock_location: stock_location,
           contents: [Spree::Stock::Package::ContentItem.new(variant3, 2),
                     Spree::Stock::Package::ContentItem.new(variant4, 2)]) }
@@ -70,6 +70,9 @@ module ActiveShipping
 
         context "raise exception if max weight exceeded" do
           it "should get Spree::ShippingError" do
+            too_heavy_package.stub(:weight) do
+              too_heavy_package.contents.sum{ |item| item.variant.weight * item.quantity }
+            end
             expect { international_calculator.compute(too_heavy_package) }.to raise_error(Spree::ShippingError)
           end
         end
