@@ -22,6 +22,11 @@ module Spree
         end
 
         def compute_package(package)
+          # helps the available? method determine
+          # if rates are avaiable for this service
+          # before calling the carrier for rates
+          is_package_shippable? package
+
           order = package.order
           stock_location = package.stock_location
 
@@ -69,6 +74,23 @@ module Spree
         end
 
         private
+        # check for known limitations inside a package
+        # that will limit you from shipping using a service
+        def is_package_shippable? package
+          # check for weight limits on service
+          country_weight_error? package
+        end
+
+        def country_weight_error? package
+          max_weight = max_weight_for_country(package.order.ship_address.country)
+          raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: The maximum per package weight for the selected service from the selected country is #{max_weight} ounces.") unless valid_weight_for_package?(package, max_weight)
+        end
+
+        def valid_weight_for_package? package, max_weight
+          return false if max_weight.nil?
+          package.weight <= max_weight
+        end
+
         def retrieve_rates(origin, destination, shipment_packages)
           begin
             response = carrier.find_rates(origin, destination, shipment_packages)
