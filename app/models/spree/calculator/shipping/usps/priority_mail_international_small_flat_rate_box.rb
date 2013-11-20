@@ -30,7 +30,7 @@ module Spree
         # weight limit in ounces http://pe.usps.com/text/imm/immc2_011.htm
         def max_weight_for_country(country)
           # https://www.usps.com/ship/priority-mail-international-flat.htm?
-          return 64  if WEIGHT_LIMITS[country.iso].present? # 4lbs
+          return 64 if WEIGHT_LIMITS[country.iso].present? # 4lbs
           nil # ex. North Korea, Somalia, etc.
         end
       end
