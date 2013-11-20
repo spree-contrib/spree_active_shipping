@@ -17,8 +17,7 @@ module Spree
         def max_weight_for_country(country)
           # if weight in ounces > 3.5, then First Class Mail International is not available for the order
           # https://www.usps.com/ship/first-class-international.htm
-          return WEIGHT_LIMITS[country.iso] unless WEIGHT_LIMITS[country.iso].nil?
-          raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: This shipping method isn't available for #{country.name}")
+          return WEIGHT_LIMITS[country.iso]
         end
       end
     end
