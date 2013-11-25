@@ -23,27 +23,27 @@ module ActiveShipping
     let(:stock_location) { FactoryGirl.create(:stock_location, :address1 => '1313 S Harbor Blvd', :address2 => '', :city => 'Anaheim', :state => california, :country => usa, :phone => '7147814000', :active => 1) }
     let(:package) { double(Spree::Stock::Package,
           order: mock_model(Spree::Order, :ship_address => address),
-          contents: [Spree::Stock::Package::ContentItem.new(variant1, 10),
-                    Spree::Stock::Package::ContentItem.new(variant2, 4),
-                    Spree::Stock::Package::ContentItem.new(variant3, 1)]) }
+          contents: [Spree::Stock::Package::ContentItem.new(nil, variant1, 10),
+                    Spree::Stock::Package::ContentItem.new(nil, variant2, 4),
+                    Spree::Stock::Package::ContentItem.new(nil, variant3, 1)]) }
     let(:too_heavy_package) { double(Spree::Stock::Package,
           order: mock_model(Spree::Order, :ship_address => address),
           stock_location: stock_location,
-          contents: [Spree::Stock::Package::ContentItem.new(variant3, 2),
-                    Spree::Stock::Package::ContentItem.new(variant4, 2)]) }
+          contents: [Spree::Stock::Package::ContentItem.new(nil, variant3, 2),
+                    Spree::Stock::Package::ContentItem.new(nil, variant4, 2)]) }
     let(:us_package) { double(Spree::Stock::Package,
           order: mock_model(Spree::Order, :ship_address => us_address),
-          contents: [Spree::Stock::Package::ContentItem.new(variant1, 10),
-                    Spree::Stock::Package::ContentItem.new(variant2, 4),
-                    Spree::Stock::Package::ContentItem.new(variant3, 1)]) }
+          contents: [Spree::Stock::Package::ContentItem.new(nil, variant1, 10),
+                    Spree::Stock::Package::ContentItem.new(nil, variant2, 4),
+                    Spree::Stock::Package::ContentItem.new(nil, variant3, 1)]) }
     let(:package_with_invalid_weights) { double(Spree::Stock::Package,
           order: mock_model(Spree::Order, :ship_address => us_address),
-          contents: [Spree::Stock::Package::ContentItem.new(variant5, 1),
-                    Spree::Stock::Package::ContentItem.new(variant6, 1)]) }
+          contents: [Spree::Stock::Package::ContentItem.new(nil, variant5, 1),
+                    Spree::Stock::Package::ContentItem.new(nil, variant6, 1)]) }
     let(:package_with_packages) { double(Spree::Stock::Package,
           order: mock_model(Spree::Order, :ship_address => us_address),
-          contents: [Spree::Stock::Package::ContentItem.new(variant8, 4),
-                    Spree::Stock::Package::ContentItem.new(variant7, 2)]) }
+          contents: [Spree::Stock::Package::ContentItem.new(nil, variant8, 4),
+                    Spree::Stock::Package::ContentItem.new(nil, variant7, 2)]) }
     let(:international_calculator) {  Spree::Calculator::Shipping::Usps::PriorityMailInternational.new }
     let(:domestic_calculator) {  Spree::Calculator::Shipping::Usps::PriorityMail.new }
 
