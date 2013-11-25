@@ -38,6 +38,7 @@ en:
   usps:
     express_mail: "USPS Express Mail"
     express_mail_intl: "USPS Express Mail International"
+    first_class_package_international: "First Class Package International Service"
     media_mail: "USPS Media Mail"
     priority_mail: "USPS Priority Mail"
     priority_mail_small_flat_rate_box: "USPS Priority Mail Small Flat Rate Box"
