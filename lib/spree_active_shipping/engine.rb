@@ -32,14 +32,12 @@ module SpreeActiveShippingExtension
         Rails.env.production? ? require(c) : load(c)
       end
 
-      unless app.config.spree.calculators.shipping_methods.nil?
-        app.config.spree.calculators.shipping_methods.concat(
-          Spree::Calculator::Shipping::Fedex::Base.descendants +
-          Spree::Calculator::Shipping::CanadaPost::Base.descendants +
-          Spree::Calculator::Shipping::Ups::Base.descendants +
-          Spree::Calculator::Shipping::Usps::Base.descendants
-        )
-      end
+      app.config.spree.calculators.shipping_methods.concat(
+        Spree::Calculator::Shipping::Fedex::Base.descendants +
+        Spree::Calculator::Shipping::CanadaPost::Base.descendants +
+        Spree::Calculator::Shipping::Ups::Base.descendants +
+        Spree::Calculator::Shipping::Usps::Base.descendants
+      )
     end
 
         # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
