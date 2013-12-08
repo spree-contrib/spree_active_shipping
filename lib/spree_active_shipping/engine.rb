@@ -32,6 +32,7 @@ module SpreeActiveShippingExtension
         Rails.env.production? ? require(c) : load(c)
       end
 
+      app.config.spree.calculators.shipping_methods ||= []
       app.config.spree.calculators.shipping_methods.concat(
         Spree::Calculator::Shipping::Fedex::Base.descendants +
         Spree::Calculator::Shipping::CanadaPost::Base.descendants +
