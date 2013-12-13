@@ -67,19 +67,6 @@
 
       <div class="row">
         <div class="alpha six columns">
-          <fieldset class="security no-border-bottom">
-            <legend align="center"><%= Spree.t(:origin_address_settings)%></legend>
-            <% @preferences_OriginAddress.each do |key|
-                type = @config.preference_type(key) %>
-                <div class="field">
-                  <%= label_tag(key, Spree.t(key) + ': ') + tag(:br) if type != :boolean %>
-                  <%= preference_field_tag(key, @config[key], :type => type) %>
-                  <%= label_tag(key, Spree.t(key)) + tag(:br) if type == :boolean %>
-                </div>
-            <% end %>
-          </fieldset>
-        </div>
-        <div class="omega six columns">
           <fieldset class="currency no-border-bottom">
             <legend align="center"><%= Spree.t(:general_settings)%></legend>
             <% @preferences_GeneralSettings.each do |key|
