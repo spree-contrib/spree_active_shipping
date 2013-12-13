@@ -52,10 +52,6 @@ So far, this gem supports getting quotes from UPS, USPS, Canada Post, and FedEx.
 Once you have an account, you can go to the active shipping settings admin configuration screen to set the right fields. You need to set all of the Orgin Address fields and the fields for the carrier you wish to use. To set the settings through a config file, you can assign values to the settings like so:
 
 ```ruby
-Spree::ActiveShipping::Config[:origin_country]
-Spree::ActiveShipping::Config[:origin_city]
-Spree::ActiveShipping::Config[:origin_state]
-Spree::ActiveShipping::Config[:origin_zip]
 Spree::ActiveShipping::Config[:ups_login]
 Spree::ActiveShipping::Config[:ups_password]
 Spree::ActiveShipping::Config[:ups_key]
