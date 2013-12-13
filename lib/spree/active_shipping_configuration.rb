@@ -14,11 +14,6 @@ class Spree::ActiveShippingConfiguration < Spree::Preferences::Configuration
 
   preference :canada_post_login, :string, :default => "canada_post_login"
 
-  preference :origin_country, :string, :default => "US"
-  preference :origin_state, :string, :default => "PA"
-  preference :origin_city, :string, :default => "University Park"
-  preference :origin_zip, :string, :default => "16802"
-
   preference :units, :string, :default => "imperial"
   preference :unit_multiplier, :integer, :default => 16 # 16 oz./lb - assumes variant weights are in lbs
   preference :default_weight, :integer, :default => 0 # 16 oz./lb - assumes variant weights are in lbs
