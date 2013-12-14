@@ -55,6 +55,11 @@ module ActiveShipping
         it "should return true" do
           calculator.available?(package).should be(true)
         end
+
+        it "should use zero as a valid weight for service" do
+          calculator.stub(:max_weight_for_country).and_return(0)
+          calculator.available?(package).should be(true)
+        end
       end
 
       context "when rates are not available" do
