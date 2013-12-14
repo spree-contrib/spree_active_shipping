@@ -86,7 +86,10 @@ module Spree
           raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: The maximum per package weight for the selected service from the selected country is #{max_weight} ounces.") unless valid_weight_for_package?(package, max_weight)
         end
 
+        # zero weight check means no check
+        # nil check means service isn't available for that country
         def valid_weight_for_package? package, max_weight
+          return true if max_weight.zero?
           return false if max_weight.nil?
           package.weight <= max_weight
         end
