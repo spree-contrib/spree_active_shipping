@@ -246,6 +246,7 @@ module Spree
         def get_max_weight(package)
           order = package.order
           max_weight = max_weight_for_country(order.ship_address.country)
+          raise Spree::ShippingError if max_weight.nil?
           max_weight_per_package = Spree::ActiveShipping::Config[:max_weight_per_package] * Spree::ActiveShipping::Config[:unit_multiplier]
           if max_weight == 0 and max_weight_per_package > 0
             max_weight = max_weight_per_package
