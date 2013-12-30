@@ -85,6 +85,17 @@ module ActiveShipping
       end
     end
 
+    describe "available?" do
+      # regression test for #164 and #171
+      it "should not return rates if the weight requirements for the destination country are not met" do
+        # if max_weight_for_country is nil -> the carrier does not ship to that country
+        # if max_weight_for_country is 0 -> the carrier does not have weight restrictions to that country
+        calculator.stub(:max_weight_for_country).and_return(nil)
+        calculator.should_receive(:is_package_shippable?).and_raise Spree::ShippingError
+        calculator.available?(package).should be(false)
+      end
+    end
+
     describe "compute" do
       it "should use the carrier supplied in the initializer" do
         stub_request(:get, /http:\/\/production.shippingapis.com\/ShippingAPI.dll.*/).

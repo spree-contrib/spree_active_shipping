@@ -16,17 +16,17 @@ module Spree
         end
 
         def available?(package)
+          # helps the available? method determine
+          # if rates are avaiable for this service
+          # before calling the carrier for rates
+          is_package_shippable?(package)
+
           !compute(package).nil?
         rescue Spree::ShippingError
           false
         end
 
         def compute_package(package)
-          # helps the available? method determine
-          # if rates are avaiable for this service
-          # before calling the carrier for rates
-          is_package_shippable? package
-
           order = package.order
           stock_location = package.stock_location
 
