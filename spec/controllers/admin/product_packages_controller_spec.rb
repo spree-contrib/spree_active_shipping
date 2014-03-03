@@ -7,7 +7,7 @@ describe Spree::Admin::ProductPackagesController do
     let(:product) { create(:product) }
 
     it 'should find ProductPackages for the product and render the view' do
-      spree_get :index, product_id: product.permalink
+      spree_get :index, product_id: product.slug
       assigns(:product).should eq(product)
       response.should be_ok
       response.should render_template('index')
@@ -23,7 +23,7 @@ describe Spree::Admin::ProductPackagesController do
       new_width = SecureRandom.random_number(19) + 1
       new_height = SecureRandom.random_number(19) + 1
       new_weight = SecureRandom.random_number(19) + 1
-      spree_post :update, product_id: product.permalink, id: product_package.id,
+      spree_post :update, product_id: product.slug, id: product_package.id,
                           product_package: { length: new_length, width: new_width, 
                                              height: new_height, weight: new_weight }
       product_package.reload
