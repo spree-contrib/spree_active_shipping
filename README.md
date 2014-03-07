@@ -49,7 +49,7 @@ Rate quotes from carriers
 
 So far, this gem supports getting quotes from UPS, USPS, Canada Post, and FedEx. In general, you will need a developer account to get rates. Please contact the shipping vendor that you wish to use about generating a developer account.
 
-Once you have an account, you can go to the active shipping settings admin configuration screen to set the right fields. You need to set all of the Orgin Address fields and the fields for the carrier you wish to use. To set the settings through a config file, you can assign values to the settings like so:
+Once you have an account, you can go to the active shipping settings admin configuration screen to set the right fields. You need to set all of the Origin Address fields and the fields for the carrier you wish to use. To set the settings through a config file, you can assign values to the settings like so:
 
 ```ruby
 Spree::ActiveShipping::Config[:ups_login]
@@ -57,7 +57,7 @@ Spree::ActiveShipping::Config[:ups_password]
 Spree::ActiveShipping::Config[:ups_key]
 Spree::ActiveShipping::Config[:usps_login]
 ```
-It is important to note how this wrapper matches the caculators to the services available from the carrier API's, by default the base calculator matches the service name to the calculator class and returns the rate, this magic happens as follows:
+It is important to note how this wrapper matches the calculators to the services available from the carrier API's, by default the base calculator matches the service name to the calculator class and returns the rate, this magic happens as follows:
 
 1. inside the calculator class
 ```ruby
@@ -72,7 +72,7 @@ Spree::Calculator::Shipping::Fedex::GroundHomeDelivery::description #holds the s
 
 this means that the calculator **Fedex::GroundHomeDelivery** will hit FedEx Servers and try to get the rates for the given package, since FedEx returns rates for package and returns all of it's available services for the given shipment we need to identify which service we are targeting ( see caching results below ) the calculator will only pick the rates from a service that matches the **"FedEx Ground Home Delivery"** string, you can see how it works below:
 
-a sample rate response alraedy parsed looks like this:
+a sample rate response already parsed looks like this:
 ```ruby
 {
          "FedEx First Overnight" => 5886,
@@ -96,7 +96,7 @@ the rate hash that is parsed by the calculator has service descriptions as keys,
 
 you can see the rates are given in cents from FedEx (in the rate hash example above), ```spree_active_shipping``` converts them dividing them by 100 before sending them to you
 
-**Note:** if you want to integrate to a new carrier service that is not listed below please take care when trying to match the service name key to theirs, there are times when they create dynamic naming conventions, please take as an example **USPS**, you can see the implementation of USPS has the **compute_packages** method overriden to match against a **service_code** key that had to be added to calculator services ( Issue #103 )
+**Note:** if you want to integrate to a new carrier service that is not listed below please take care when trying to match the service name key to theirs, there are times when they create dynamic naming conventions, please take as an example **USPS**, you can see the implementation of USPS has the **compute_packages** method overridden to match against a **service_code** key that had to be added to calculator services ( Issue #103 )
 
 Global Handling Fee
 -------------------
@@ -118,7 +118,7 @@ Spree::ActiveShipping::Config[:default_weight]
 ```
 
 ## Weight units
-Weights are expected globaly inside ```spree_active_shipping``` to be entered in a unit that can be divided to oz and a global variable was added to help with unit conversion
+Weights are expected globally inside ```spree_active_shipping``` to be entered in a unit that can be divided to oz and a global variable was added to help with unit conversion
 
 ```ruby
 Spree::ActiveShipping::Config[:unit_multiplier]
@@ -137,7 +137,7 @@ Spree::ActiveShipping::Config[:unit_multiplier] = 0.0283495
 Cache
 ------------
 
-When Spree tries to get rates for a given shipment it calls **Spree::Stock::Estimator**, this class is in charge of getting the rates back from any calculator active for a shipment, the way the estimator determines the shipping methods that will apply to the shipment varies from whitin spree versions but the general idea is this:
+When Spree tries to get rates for a given shipment it calls **Spree::Stock::Estimator**, this class is in charge of getting the rates back from any calculator active for a shipment, the way the estimator determines the shipping methods that will apply to the shipment varies from within spree versions but the general idea is this:
 
 **NOTE:** Shipping methods are tied to calculators
 
@@ -160,7 +160,7 @@ The money line for **spree_active_shipping** is when it calls the calculator's `
 - Calculators are active for the following services: **FedEx Ground Home Delivery**, **FedEx 2 Day**, **FedEx International Priority**
 - Order calls the estimator for rates:
 - Estimator will try to get the active shipping methods for this package, it will call available? on all of the active calculators to determine if they are all available for this shipment
-- once it calls it for the first calculator (**FedEx Ground Home Delivery**) it will get the folling rates back from FedEx
+- once it calls it for the first calculator (**FedEx Ground Home Delivery**) it will get the following rates back from FedEx
 
 ```ruby
 {
