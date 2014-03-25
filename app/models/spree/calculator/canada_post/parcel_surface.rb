@@ -2,7 +2,7 @@
 # See spree/spree#4479
 
 module Spree
-  module Calculator
+  class Calculator < ActiveRecord::Base
     module CanadaPost
       class ParcelSurface < Spree::Calculator::Shipping::CanadaPost::ParcelSurface
       end

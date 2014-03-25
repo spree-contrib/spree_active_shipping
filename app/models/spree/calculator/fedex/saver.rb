@@ -2,7 +2,7 @@
 # See spree/spree#4479
 
 module Spree
-  module Calculator
+  class Calculator < ActiveRecord::Base
     module Fedex
       class Saver < Spree::Calculator::Shipping::Fedex::Saver
       end

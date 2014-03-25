@@ -2,7 +2,7 @@
 # See spree/spree#4479
 
 module Spree
-  module Calculator
+  class Calculator < ActiveRecord::Base
     module Fedex
       class InternationalFirst < Spree::Calculator::Shipping::Fedex::InternationalFirst
       end

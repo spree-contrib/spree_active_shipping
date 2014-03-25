@@ -2,7 +2,7 @@
 # See spree/spree#4479
 
 module Spree
-  module Calculator
+  class Calculator < ActiveRecord::Base
     module Ups
       class NextDayAirSaver < Spree::Calculator::Shipping::Ups::NextDayAirSaver
       end
