@@ -1,6 +1,6 @@
 Spree::Admin::ProductsController.class_eval do
   def product_packages
-    @product = Spree::Product.find_by_permalink!(params[:id])
+    @product = Spree::Product.friendly.find(params[:id])
     @packages = @product.product_packages
     @product.product_packages.build
     
