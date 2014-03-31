@@ -4,7 +4,7 @@
 module Spree
   class Calculator < ActiveRecord::Base
     module Ups
-      class NextDayEarlyAm < Spree::Calculator::Shipping::Ups::NextDayEarlyAm
+      class NextDayAirEarlyAm < Spree::Calculator::Shipping::Ups::NextDayAirEarlyAm
       end
     end
   end
