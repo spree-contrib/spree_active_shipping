@@ -4,7 +4,7 @@
 module Spree
   class Calculator < ActiveRecord::Base
     module Usps
-      class FirstClassMailInternationalLargeEnvelope < Spree::Calculator::Shipping::Usps::FirstClassMailinternationalLargeEnvelope
+      class FirstClassMailInternationalLargeEnvelope < Spree::Calculator::Shipping::Usps::FirstClassMailInternationalLargeEnvelope
       end
     end
   end
