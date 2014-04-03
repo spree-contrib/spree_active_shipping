@@ -4,7 +4,7 @@
 module Spree
   class Calculator < ActiveRecord::Base
     module Fedex
-      class TwoDayFrieghtSaturdayDelivery < Spree::Calculator::Shipping::Fedex::TwoDayFreightSaturdayDelivery
+      class TwoDayFreightSaturdayDelivery < Spree::Calculator::Shipping::Fedex::TwoDayFreightSaturdayDelivery
       end
     end
   end
