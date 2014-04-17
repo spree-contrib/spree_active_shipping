@@ -1,0 +1,7 @@
+<!-- insert_bottom "[data-hook='admin_product_tabs']" -->
+
+<% if can? :update, @product.product_packages.build %>
+  <li<%== ' class=\"active\"' if current == 'Product Packages' %>>
+     <%= link_to Spree.t(:product_packages), admin_product_product_packages_url(@product), :class => 'icon-truck' %>
+  </li>
+<% end %>
