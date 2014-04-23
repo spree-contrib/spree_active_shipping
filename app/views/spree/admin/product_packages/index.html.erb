@@ -11,7 +11,7 @@
 
 <div id="product_packages" data-hook></div>
 
-<% unless @product.product_packages.any? %>
+<% unless @product.reload.product_packages.any? %>
   <div class="no-objects-found">
     <%= Spree.t(:no_packages_found) %>.
   </div>

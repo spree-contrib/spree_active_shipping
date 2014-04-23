@@ -29,16 +29,17 @@ module ActiveShipping
                     Spree::Stock::Package::ContentItem.new(nil, variant3, 1)]) }
 
     let(:too_heavy_package) do
-      Spree::Stock::Package.new(
-        stock_location,
-        mock_model(Spree::Order, :ship_address => address),
-        [
+      Spree::Stock::Package.extend ActiveModel::Naming
+      mock_model(
+        Spree::Stock::Package,
+        order: mock_model(Spree::Order, :ship_address => address),
+        stock_location: stock_location,
+        contents: [
           Spree::Stock::Package::ContentItem.new(nil, variant3, 2),
           Spree::Stock::Package::ContentItem.new(nil, variant4, 2)
         ]
       )
     end
-
 
     let(:us_package) { double(Spree::Stock::Package,
           order: mock_model(Spree::Order, :ship_address => us_address),
