@@ -70,7 +70,7 @@ Spree::Calculator::Shipping::Fedex::GroundHomeDelivery::description #holds the s
   rate = rates_result[self.class.description] # <- matches with the description as the key
 ```
 
-this means that the calculator **Fedex::GroundHomeDelivery** will hit FedEx Servers and try to get the rates for the given package, since FedEx returns rates for package and returns all of it's available services for the given shipment we need to identify which service we are targeting ( see caching results below ) the calculator will only pick the rates from a service that matches the **"FedEx Ground Home Delivery"** string, you can see how it works below:
+this means that the calculator **Fedex::GroundHomeDelivery** will hit FedEx Servers and try to get the rates for the given package, since FedEx returns rates for package and returns all of its available services for the given shipment we need to identify which service we are targeting ( see caching results below ) the calculator will only pick the rates from a service that matches the **"FedEx Ground Home Delivery"** string, you can see how it works below:
 
 a sample rate response already parsed looks like this:
 ```ruby
@@ -173,14 +173,14 @@ The money line for **spree_active_shipping** is when it calls the calculator's `
 }
 ```
 
-- when it tries to get rates for the 2nd calculator (**FedEx 2 Day**) it will check the cache first and will find that for this package and stock location it already has rates stored in the cache and it wont call FedEx again, using this same rates
-- when it hits the last calculator (**FedEx International Priority**) it will find that the cache doesn't have any rates for the given key, and the method ```available?``` called from the Estimator will return false thus removing the calculators shipping method from the list of available calculators and won't return any rates back for it
+- when it tries to get rates for the 2nd calculator (**FedEx 2 Day**) it will check the cache first and will find that for this package and stock location it already has rates stored in the cache and it won't call FedEx again, using this same rates
+- when it hits the last calculator (**FedEx International Priority**) it will find that the cache doesn't have any rates for the given key, and the method ```available?``` called from the Estimator will return false thus removing the calculator's shipping method from the list of available calculators and won't return any rates back for it
 - Consequently since this 3rd calculator (**FedEx International Priority**) is an international calculator it would have been removed as well by the line that checks if any shipping method is allowed in already defined Zones.
 
 Installation
 ------------
 
-1. Add the following to your applications Gemfile
+1. Add the following to your application's Gemfile
 
 ```ruby
 gem 'spree_active_shipping'
