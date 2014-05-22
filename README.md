@@ -128,10 +128,10 @@ It is important to note that by default this variable is set to have a value of 
 
 ### Example of converting from metric system to oz
 
-Say you have your weights in **kg** you would have to set the multiplier to **0.0283495**
+Say you have your weights in **kg** you would have to set the multiplier to **35.274**
 
 ```ruby
-Spree::ActiveShipping::Config[:unit_multiplier] = 0.0283495
+Spree::ActiveShipping::Config[:unit_multiplier] = 35.274
 ```
 
 Cache
