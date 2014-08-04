@@ -2,6 +2,6 @@
 
 <% if can? :update, @product.product_packages.build %>
   <li<%== ' class=\"active\"' if current == 'Product Packages' %>>
-     <%= link_to Spree.t(:product_packages), admin_product_product_packages_url(@product), class: 'fa fa-truck' %>
+    <%= link_to_with_icon 'cube', Spree.t(:product_packages), admin_product_product_packages_url(@product) %>
   </li>
 <% end %>
