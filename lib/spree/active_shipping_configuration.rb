@@ -15,7 +15,7 @@ class Spree::ActiveShippingConfiguration < Spree::Preferences::Configuration
   preference :canada_post_login, :string, :default => "canada_post_login"
 
   preference :units, :string, :default => "imperial"
-  preference :unit_multiplier, :integer, :default => 16 # 16 oz./lb - assumes variant weights are in lbs
+  preference :unit_multiplier, :decimal, :default => 16 # 16 oz./lb - assumes variant weights are in lbs
   preference :default_weight, :integer, :default => 0 # 16 oz./lb - assumes variant weights are in lbs
   preference :handling_fee, :integer
   preference :max_weight_per_package, :integer, :default => 0 # 0 means no limit
