@@ -13,7 +13,7 @@ module Spree
         end
 
         def self.description
-          "USPS First-Class Mail International Large Envelope"
+          I18n.t("usps.first_class_mail_international_large_envelope")
         end
 
         protected

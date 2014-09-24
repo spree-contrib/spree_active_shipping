@@ -1,7 +1,7 @@
 module Spree
   module Calculator::Shipping
     module Usps
-      class FirstClassMailParcels < Spree::Calculator::Shipping::Usps::Base
+      class FirstClassMailParcel < Spree::Calculator::Shipping::Usps::Base
         WEIGHT_LIMITS = { "US" => 13 }
 
         def self.geo_group
@@ -13,7 +13,7 @@ module Spree
         end
 
         def self.description
-          "USPS First-Class Mail Parcel"
+          I18n.t("usps.first_class_mail_parcel")
         end
 
         protected
