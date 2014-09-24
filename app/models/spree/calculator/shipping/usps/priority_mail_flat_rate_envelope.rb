@@ -2,8 +2,12 @@ module Spree
   module Calculator::Shipping
     module Usps
       class PriorityMailFlatRateEnvelope < Spree::Calculator::Shipping::Usps::Base
+        def self.geo_group
+          :domestic
+        end
+
         def self.service_code
-          16 #Priority Mail {0}™ Flat Rate Envelope
+          "#{SERVICE_CODE_PREFIX[geo_group]}:16" #Priority Mail {0}™ Flat Rate Envelope
         end
 
         def self.description

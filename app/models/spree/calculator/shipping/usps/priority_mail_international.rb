@@ -26,8 +26,12 @@ module Spree
           "AE"=>1120, "UZ"=>1120, "VN"=>1120
         }
 
+        def self.geo_group
+          :international
+        end
+
         def self.service_code
-          2 #Priority Mail International®
+          "#{SERVICE_CODE_PREFIX[geo_group]}:2" #Priority Mail International®
         end
 
         def self.description

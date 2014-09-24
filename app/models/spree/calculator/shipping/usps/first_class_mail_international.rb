@@ -4,12 +4,16 @@ module Spree
       class FirstClassMailInternational < Spree::Calculator::Shipping::Usps::Base
         WEIGHT_LIMITS = { "US" => 3.5 }
 
+        def self.geo_group
+          :international
+        end
+
         def self.service_code
-          13 #First-Class Mail® International Letter
+          "#{SERVICE_CODE_PREFIX[geo_group]}:13" #First-Class Mail® International Letter
         end
 
         def self.description
-          "USPS First-Class Mail International Letter"
+          I18n.t("usps.first_class_mail_international")
         end
 
 
