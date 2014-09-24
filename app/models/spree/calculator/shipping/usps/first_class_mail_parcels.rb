@@ -4,8 +4,12 @@ module Spree
       class FirstClassMailParcels < Spree::Calculator::Shipping::Usps::Base
         WEIGHT_LIMITS = { "US" => 13 }
 
+        def self.geo_group
+          :domestic
+        end
+
         def self.service_code
-          0 #First-Class Mail® Parcel
+          "#{SERVICE_CODE_PREFIX[geo_group]}:0" #First-Class Mail® Parcel
         end
 
         def self.description

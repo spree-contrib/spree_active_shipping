@@ -4,8 +4,12 @@ module Spree
       class FirstClassMailInternationalLargeEnvelope < Spree::Calculator::Shipping::Usps::Base
         WEIGHT_LIMITS = { "US" => 64 }
 
+        def self.geo_group
+          :international
+        end
+
         def self.service_code
-          14 #First-Class Mail® International Large Envelope
+          "#{SERVICE_CODE_PREFIX[geo_group]}:14" #First-Class Mail® International Large Envelope
         end
 
         def self.description

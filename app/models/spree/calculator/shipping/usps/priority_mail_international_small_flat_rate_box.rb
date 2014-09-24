@@ -18,8 +18,12 @@ module Spree
           "UY", "UZ", "VA", "VC", "VE", "VG", "VN", "VU", "WF", "WS", "YE", "ZA", "ZM", "ZW"
         ]
 
+        def self.geo_group
+          :international
+        end
+
         def self.service_code
-          16 #Priority Mail International® Small Flat Rate Box**
+          "#{SERVICE_CODE_PREFIX[geo_group]}:16" #Priority Mail International® Small Flat Rate Box**
         end
 
         def self.description

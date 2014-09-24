@@ -30,7 +30,7 @@ module ActiveShipping
 
     let(:carrier) { ActiveMerchant::Shipping::USPS.new(:login => "FAKEFAKEFAKE") }
     let(:calculator) { Spree::Calculator::Shipping::Usps::ExpressMail.new }
-    let(:response) { double('response', :rates => rates) }
+    let(:response) { double('response', :rates => rates, :params => {}) }
     let(:package) { order.shipments.first.to_package }
 
     before(:each) do
