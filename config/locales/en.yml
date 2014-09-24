@@ -43,6 +43,7 @@ en:
     first_class_package_international: "USPS First-Class Package International Service"
     first_class_mail_parcel: "USPS First-Class Mail Parcel"
     media_mail: "USPS Media Mail Parcel"
+    standard_post: "USPS Standard Post"
     priority_mail: "USPS Priority Mail"
     priority_mail_small_flat_rate_box: "USPS Priority Mail Small Flat Rate Box"
     priority_mail_medium_flat_rate_box: "USPS Priority Mail Medium Flat Rate Box"
@@ -52,6 +53,7 @@ en:
     priority_mail_international_small_flat_rate_box: "USPS Priority Mail International Small Flat Rate Box"
     priority_mail_international_medium_flat_rate_box: "USPS Priority Mail International Medium Flat Rate Box"
     priority_mail_international_large_flat_rate_box: "USPS Priority Mail International Large Flat Rate Box"
+    global_express_guaranteed: "USPS Global Express Guaranteed (GXG)"
   canada_post:
     regular: "Canada Post Regular"
     expedited: "Canada Post Expedited"
