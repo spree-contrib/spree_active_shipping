@@ -1,17 +1,17 @@
 module Spree
   module Calculator::Shipping
     module Usps
-      class PriorityMail < Spree::Calculator::Shipping::Usps::Base
+      class StandardPost < Spree::Calculator::Shipping::Usps::Base
         def self.geo_group
           :domestic
         end
 
         def self.service_code
-          "#{SERVICE_CODE_PREFIX[geo_group]}:1" #Priority Mail {0}™
+          "#{SERVICE_CODE_PREFIX[geo_group]}:4" #Standard Post
         end
 
         def self.description
-          I18n.t("usps.priority_mail")
+          I18n.t("usps.standard_post")
         end
       end
     end

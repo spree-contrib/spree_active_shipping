@@ -2,8 +2,12 @@ module Spree
   module Calculator::Shipping
     module Usps
       class FirstClassPackageInternational < Spree::Calculator::Shipping::Usps::Base
+        def self.geo_group
+          :international
+        end
+
         def self.service_code
-          15 # First-Class Package International Service™
+          "#{SERVICE_CODE_PREFIX[geo_group]}:15" # First-Class Package International Service™
         end
 
         def self.description
