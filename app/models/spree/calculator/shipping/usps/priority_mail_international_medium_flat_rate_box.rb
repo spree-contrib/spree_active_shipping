@@ -18,8 +18,12 @@ module Spree
           "VE", "VG", "VN", "VU", "WF", "WS", "YE", "ZA", "ZM", "ZW"
         ]
 
+        def self.geo_group
+          :international
+        end
+
         def self.service_code
-          9 #Priority Mail International® Medium Flat Rate Box
+          "#{SERVICE_CODE_PREFIX[geo_group]}:9" #Priority Mail International® Medium Flat Rate Box
         end
 
         def self.description
@@ -30,7 +34,7 @@ module Spree
         # weight limit in ounces http://pe.usps.com/text/imm/immc2_011.htm
         def max_weight_for_country(country)
           # https://www.usps.com/ship/priority-mail-international-flat.htm?
-          return 320 if WEIGHT_LIMITS[country.iso].present? # 20lbs
+          return 320 if AVAILABLE_COUNTRIES.include? country.iso # 20lbs
           nil # ex. AC, BO, CU, FK, KP, SO
         end
       end

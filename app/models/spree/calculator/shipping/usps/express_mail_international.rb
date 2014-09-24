@@ -23,8 +23,12 @@ module Spree
           "UY"=>704, "UZ"=>1056, "VU"=>880, "VA"=>1056, "VE"=>1056, "VN"=>1056, "WS"=>704, "YE"=>1056, "ZM"=>1056, "ZW"=>704
         }
 
+        def self.geo_group
+          :international
+        end
+
         def self.service_code
-          1 #Priority Mail Express International™
+          "#{SERVICE_CODE_PREFIX[geo_group]}:1" #Priority Mail Express International™
         end
 
         def self.description
