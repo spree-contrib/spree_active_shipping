@@ -3,7 +3,7 @@ module Spree
     module Usps
       class Base < Spree::Calculator::Shipping::ActiveShipping::Base
 
-        SERVICE_CODE_PREFIX = {
+        SERVICE_CODE_PREFIX ||= {
           :international => 'intl',
           :domestic      => 'dom'
         }
