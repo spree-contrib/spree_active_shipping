@@ -8,26 +8,6 @@ module Spree
           :domestic      => 'dom'
         }
 
-        def compute_package(package)
-          order = package.order
-          stock_location = package.stock_location
-
-          origin = build_location(stock_location)
-          destination = build_location(order.ship_address)
-
-          rates_result = retrieve_rates_from_cache(package, origin, destination)
-
-          return nil if rates_result.kind_of?(Spree::ShippingError)
-          return nil if rates_result.empty?
-          rate = rates_result[self.class.service_code]
-
-          return nil unless rate
-          rate = rate.to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
-
-          # divide by 100 since active_shipping rates are expressed as cents
-          return rate/100.0
-        end
-
         def carrier
           carrier_details = {
             :login => Spree::ActiveShipping::Config[:usps_login],
@@ -77,6 +57,11 @@ module Spree
         # weight limit in ounces or zero (if there is no limit)
         def max_weight_for_country(country)
           1120  # 70 lbs
+        end
+
+        # Identifies the calculator returned from a carrier
+        def rate_result_key
+          self.class.service_code
         end
       end
     end
