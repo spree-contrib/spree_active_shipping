@@ -10,7 +10,7 @@ gem 'active_shipping', :github => "Shopify/active_shipping", :branch => 'master'
 
 group :development, :test do
   gem 'ffaker'
-  gem 'rails', '~> 4.0.5'
+  gem 'rails', '~> 4.1.6'
   gem 'rspec-rails', '~> 2.13'
 end
 
