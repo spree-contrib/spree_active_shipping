@@ -7,6 +7,7 @@ module ActiveShipping
     # NOTE: All specs will use the bogus calculator (no login information needed)
 
     let(:address) { FactoryGirl.create(:address) }
+    let(:stock_location) { FactoryGirl.create(:stock_location) }
     let!(:order) do
       order = FactoryGirl.create(:order_with_line_items, :ship_address => address, :line_items_count => 2)
       order.line_items.first.tap do |line_item|
@@ -34,12 +35,21 @@ module ActiveShipping
     let(:package) { order.shipments.first.to_package }
 
     before(:each) do
+      Spree::StockLocation.destroy_all
+      stock_location
       order.create_proposed_shipments
       order.shipments.count.should == 1
       Spree::ActiveShipping::Config.set(:units => "imperial")
       Spree::ActiveShipping::Config.set(:unit_multiplier => 1)
       calculator.stub(:carrier).and_return(carrier)
       Rails.cache.clear
+    end
+
+    describe "package.order" do
+      it{ expect(package.order).to eq(order) }
+      it{ expect(package.order.ship_address).to eq(address) }
+      it{ expect(package.order.ship_address.country.iso).to eq('US') }
+      it{ expect(package.stock_location).to eq(stock_location) }
     end
 
     describe "available" do
