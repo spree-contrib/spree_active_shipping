@@ -2,11 +2,10 @@ source 'https://rubygems.org'
 
 gem 'sqlite3'
 
-# TODO: Add to gemspec once gem is released
-gem 'spree', :github => 'spree/spree', :branch => 'master'
+gem 'spree', :github => 'spree/spree', :branch => '2-4-stable'
 
 gem 'factory_girl_rails', '~> 4.5.0', :group => :test
-gem 'active_shipping', :github => "Shopify/active_shipping", :branch => 'master'
+gem 'active_shipping', :github => "Shopify/active_shipping", :tag => 'v0.12.5'
 
 group :development, :test do
   gem 'ffaker'
