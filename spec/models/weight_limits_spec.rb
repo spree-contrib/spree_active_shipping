@@ -81,13 +81,13 @@ module ActiveShipping
       context "for international calculators" do
         it "should convert package contents to weights array for non-US countries (ex. Canada [limit = 66lbs])" do
           weights = international_calculator.send :convert_package_to_weights_array, package
-          weights.should match_array [20.0, 21.0, 29.0, 60.0, 60.0, 60.0].map{ |x| (x * Spree::ActiveShipping::Config[:unit_multiplier]).to_d }
+          weights.should match_array [5.25, 5.25, 5.25, 5.25, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 29.0].map{ |x| (x * Spree::ActiveShipping::Config[:unit_multiplier]).to_d }
         end
 
         it "should create array of packages" do
           packages = international_calculator.send :packages, package
           packages.size.should == 5
-          packages.map{|package| package.weight.amount}.should == [41.0, 29.0, 60.0, 60.0, 60.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
+          packages.map{|package| package.weight.amount}.should == [61.0, 60.0, 60.0, 40.0, 29.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
           packages.map{|package| package.weight.unit}.uniq.should == [:ounces]
         end
 
@@ -104,13 +104,13 @@ module ActiveShipping
       context "for domestic calculators" do
         it "should not convert order line items to weights array for US" do
           weights = domestic_calculator.send :convert_package_to_weights_array, us_package
-          weights.should == [20.0, 21.0, 29.0, 60.0, 60.0, 60.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
+          weights.should == [5.25, 5.25, 5.25, 5.25, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 29.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
         end
 
         it "should create array with one package for US" do
           packages = domestic_calculator.send :packages, us_package
           packages.size.should == 4
-          packages.map{|package| package.weight.amount}.should == [70.0, 60.0, 60.0, 60.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
+          packages.map{|package| package.weight.amount}.should == [61.0, 60.0, 60.0, 69.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
           packages.map{|package| package.weight.unit}.uniq.should == [:ounces]
         end
       end
@@ -125,11 +125,11 @@ module ActiveShipping
       it "should respect the max weight per package" do
         Spree::ActiveShipping::Config.set(:max_weight_per_package => 30)
         weights = international_calculator.send :convert_package_to_weights_array, package
-        weights.should == [20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 21.0, 29.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
+        weights.should == [5.25, 5.25, 5.25, 5.25, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 29.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
 
         packages = international_calculator.send :packages, package
         packages.size.should == 12
-        packages.map{|package| package.weight.amount}.should == [20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 21.0, 29.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
+        packages.map{|package| package.weight.amount}.should == [21.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 29.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
         packages.map{|package| package.weight.unit}.uniq.should == [:ounces]
       end
     end
@@ -154,7 +154,7 @@ module ActiveShipping
       it "should add item packages to weight calculation" do
         packages = domestic_calculator.send :packages, package_with_packages
         packages.size.should == 6
-        packages.map{|package| package.weight.amount}.should == [21, 58, 36, 36, 43, 43].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
+        packages.map{|package| package.weight.amount}.should == [50, 29, 36, 43, 36, 43].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]}
         packages.map{|package| package.weight.unit}.uniq.should == [:ounces]
       end
     end
