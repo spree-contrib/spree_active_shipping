@@ -1,5 +1,5 @@
 require 'spec_helper'
-include ActiveMerchant::Shipping
+include ActiveShipping
 
 module ActiveShipping
   describe Spree::ShippingCalculator do
