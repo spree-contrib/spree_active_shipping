@@ -18,12 +18,12 @@ module Spree
                pickup_type = options[:pickup_type] || :daily_pickup
 
                root_node << XmlNode.new('PickupType') do |pickup_type_node|
-                 pickup_type_node << XmlNode.new('Code', ActiveShipping::UPS::PICKUP_CODES[pickup_type])
+                 pickup_type_node << XmlNode.new('Code', ::ActiveShipping::UPS::PICKUP_CODES[pickup_type])
                  # not implemented: PickupType/PickupDetails element
                end
-               cc = options[:customer_classification] || ActiveShipping::UPS::DEFAULT_CUSTOMER_CLASSIFICATIONS[pickup_type]
+               cc = options[:customer_classification] || ::ActiveShipping::UPS::DEFAULT_CUSTOMER_CLASSIFICATIONS[pickup_type]
                root_node << XmlNode.new('CustomerClassification') do |cc_node|
-                 cc_node << XmlNode.new('Code', ActiveShipping::UPS::CUSTOMER_CLASSIFICATIONS[cc])
+                 cc_node << XmlNode.new('Code', ::ActiveShipping::UPS::CUSTOMER_CLASSIFICATIONS[cc])
                end
 
                root_node << XmlNode.new('Shipment') do |shipment|
