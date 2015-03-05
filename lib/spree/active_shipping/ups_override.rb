@@ -254,7 +254,7 @@ module Spree
                 total_price     = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/MonetaryValue').to_s.to_f : negotiated_rate.to_f
                 currency        = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/CurrencyCode').to_s : rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/CurrencyCode').to_s
 
-                rate_estimates << ActiveShipping::RateEstimate.new(origin, destination, ActiveShipping::UPS.name,
+                rate_estimates << ::ActiveShipping::RateEstimate.new(origin, destination, ::ActiveShipping::UPS.name,
                                     service_name_for(origin, service_code),
                                     :total_price => total_price,
                                     :currency => currency,
@@ -263,7 +263,7 @@ module Spree
                                     )
               end
             end
-            ActiveShipping::RateResponse.new(success, message, Hash.from_xml(response).values.first, :rates => rate_estimates, :xml => response, :request => last_request)
+            ::ActiveShipping::RateResponse.new(success, message, Hash.from_xml(response).values.first, :rates => rate_estimates, :xml => response, :request => last_request)
           end
         end
       end
