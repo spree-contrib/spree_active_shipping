@@ -162,28 +162,10 @@ module Spree
             item_weight = default_weight if item_weight <= 0
             item_weight *= multiplier
 
-            quantity = content_item.quantity
-            if max_weight <= 0
-              item_weight * quantity
-            elsif item_weight == 0
-              0
+            if max_weight <= 0 || item_weight < max_weight
+              item_weight
             else
-              if item_weight < max_weight
-                max_quantity = (max_weight/item_weight).floor
-                if quantity < max_quantity
-                  item_weight * quantity
-                else
-                  new_items = []
-                  while quantity > 0 do
-                    new_quantity = [max_quantity, quantity].min
-                    new_items << (item_weight * new_quantity)
-                    quantity -= new_quantity
-                  end
-                  new_items
-                end
-              else
-                raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: The maximum per package weight for the selected service from the selected country is #{max_weight} ounces.")
-              end
+              raise Spree::ShippingError.new("#{I18n.t(:shipping_error)}: The maximum per package weight for the selected service from the selected country is #{max_weight} ounces.")  
             end
           end
           weights.flatten.compact.sort
