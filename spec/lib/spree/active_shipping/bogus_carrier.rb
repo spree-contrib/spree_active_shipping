@@ -2,7 +2,7 @@ module Spree
   module ActiveShipping
     # Bogus carrier useful for testing.  For some reasons the plugin version of this class does not work
     # properly (it fails to return a RateResponse)
-    class BogusCarrier < ActiveMerchant::Shipping::Carrier
+    class BogusCarrier < ::ActiveShipping::Carrier
       def name
         "BogusCarrier"
       end
