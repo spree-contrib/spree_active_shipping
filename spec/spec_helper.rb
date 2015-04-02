@@ -49,4 +49,8 @@ RSpec.configure do |config|
   #config.include Spree::UrlHelpers
   #config.include Devise::TestHelpers, :type => :controller
 
+  # Upgrade to rspec 3.x
+  config.infer_spec_type_from_file_location!
+
+
 end
