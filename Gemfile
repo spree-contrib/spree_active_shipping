@@ -13,6 +13,7 @@ group :development, :test do
   gem 'ffaker'
   gem 'rails', '~> 4.2.0'
   gem 'rspec-rails', '~> 2.13'
+  gem 'rspec-activemodel-mocks'
 end
 
 gemspec
