@@ -6,7 +6,7 @@ require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require 'rspec/rails'
 require 'webmock/rspec'
 require 'factory_girl'
-
+require 'pry'
 # Run any available migration
 ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__)
 
@@ -50,4 +50,3 @@ RSpec.configure do |config|
   #config.include Devise::TestHelpers, :type => :controller
 
 end
-

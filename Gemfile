@@ -5,9 +5,7 @@ gem 'sqlite3'
 # TODO: Add to gemspec once gem is released
 gem "spree", github: "spree/spree", tag: "v3.0.0.rc3"
 
-
 gem 'factory_girl_rails', '~> 4.5.0', :group => :test
-gem 'active_shipping', :github => "Shopify/active_shipping", :branch => 'master'
 
 group :development, :test do
   gem 'ffaker'
