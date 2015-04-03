@@ -1,24 +1,22 @@
-<div data-hook="admin_product_package_form_fields">
-  <div class="six columns alpha">
+<div class="row" data-hook="admin_product_package_form_fields">
+  <div class="col-md-6">
     <div data-hook="length" class="field">
       <%= f.label Spree.t(:length) %><br>
-      <%= f.text_field :length %>
+      <%= f.text_field :length, class: "form-control" %>
     </div>
     <div data-hook="width" class="field">
       <%= f.label Spree.t(:width) %><br>
-      <%= f.text_field :width %>
+      <%= f.text_field :width, class: "form-control" %>
     </div>
   </div>
-    <div class="six columns omega">
+  <div class="col-md-6">
     <div data-hook="height" class="field">
       <%= f.label Spree.t(:height) %><br>
-      <%= f.text_field :height %>
+      <%= f.text_field :height, class: "form-control" %>
     </div>
     <div data-hook="weight" class="field">
       <%= f.label Spree.t(:weight) %><br>
-      <%= f.text_field :weight %>
+      <%= f.text_field :weight, class: "form-control" %>
     </div>
   </div>
 </div>
-
-<div class="clear"></div>

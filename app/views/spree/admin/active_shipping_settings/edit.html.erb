@@ -8,7 +8,7 @@
   <div id="preferences" data-hook>
     <fieldset class="general no-border-top">
       <div class="row">
-        <div class="alpha six columns">
+        <div class="col-md-6">
           <fieldset class="security no-border-bottom">
             <legend align="center"><%= Spree.t(:ups_settings)%></legend>
             <% @preferences_UPS.each do |key|
@@ -21,7 +21,7 @@
             <% end %>
           </fieldset>
         </div>
-        <div class="omega six columns">
+        <div class="col-md-6">
           <fieldset class="currency no-border-bottom">
             <legend align="center"><%= Spree.t(:fedex_settings)%></legend>
             <% @preferences_FedEx.each do |key|
@@ -37,7 +37,7 @@
       </div>
 
       <div class="row">
-        <div class="alpha six columns">
+        <div class="col-md-6">
           <fieldset class="security no-border-bottom">
             <legend align="center"><%= Spree.t(:usps_settings)%></legend>
             <% @preferences_USPS.each do |key|
@@ -50,7 +50,7 @@
             <% end %>
           </fieldset>
         </div>
-        <div class="omega six columns">
+        <div class="col-md-6">
           <fieldset class="currency no-border-bottom">
             <legend align="center"><%= Spree.t(:canada_post_settings)%></legend>
             <% @preferences_CanadaPost.each do |key|
@@ -66,7 +66,7 @@
       </div>
 
       <div class="row">
-        <div class="alpha six columns">
+        <div class="col-md-6">
           <fieldset class="currency no-border-bottom">
             <legend align="center"><%= Spree.t(:general_settings)%></legend>
             <% @preferences_GeneralSettings.each do |key|
@@ -81,11 +81,7 @@
         </div>
       </div>
 
-      <div class="form-buttons filter-actions actions" data-hook="buttons">
-        <%= button Spree.t(:update), 'icon-refresh' %>
-        <span class="or"><%= Spree.t(:or) %></span>
-        <%= link_to_with_icon 'icon-remove', Spree.t(:cancel), edit_admin_active_shipping_settings_url, :class => 'button' %>
-      </div>
+      <%= render partial: 'spree/admin/shared/edit_resource_links', locals: { collection_url: edit_admin_active_shipping_settings_url } %>
 
     </fieldset>
   </div>
