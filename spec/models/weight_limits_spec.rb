@@ -81,10 +81,10 @@ module ActiveShipping
       context "for international calculators" do
         it "should convert package contents to weights array for non-US countries (ex. Canada [limit = 66lbs])" do
           weights = international_calculator.send :convert_package_to_weights_array, package
-          active_shipping_weights = [20.0, 21.0, 29.0, 60.0, 60.0, 60.0].map do |x|
+          active_shipping_weights = [5.25, 5.25, 5.25, 5.25, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 29.0].map do |x|
             (x * Spree::ActiveShipping::Config[:unit_multiplier]).to_d
           end
-          weights.should match_array active_shipping_weights
+          expect(weights).to match_array active_shipping_weights
         end
 
         it "should create array of packages" do
