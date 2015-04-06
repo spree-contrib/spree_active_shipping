@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib"]
 
-  s.add_dependency('spree_core', '~> 3.0.0.beta')
+  s.add_dependency('spree_core', '~> 3.1.0.beta')
   s.add_dependency('active_shipping', '~> 1.0.0.pre4')
   s.add_development_dependency 'pry'
   s.add_development_dependency 'webmock'
