@@ -18,12 +18,12 @@ module Spree
                pickup_type = options[:pickup_type] || :daily_pickup
 
                root_node << XmlNode.new('PickupType') do |pickup_type_node|
-                 pickup_type_node << XmlNode.new('Code', ActiveMerchant::Shipping::UPS::PICKUP_CODES[pickup_type])
+                 pickup_type_node << XmlNode.new('Code', ::ActiveShipping::UPS::PICKUP_CODES[pickup_type])
                  # not implemented: PickupType/PickupDetails element
                end
-               cc = options[:customer_classification] || ActiveMerchant::Shipping::UPS::DEFAULT_CUSTOMER_CLASSIFICATIONS[pickup_type]
+               cc = options[:customer_classification] || ::ActiveShipping::UPS::DEFAULT_CUSTOMER_CLASSIFICATIONS[pickup_type]
                root_node << XmlNode.new('CustomerClassification') do |cc_node|
-                 cc_node << XmlNode.new('Code', ActiveMerchant::Shipping::UPS::CUSTOMER_CLASSIFICATIONS[cc])
+                 cc_node << XmlNode.new('Code', ::ActiveShipping::UPS::CUSTOMER_CLASSIFICATIONS[cc])
                end
 
                root_node << XmlNode.new('Shipment') do |shipment|
@@ -253,8 +253,8 @@ module Spree
                 negotiated_rate = rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue').to_s
                 total_price     = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/MonetaryValue').to_s.to_f : negotiated_rate.to_f
                 currency        = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/CurrencyCode').to_s : rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/CurrencyCode').to_s
-                
-                rate_estimates << ActiveMerchant::Shipping::RateEstimate.new(origin, destination, ActiveMerchant::Shipping::UPS.name,
+
+                rate_estimates << ::ActiveShipping::RateEstimate.new(origin, destination, ::ActiveShipping::UPS.name,
                                     service_name_for(origin, service_code),
                                     :total_price => total_price,
                                     :currency => currency,
@@ -263,7 +263,7 @@ module Spree
                                     )
               end
             end
-            ActiveMerchant::Shipping::RateResponse.new(success, message, Hash.from_xml(response).values.first, :rates => rate_estimates, :xml => response, :request => last_request)
+            ::ActiveShipping::RateResponse.new(success, message, Hash.from_xml(response).values.first, :rates => rate_estimates, :xml => response, :request => last_request)
           end
         end
       end

@@ -6,7 +6,7 @@ require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require 'rspec/rails'
 require 'webmock/rspec'
 require 'factory_girl'
-
+require 'pry'
 # Run any available migration
 ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__)
 
@@ -25,7 +25,7 @@ require 'spree/testing_support/url_helpers'
 Dir[File.join(File.dirname(__FILE__), "factories/*.rb")].each {|f| require f }
 
 RSpec.configure do |config|
-  config.include Spree::TestingSupport::ControllerRequests
+  config.include Spree::TestingSupport::ControllerRequests, :type => :controller
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::TestingSupport::UrlHelpers
   config.include WebFixtures
@@ -49,5 +49,8 @@ RSpec.configure do |config|
   #config.include Spree::UrlHelpers
   #config.include Devise::TestHelpers, :type => :controller
 
-end
+  # Upgrade to rspec 3.x
+  config.infer_spec_type_from_file_location!
 
+
+end

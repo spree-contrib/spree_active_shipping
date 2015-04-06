@@ -8,9 +8,9 @@ describe Spree::Admin::ProductPackagesController do
 
     it 'should find ProductPackages for the product and render the view' do
       spree_get :index, product_id: product.slug
-      assigns(:product).should eq(product)
-      response.should be_ok
-      response.should render_template('index')
+      expect(assigns(:product)).to eq(product)
+      expect(response).to be_ok
+      expect(response).to render_template('index')
     end
   end
 
@@ -27,10 +27,10 @@ describe Spree::Admin::ProductPackagesController do
                           product_package: { length: new_length, width: new_width, 
                                              height: new_height, weight: new_weight }
       product_package.reload
-      product_package.length.should eq(new_length)
-      product_package.width.should eq(new_width)
-      product_package.height.should eq(new_height)
-      product_package.weight.should eq(new_weight)
+      expect(product_package.length).to eq(new_length)
+      expect(product_package.width).to eq(new_width)
+      expect(product_package.height).to eq(new_height)
+      expect(product_package.weight).to eq(new_weight)
     end
   end
 end
