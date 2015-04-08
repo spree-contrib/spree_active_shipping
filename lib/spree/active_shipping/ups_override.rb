@@ -169,15 +169,20 @@ module Spree
 
           def parse_rate_response(origin, destination, packages, response, options={})
             xml = build_document(response, 'RatingServiceSelectionResponse')
+            Rails.logger.info "IN PARSE RATE RESPONSE***********************"
+            Rails.logger.info "Origin: #{origin}"
+            Rails.logger.info "Dest: #{destination}"
+            Rails.logger.info xml
             success = response_success?(xml)
             message = response_message(xml)
+            Rails.logger.info message
 
             if success
               rate_estimates = xml.root.css('> RatedShipment').map do |rated_shipment|
-                service_code    = rated_shipment.get_text('Service/Code').text
-                negotiated_rate = rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue').text
-                total_price     = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/MonetaryValue').try(:text).to_f : negotiated_rate.to_f
-                currency        = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/CurrencyCode').text : rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/CurrencyCode').text
+                service_code    = rated_shipment.at('Service/Code').text
+                negotiated_rate = rated_shipment.at('NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue').try(:text)
+                total_price     = negotiated_rate.blank? ? rated_shipment.at('TotalCharges/MonetaryValue').try(:text).to_f : negotiated_rate.to_f
+                currency        = negotiated_rate.blank? ? rated_shipment.at('TotalCharges/CurrencyCode').text : rated_shipment.at('NegotiatedRates/NetSummaryCharges/GrandTotal/CurrencyCode').text
 
                 ::ActiveShipping::RateEstimate.new(origin, destination, ::ActiveShipping::UPS.name,
                     service_name_for(origin, service_code),
@@ -229,12 +234,12 @@ module Spree
               rate_estimates = {}
 
               xml.root.css('TransitResponse ServiceSummary').each do |service_summary|
-                service_code    = service_summary.get_text('Service/Code').text
+                service_code    = service_summary.at('Service/Code').text
                 service_code_2 = time_code_mapping[service_code]
-                service_desc    = service_summary.get_text('Service/Description').text
-                guaranteed_code = service_summary.get_text('Guaranteed/Code').text
-                business_transit_days = service_summary.get_text('EstimatedArrival/BusinessTransitDays').text
-                date = service_summary.get_text('EstimatedArrival/Date').text
+                service_desc    = service_summary.at('Service/Description').text
+                guaranteed_code = service_summary.at('Guaranteed/Code').text
+                business_transit_days = service_summary.at('EstimatedArrival/BusinessTransitDays').text
+                date = service_summary.at('EstimatedArrival/Date').text
                 rate_estimates[service_name_for(origin, service_code_2)] = {:service_code => service_code, :service_code_2 => service_code_2, :service_desc => service_desc,
                     :guaranteed_code => guaranteed_code, :business_transit_days => business_transit_days,
                     :date => date}
