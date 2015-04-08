@@ -18,13 +18,13 @@ module Spree
                 pickup_type = options[:pickup_type] || :daily_pickup
 
                 xml.PickupType do
-                  xml.Code(PICKUP_CODES[pickup_type])
+                  xml.Code(::ActiveShipping::UPS::PICKUP_CODES[pickup_type])
                   # not implemented: PickupType/PickupDetails element
                 end
 
-                cc = options[:customer_classification] || DEFAULT_CUSTOMER_CLASSIFICATIONS[pickup_type]
+                cc = options[:customer_classification] || ::ActiveShipping::UPS::DEFAULT_CUSTOMER_CLASSIFICATIONS[pickup_type]
                 xml.CustomerClassification do
-                  xml.Code(CUSTOMER_CLASSIFICATIONS[cc])
+                  xml.Code(::ActiveShipping::UPS::CUSTOMER_CLASSIFICATIONS[cc])
                 end
 
                 xml.Shipment do
@@ -43,7 +43,7 @@ module Spree
                   #                   * Shipment/DocumentsOnly element
 
                   Array(packages).each do |package|
-                    options[:imperial] ||= IMPERIAL_COUNTRIES.include?(origin.country_code(:alpha2))
+                    options[:imperial] ||= ::ActiveShipping::UPS::IMPERIAL_COUNTRIES.include?(origin.country_code(:alpha2))
                     build_package_node(xml, package, options)
                   end
 
