@@ -239,20 +239,17 @@ module Spree
 
 
           def parse_rate_response(origin, destination, packages, response, options={})
-            rates = []
-            xml = REXML::Document.new(response)
+            xml = build_document(response, 'RatingServiceSelectionResponse')
             success = response_success?(xml)
             message = response_message(xml)
-            transits = options[:transit]
-            if success
-              rate_estimates = []
 
-              xml.elements.each('/*/RatedShipment') do |rated_shipment|
-                service_code    = rated_shipment.get_text('Service/Code').to_s
-                service    = rated_shipment.get_text('Service/Code').to_s
-                negotiated_rate = rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue').to_s
-                total_price     = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/MonetaryValue').to_s.to_f : negotiated_rate.to_f
-                currency        = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/CurrencyCode').to_s : rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/CurrencyCode').to_s
+            if success
+              rate_estimates = xml.root.css('> RatedShipment').map do |rated_shipment|
+                service_code    = rated_shipment.get_text('Service/Code').text
+                service    = rated_shipment.get_text('Service/Code').text
+                negotiated_rate = rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue').text
+                total_price     = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/MonetaryValue').text.to_f : negotiated_rate.to_f
+                currency        = negotiated_rate.blank? ? rated_shipment.get_text('TotalCharges/CurrencyCode').text : rated_shipment.get_text('NegotiatedRates/NetSummaryCharges/GrandTotal/CurrencyCode').to_s
 
                 rate_estimates << ::ActiveShipping::RateEstimate.new(origin, destination, ::ActiveShipping::UPS.name,
                                     service_name_for(origin, service_code),
@@ -264,6 +261,30 @@ module Spree
               end
             end
             ::ActiveShipping::RateResponse.new(success, message, Hash.from_xml(response).values.first, :rates => rate_estimates, :xml => response, :request => last_request)
+          end
+
+          def parse_rate_response(origin, destination, packages, response, options = {})
+            xml = build_document(response, 'RatingServiceSelectionResponse')
+            success = response_success?(xml)
+            message = response_message(xml)
+
+            if success
+              rate_estimates = xml.root.css('> RatedShipment').map do |rated_shipment|
+                service_code = rated_shipment.at('Service/Code').text
+                days_to_delivery = rated_shipment.at('GuaranteedDaysToDelivery').text.to_i
+                days_to_delivery = nil if days_to_delivery == 0
+                RateEstimate.new(origin, destination, @@name, service_name_for(origin, service_code),
+                    :total_price => rated_shipment.at('TotalCharges/MonetaryValue').text.to_f,
+                    :insurance_price => rated_shipment.at('ServiceOptionsCharges/MonetaryValue').text.to_f,
+                    :currency => rated_shipment.at('TotalCharges/CurrencyCode').text,
+                    :service_code => service_code,
+                    :packages => packages,
+                    :delivery_range => [timestamp_from_business_day(days_to_delivery)],
+                    :negotiated_rate => rated_shipment.at('NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue').try(:text).to_f
+                )
+              end
+            end
+            RateResponse.new(success, message, Hash.from_xml(response).values.first, :rates => rate_estimates, :xml => response, :request => last_request)
           end
         end
       end
