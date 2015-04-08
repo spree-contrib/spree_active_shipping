@@ -169,13 +169,8 @@ module Spree
 
           def parse_rate_response(origin, destination, packages, response, options={})
             xml = build_document(response, 'RatingServiceSelectionResponse')
-            Rails.logger.info "IN PARSE RATE RESPONSE***********************"
-            Rails.logger.info "Origin: #{origin}"
-            Rails.logger.info "Dest: #{destination}"
-            Rails.logger.info xml
             success = response_success?(xml)
             message = response_message(xml)
-            Rails.logger.info message
 
             if success
               rate_estimates = xml.root.css('> RatedShipment').map do |rated_shipment|
