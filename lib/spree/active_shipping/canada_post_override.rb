@@ -22,7 +22,7 @@ module Spree
               xml.lineItems do
 
                 line_items.each do |line_item|
-                  xml.item
+                  xml.item do
                     xml.quantity(1) 
                     xml.weight(line_item.kilograms)
                     xml.length(line_item.cm(:length).to_s)
@@ -39,7 +39,9 @@ module Spree
             
             xml_builder.to_xml
           end
+
         end
+
       end
     end
   end
