@@ -5,7 +5,7 @@ gem 'sqlite3'
 gem 'spree', :github => 'spree/spree', :branch => '2-3-stable'
 
 gem 'factory_girl_rails', '~> 4.2.1', :group => :test
-gem 'active_shipping', :github => "Shopify/active_shipping", :branch => 'master'
+gem 'active_shipping', '~> 0.12.5'
 
 group :development, :test do
   gem 'ffaker'
