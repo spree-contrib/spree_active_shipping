@@ -1,8 +1,7 @@
 Active Shipping
 ===============
 
-[![Build
-Status](https://secure.travis-ci.org/spree/spree_active_shipping.png)](http://travis-ci.org/spree/spree_active_shipping)
+[![Build Status](https://travis-ci.org/spree-contrib/spree_active_shipping.svg?branch=2-4-stable)](https://travis-ci.org/spree-contrib/spree_active_shipping)
 
 This is a Spree extension that wraps the popular [active_shipping](http://github.com/Shopify/active_shipping/tree/master) plugin.
 
