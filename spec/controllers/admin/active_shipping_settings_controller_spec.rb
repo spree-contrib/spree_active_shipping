@@ -13,7 +13,7 @@ describe Spree::Admin::ActiveShippingSettingsController do
 
   context '#update' do
     config = Spree::ActiveShippingConfiguration.new
-    config.preferences.each do |name, orig_val|
+    config.defined_preferences.each do |name, orig_val|
       case config.preference_type(name)
       when :integer
         it "should allow us to set the value of #{name}" do
