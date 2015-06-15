@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency('spree_core', '~> 2.4.3')
-  s.add_dependency('active_shipping', '~> 0.12.5')
+  s.add_dependency('active_shipping', '~> 0.12.6')
   s.add_development_dependency 'pry'
   s.add_development_dependency 'webmock'
   s.add_development_dependency 'sass-rails', '~> 4.0.2'
