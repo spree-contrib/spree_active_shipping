@@ -11,6 +11,8 @@ class Spree::ActiveShippingConfiguration < Spree::Preferences::Configuration
   preference :fedex_key, :string, :default => "authorization_key"
 
   preference :usps_login, :string, :default => "aunt_judy"
+  preference :usps_commercial_base, :boolean, :default => false
+  preference :usps_commercial_plus, :boolean, :default => false
 
   preference :canada_post_login, :string, :default => "canada_post_login"
 
