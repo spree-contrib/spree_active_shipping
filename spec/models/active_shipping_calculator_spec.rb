@@ -86,7 +86,7 @@ module ActiveShipping
 
       context "when there is an error retrieving the rates" do
         before do
-          expect(carrier).to receive(:find_rates).and_raise(ActiveMerchant::ActiveMerchantError)
+          expect(carrier).to receive(:find_rates).and_raise(ActiveShipping::ResponseError)
         end
 
         it "should return false" do
