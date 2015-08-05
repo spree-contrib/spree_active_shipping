@@ -180,21 +180,6 @@ The money line for **spree_active_shipping** is when it calls the calculator's `
 - when it hits the last calculator (**FedEx International Priority**) it will find that the cache doesn't have any rates for the given key, and the method ```available?``` called from the Estimator will return false thus removing the calculator's shipping method from the list of available calculators and won't return any rates back for it
 - Consequently since this 3rd calculator (**FedEx International Priority**) is an international calculator it would have been removed as well by the line that checks if any shipping method is allowed in already defined Zones.
 
-Installation
-------------
-
-1. Add the following to your application's Gemfile
-
-```ruby
-gem 'spree_active_shipping'
-```
-
-2. Run bundler
-
-```
-bundle install
-```
-
 Testing
 -------
 
