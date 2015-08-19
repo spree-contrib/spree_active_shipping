@@ -9,8 +9,9 @@ gem 'active_shipping', :github => "Shopify/active_shipping", :branch => 'master'
 
 group :development, :test do
   gem 'ffaker'
-  gem 'rails', '~> 4.0.5'
+  gem 'rails', '~> 4.0.9'
   gem 'rspec-rails', '~> 2.13'
+  gem 'test-unit'
 end
 
 gemspec
