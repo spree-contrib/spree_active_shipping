@@ -16,6 +16,7 @@ module Spree
         end
 
         def available?(package)
+          return false unless package.order.ship_address
           !compute(package).nil?
         rescue Spree::ShippingError
           false

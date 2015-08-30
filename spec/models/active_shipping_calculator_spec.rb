@@ -43,44 +43,54 @@ module ActiveShipping
     end
 
     describe "available" do
-      context "when rates are available" do
-        let(:rates) do
-          [ double('rate', :service_name => 'Service', :service_code => 3, :price => 1) ]
-        end
+      context "when the order does not have a shipping address" do
+        before { order.update(ship_address: nil) }
 
-        before do
-          carrier.should_receive(:find_rates).and_return(response)
-        end
-
-        it "should return true" do
-          calculator.available?(package).should be(true)
-        end
-
-        it "should use zero as a valid weight for service" do
-          calculator.stub(:max_weight_for_country).and_return(0)
-          calculator.available?(package).should be(true)
+        it "returns false" do
+          expect(calculator.available?(package)).to be_false
         end
       end
 
-      context "when rates are not available" do
-        let(:rates) { [] }
+      context "when the order has a shipping address" do
+        context "when rates are available" do
+          let(:rates) do
+            [ double('rate', :service_name => 'Service', :service_code => 3, :price => 1) ]
+          end
 
-        before do
-          carrier.should_receive(:find_rates).and_return(response)
+          before do
+            carrier.should_receive(:find_rates).and_return(response)
+          end
+
+          it "should return true" do
+            calculator.available?(package).should be(true)
+          end
+
+          it "should use zero as a valid weight for service" do
+            calculator.stub(:max_weight_for_country).and_return(0)
+            calculator.available?(package).should be(true)
+          end
         end
 
-        it "should return false" do
-          calculator.available?(package).should be(false)
-        end
-      end
+        context "when rates are not available" do
+          let(:rates) { [] }
 
-      context "when there is an error retrieving the rates" do
-        before do
-          carrier.should_receive(:find_rates).and_raise(ActiveMerchant::ActiveMerchantError)
+          before do
+            carrier.should_receive(:find_rates).and_return(response)
+          end
+
+          it "should return false" do
+            calculator.available?(package).should be(false)
+          end
         end
 
-        it "should return false" do
-          calculator.available?(package).should be(false)
+        context "when there is an error retrieving the rates" do
+          before do
+            carrier.should_receive(:find_rates).and_raise(ActiveMerchant::ActiveMerchantError)
+          end
+
+          it "should return false" do
+            calculator.available?(package).should be(false)
+          end
         end
       end
     end
