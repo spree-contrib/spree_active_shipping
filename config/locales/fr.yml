@@ -9,4 +9,8 @@ fr:
     small_packets_air: "Postes Canada Petits Colis - Air"
     parcel_surface: "Postes Canada Colis Postaux - Surface"
     small_packets_surface: "Postes Canada Petits Colis - Surface"
+    expedited_usa: "Postes Canada Colis accélérés Business"
+    priority_worldwide_usa: "Postes Canada Priorité Mondial é.U."
+    tracked_packet_usa: "Postes Canada Paquet repérable - é.U."
+    xpresspost_usa: "Postes Canada Xpresspost USA"
   shipping_error: "Erreur de livraison"
