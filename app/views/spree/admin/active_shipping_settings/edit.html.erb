@@ -1,10 +1,10 @@
-<%= render :partial => 'spree/admin/shared/sub_menu/configuration' %>
+<%= render partial: 'spree/admin/shared/sub_menu/configuration' %>
 
 <% content_for :page_title do %>
   <%= Spree.t(:active_shipping_settings) %>
 <% end %>
 
-<%= form_tag admin_active_shipping_settings_path, :method => :put  do |form| %>
+<%= form_tag admin_active_shipping_settings_path, method: :put  do |form| %>
   <div id="preferences" data-hook>
     <fieldset class="general no-border-top">
       <div class="row">
@@ -15,7 +15,7 @@
                 type = @config.preference_type(key) %>
                 <div class="field">
                   <%= label_tag(key, Spree.t(key) + ': ') + tag(:br) if type != :boolean %>
-                  <%= preference_field_tag(key, @config[key], :type => type) %>
+                  <%= preference_field_tag(key, @config[key], type: type) %>
                   <%= label_tag(key, Spree.t(key)) + tag(:br) if type == :boolean %>
                 </div>
             <% end %>
@@ -28,7 +28,7 @@
                 type = @config.preference_type(key) %>
                 <div class="field">
                   <%= label_tag(key, Spree.t(key) + ': ') + tag(:br) if type != :boolean %>
-                  <%= preference_field_tag(key, @config[key], :type => type) %>
+                  <%= preference_field_tag(key, @config[key], type: type) %>
                   <%= label_tag(key, Spree.t(key)) + tag(:br) if type == :boolean %>
                 </div>
             <% end %>
@@ -44,7 +44,7 @@
                 type = @config.preference_type(key) %>
                 <div class="field">
                   <%= label_tag(key, Spree.t(key) + ': ') + tag(:br) if type != :boolean %>
-                  <%= preference_field_tag(key, @config[key], :type => type) %>
+                  <%= preference_field_tag(key, @config[key], type: type) %>
                   <%= label_tag(key, Spree.t(key)) + tag(:br) if type == :boolean %>
                 </div>
             <% end %>
@@ -57,7 +57,7 @@
                 type = @config.preference_type(key) %>
                 <div class="field">
                   <%= label_tag(key, Spree.t(key) + ': ') + tag(:br) if type != :boolean %>
-                  <%= preference_field_tag(key, @config[key], :type => type) %>
+                  <%= preference_field_tag(key, @config[key], type: type) %>
                   <%= label_tag(key, Spree.t(key)) + tag(:br) if type == :boolean %>
                 </div>
             <% end %>
@@ -73,7 +73,7 @@
                 type = @config.preference_type(key) %>
                 <div class="field">
                   <%= label_tag(key, Spree.t(key) + ': ') + tag(:br) if type != :boolean %>
-                  <%= preference_field_tag(key, @config[key], :type => type) %>
+                  <%= preference_field_tag(key, @config[key], type: type) %>
                   <%= label_tag(key, Spree.t(key)) + tag(:br) if type == :boolean %>
                 </div>
             <% end %>

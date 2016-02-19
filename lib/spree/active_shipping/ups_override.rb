@@ -64,7 +64,7 @@ module Spree
             packages = Array(packages)
 
             xml_builder = Nokogiri::XML::Builder.new do |xml|
-              xml.TimeInTransitRequest do 
+              xml.TimeInTransitRequest do
                 xml.Request do
                   xml.TransactionReference do
                     xml.CustomerContext('Time in Transit')
@@ -158,11 +158,11 @@ module Spree
 
           def find_rates(origin, destination, packages, options={})
             origin, destination = upsified_location(origin), upsified_location(destination)
-            options = @options.merge(options)
-            packages = Array(packages)
+            options        = @options.merge(options)
+            packages       = Array(packages)
             access_request = build_access_request
-            rate_request = build_rate_request(origin, destination, packages, options)
-            response = commit(:rates, save_request(access_request + rate_request), (options[:test] || false))
+            rate_request   = build_rate_request(origin, destination, packages, options)
+            response       = commit(:rates, save_request(access_request + rate_request), (options[:test] || false))
             parse_rate_response(origin, destination, packages, response, options)
           end
 
@@ -181,14 +181,14 @@ module Spree
 
                 ::ActiveShipping::RateEstimate.new(origin, destination, ::ActiveShipping::UPS.name,
                     service_name_for(origin, service_code),
-                    :total_price => total_price,
-                    :currency => currency,
-                    :service_code => service_code,
-                    :packages => packages
-                    )
+                    total_price: total_price,
+                    currency: currency,
+                    service_code: service_code,
+                    packages: packages
+                  )
               end
             end
-            ::ActiveShipping::RateResponse.new(success, message, Hash.from_xml(response).values.first, :rates => rate_estimates, :xml => response, :request => last_request)
+            ::ActiveShipping::RateResponse.new(success, message, Hash.from_xml(response).values.first, rates: rate_estimates, xml: response, request: last_request)
           end
 
 
@@ -211,36 +211,41 @@ module Spree
               "1DA" => "01",
               "2DA" => "02",
               "GND" => "03",
-              "01" => "07",
-              "05" => "08",
-              "03" => "11",
+              "01"  => "07",
+              "05"  => "08",
+              "03"  => "11",
               "3DS" => "12",
               "1DP" => "13",
               "1DM" => "14",
-              "21" => "54",
+              "21"  => "54",
               "2DM" => "59"
             }
 
-            rates = []
-            xml = build_document(response, 'TimeInTransitResponse')
+            rates   = []
+            xml     = build_document(response, 'TimeInTransitResponse')
             success = response_success?(xml)
             message = response_message(xml)
             if success
               rate_estimates = {}
 
               xml.root.css('TransitResponse ServiceSummary').each do |service_summary|
-                service_code    = service_summary.at('Service/Code').text
-                service_code_2 = time_code_mapping[service_code]
-                service_desc    = service_summary.at('Service/Description').text
-                guaranteed_code = service_summary.at('Guaranteed/Code').text
+                service_code          = service_summary.at('Service/Code').text
+                service_code_2        = time_code_mapping[service_code]
+                service_desc          = service_summary.at('Service/Description').text
+                guaranteed_code       = service_summary.at('Guaranteed/Code').text
                 business_transit_days = service_summary.at('EstimatedArrival/BusinessTransitDays').text
-                date = service_summary.at('EstimatedArrival/Date').text
-                rate_estimates[service_name_for(origin, service_code_2)] = {:service_code => service_code, :service_code_2 => service_code_2, :service_desc => service_desc,
-                    :guaranteed_code => guaranteed_code, :business_transit_days => business_transit_days,
-                    :date => date}
+                date                  = service_summary.at('EstimatedArrival/Date').text
+                rate_estimates[service_name_for(origin, service_code_2)] = {
+                  service_code:          service_code,
+                  service_code_2:        service_code_2,
+                  service_desc:          service_desc,
+                  guaranteed_code:       guaranteed_code,
+                  business_transit_days: business_transit_days,
+                  date:                  date
+                }
               end
             end
-            return rate_estimates
+            rate_estimates
           end
 
         end
