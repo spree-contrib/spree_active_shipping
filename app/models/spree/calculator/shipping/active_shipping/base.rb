@@ -212,19 +212,21 @@ module Spree
           dimensions = convert_package_to_dimensions_array(package)
           item_specific_packages = convert_package_to_item_packages_array(package)
 
-          if max_weight <= 0
-            packages << ::ActiveShipping::Package.new(weights.sum, dimensions, units: units)
-          else
-            package_weight = 0
-            weights.each do |content_weight|
-              if package_weight + content_weight <= max_weight
-                package_weight += content_weight
-              else
-                packages << ::ActiveShipping::Package.new(package_weight, dimensions, units: units)
-                package_weight = content_weight
+          if item_specific_packages.empty?
+            if max_weight <= 0
+              packages << ::ActiveShipping::Package.new(weights.sum, dimensions, units: units)
+            else
+              package_weight = 0
+              weights.each do |content_weight|
+                if package_weight + content_weight <= max_weight
+                  package_weight += content_weight
+                else
+                  packages << ::ActiveShipping::Package.new(package_weight, dimensions, units: units)
+                  package_weight = content_weight
+                end
               end
+              packages << ::ActiveShipping::Package.new(package_weight, dimensions, units: units) if package_weight > 0
             end
-            packages << ::ActiveShipping::Package.new(package_weight, dimensions, units: units) if package_weight > 0
           end
 
           item_specific_packages.each do |package|
