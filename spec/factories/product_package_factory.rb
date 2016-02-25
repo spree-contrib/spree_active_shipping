@@ -5,5 +5,5 @@ FactoryGirl.define do
     height { SecureRandom.random_number(19) + 1 }
     weight { SecureRandom.random_number(19) + 1 }
     product
-  end 
+  end
 end
