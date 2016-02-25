@@ -14,7 +14,7 @@ Installation
 We highly recommend using the stable branches of this gem. If you were using version 1.3, you can place this line inside your application's Gemfile:
 
 ```ruby
-gem 'spree_active_shipping', :git => "git://github.com/spree/spree_active_shipping", :branch => "1-3-stable"
+gem 'spree_active_shipping', git: "git://github.com/spree/spree_active_shipping", branch: "1-3-stable"
 ```
 
 To install the latest edge version of this extension, place this line inside your application's Gemfile:
@@ -22,13 +22,13 @@ To install the latest edge version of this extension, place this line inside you
 - To use the latest edge code in master branch:
 
 ```ruby
-gem 'spree_active_shipping', :git => "git://github.com/spree/spree_active_shipping"
+gem 'spree_active_shipping', git: "git://github.com/spree/spree_active_shipping"
 ```
 
 - To use a specific branch specified in the Versionfile for your version of Spree:
 
 ```ruby
-gem 'spree_active_shipping', :git => "git://github.com/spree/spree_active_shipping", :branch => '1-3-stable'
+gem 'spree_active_shipping', git: "git://github.com/spree/spree_active_shipping", branch: '1-3-stable'
 ```
 
 **2.** Install migrations and migrate database:

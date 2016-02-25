@@ -49,15 +49,15 @@ module Spree
         def timing(line_items)
           order = line_items.first.order
           # TODO: Figure out where stock_location is supposed to come from.
-          origin= ::ActiveShipping::Location.new(:country => stock_location.country.iso,
-                               :city => stock_location.city,
-                               :state => (stock_location.state ? stock_location.state.abbr : stock_location.state_name),
-                               :zip => stock_location.zipcode)
+          origin= ::ActiveShipping::Location.new(country: stock_location.country.iso,
+                               city: stock_location.city,
+                               state: (stock_location.state ? stock_location.state.abbr : stock_location.state_name),
+                               zip: stock_location.zipcode)
           addr = order.ship_address
-          destination = ::ActiveShipping::Location.new(:country => addr.country.iso,
-                                     :state => (addr.state ? addr.state.abbr : addr.state_name),
-                                     :city => addr.city,
-                                     :zip => addr.zipcode)
+          destination = ::ActiveShipping::Location.new(country: addr.country.iso,
+                                     state: (addr.state ? addr.state.abbr : addr.state_name),
+                                     city: addr.city,
+                                     zip: addr.zipcode)
           timings_result = Rails.cache.fetch(cache_key(package)+"-timings") do
             retrieve_timings(origin, destination, packages(order))
           end
@@ -213,22 +213,22 @@ module Spree
           item_specific_packages = convert_package_to_item_packages_array(package)
 
           if max_weight <= 0
-            packages << ::ActiveShipping::Package.new(weights.sum, dimensions, :units => units)
+            packages << ::ActiveShipping::Package.new(weights.sum, dimensions, units: units)
           else
             package_weight = 0
             weights.each do |content_weight|
               if package_weight + content_weight <= max_weight
                 package_weight += content_weight
               else
-                packages << ::ActiveShipping::Package.new(package_weight, dimensions, :units => units)
+                packages << ::ActiveShipping::Package.new(package_weight, dimensions, units: units)
                 package_weight = content_weight
               end
             end
-            packages << ::ActiveShipping::Package.new(package_weight, dimensions, :units => units) if package_weight > 0
+            packages << ::ActiveShipping::Package.new(package_weight, dimensions, units: units) if package_weight > 0
           end
 
           item_specific_packages.each do |package|
-            packages << ::ActiveShipping::Package.new(package.at(0), [package.at(1), package.at(2), package.at(3)], :units => :imperial)
+            packages << ::ActiveShipping::Package.new(package.at(0), [package.at(1), package.at(2), package.at(3)], units: :imperial)
           end
 
           packages
@@ -260,10 +260,10 @@ module Spree
         end
 
         def build_location address
-          ::ActiveShipping::Location.new(:country => address.country.iso,
-                       :state   => fetch_best_state_from_address(address),
-                       :city    => address.city,
-                       :zip     => address.zipcode)
+          ::ActiveShipping::Location.new(country: address.country.iso,
+                       state: fetch_best_state_from_address(address),
+                       city: address.city,
+                       zip: address.zipcode)
         end
 
         def retrieve_rates_from_cache package, origin, destination
