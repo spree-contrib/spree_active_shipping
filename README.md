@@ -9,40 +9,28 @@ This is a Spree extension that wraps the popular [active_shipping](http://github
 Installation
 ------------
 
-**1.** Add the gem to your application's Gemfile:
+1. Add this extension to your Gemfile with this line:
+  ```ruby
+  gem 'spree_active_shipping', github: 'spree-contrib/spree_active_shipping', branch: 'X-X-stable'
+  ```
 
-We highly recommend using the stable branches of this gem. If you were using version 1.3, you can place this line inside your application's Gemfile:
+  The `branch` option is important: it must match the version of Spree you're using.
+  For example, use `3-0-stable` if you're using Spree `3-0-stable` or any `3.0.x` version.
 
-```ruby
-gem 'spree_active_shipping', git: "git://github.com/spree/spree_active_shipping", branch: "1-3-stable"
-```
+2. Install the gem using Bundler:
+  ```ruby
+  bundle install
+  ```
 
-To install the latest edge version of this extension, place this line inside your application's Gemfile:
+3. Copy & run migrations
+  ```ruby
+  bundle exec rake railties:install:migration
+  bundle exec rake db:migrate
+  ```
 
-- To use the latest edge code in master branch:
+4. Restart your server
 
-```ruby
-gem 'spree_active_shipping', git: "git://github.com/spree/spree_active_shipping"
-```
-
-- To use a specific branch specified in the Versionfile for your version of Spree:
-
-```ruby
-gem 'spree_active_shipping', git: "git://github.com/spree/spree_active_shipping", branch: '1-3-stable'
-```
-
-**2.** Install migrations and migrate database:
-
-```
-$ bundle exec rake railties:install:migrations
-$ bundle exec rake db:migrate
-```
-
-**3.** Run bundler:
-
-```
-$ bundle
-```
+  If your server was running, restart it so that it can find the assets properly.
 
 Rate quotes from carriers
 ---
