@@ -63,6 +63,10 @@ en:
     small_packets_air: "Canada Post Small Packets Air"
     parcel_surface: "Canada Post Parcel Surface"
     small_packets_surface: "Canada Post Small Packets Surface"
+    expedited_usa: "Canada Post Expedited US Business"
+    priority_worldwide_usa: "Canada Post Priority Worldwide USA"
+    tracked_packet_usa: "Canada Post Tracked Packet - USA"
+    xpresspost_usa: "Canada Post Xpresspost USA"
   shipping_error: "Shipping Error"
   spree:
     product_packages: "Product Packages"
