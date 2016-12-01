@@ -47,13 +47,14 @@ module Spree
                     build_package_node(xml, package, options)
                   end
 
+                  # Following section trigger UPS API check the state, and thus the estimation fail
                   # not implemented:  * Shipment/ShipmentServiceOptions element
                   #SPREE OVERRIDE
-                  if options[:negotiated_rates] || @options[:origin_account] || options[:origin_account]
-                    xml.RateInformation do
-                      xml.NegotiatedRatesIndicator
-                    end
-                  end
+                  #if options[:negotiated_rates] || @options[:origin_account] || options[:origin_account]
+                  #  xml.RateInformation do
+                  #    xml.NegotiatedRatesIndicator
+                  #  end
+                  #end
                 end
               end
             end
