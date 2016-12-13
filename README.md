@@ -24,7 +24,7 @@ Installation
 
 3. Copy & run migrations
   ```ruby
-  bundle exec rake railties:install:migration
+  bundle exec rake railties:install:migrations
   bundle exec rake db:migrate
   ```
 
