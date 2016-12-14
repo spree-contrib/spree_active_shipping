@@ -2,7 +2,7 @@ module Spree
   module Admin
     class ProductPackagesController < ResourceController
       belongs_to 'spree/product', find_by: :slug
-      before_filter :load_data
+      before_action :load_data
 
       private
         def load_data
