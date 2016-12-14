@@ -4,9 +4,11 @@ require 'simplecov' if ENV['COVERAGE']
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 
 require 'rspec/rails'
+require 'rspec/active_model/mocks'
 require 'webmock/rspec'
 require 'factory_girl'
 require 'pry'
+require 'ffaker'
 # Run any available migration
 ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__)
 
