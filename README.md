@@ -10,6 +10,15 @@ Installation
 ------------
 
 1. Add this extension to your Gemfile with this line:
+
+  #### Spree >= 3.1
+
+  ```ruby
+  gem 'spree_active_shipping', github: 'spree-contrib/spree_active_shipping'
+  ```
+
+  #### Spree 3.0 and Spree 2.x
+
   ```ruby
   gem 'spree_active_shipping', github: 'spree-contrib/spree_active_shipping', branch: 'X-X-stable'
   ```
