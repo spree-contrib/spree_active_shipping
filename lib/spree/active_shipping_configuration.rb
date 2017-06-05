@@ -16,6 +16,8 @@ class Spree::ActiveShippingConfiguration < Spree::Preferences::Configuration
 
   preference :canada_post_login, :string, default: "canada_post_login"
 
+  preference :australia_post_login, :string, default: "australia_post_api_key"
+
   preference :units, :string, default: "imperial"
   preference :unit_multiplier, :decimal, default: 16 # 16 oz./lb - assumes variant weights are in lbs
   preference :default_weight, :integer, default: 0 # 16 oz./lb - assumes variant weights are in lbs

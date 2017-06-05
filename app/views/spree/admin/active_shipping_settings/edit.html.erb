@@ -63,6 +63,19 @@
             <% end %>
           </fieldset>
         </div>
+        <div class="col-md-6">
+          <fieldset class="currency no-border-bottom">
+            <legend align="center"><%= Spree.t(:australia_post_settings)%></legend>
+            <% @preferences_AustraliaPost.each do |key|
+              type = @config.preference_type(key) %>
+                <div class="field">
+                  <%= label_tag(key, Spree.t(key) + ': ') + tag(:br) if type != :boolean %>
+                  <%= preference_field_tag(key, @config[key], type: type) %>
+                  <%= label_tag(key, Spree.t(key)) + tag(:br) if type == :boolean %>
+                </div>
+            <% end %>
+          </fieldset>
+        </div>
       </div>
 
       <div class="row">
