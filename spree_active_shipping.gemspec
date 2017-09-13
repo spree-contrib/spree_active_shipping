@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
 
   s.name        = 'spree_active_shipping'
-  s.version     = '3.2.0.alpha'
+  s.version     = '3.3.0.beta'
   s.authors     = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
   s.homepage    = 'http://github.com/spree-contrib/spree_active_shipping'
