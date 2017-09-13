@@ -1,4 +1,4 @@
-class CreateProductPackages < ActiveRecord::Migration
+class CreateProductPackages < SpreeExtension::Migration[4.2]
   def change
     create_table :spree_product_packages do |t|
       t.integer "product_id",                :null => false
