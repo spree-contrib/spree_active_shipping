@@ -14,9 +14,9 @@ module ActiveShipping
 
     let(:country) { mock_model Spree::Country, :iso => "CA", :state_name => "Quebec", :state => nil }
     let(:address) { mock_model Spree::Address, :country => country, :state_name => country.state_name, :city => "Montreal", :zipcode => "H2B", :state => nil }
-    let(:usa) { FactoryGirl.create(:country, :name => "USA", :iso => "US") }
-    let(:state) { FactoryGirl.create(:state, country: usa, abbr: 'MD', name: 'Maryland')}
-    let(:us_address) { FactoryGirl.create(:address, :country => usa, :state => state, :city => "Chevy Chase", :zipcode => "20815") }
+    let(:usa) { FactoryBot.create(:country, :name => "USA", :iso => "US") }
+    let(:state) { FactoryBot.create(:state, country: usa, abbr: 'MD', name: 'Maryland')}
+    let(:us_address) { FactoryBot.create(:address, :country => usa, :state => state, :city => "Chevy Chase", :zipcode => "20815") }
     let(:ca_order) { mock_model(Spree::Order, :ship_address => address) }
     let(:us_order) { mock_model(Spree::Order, :ship_address => us_address) }
     let(:package1) { mock_model(Spree::ProductPackage, :length => 12, :width => 24, :height => 47, :weight => 36) }
@@ -29,8 +29,8 @@ module ActiveShipping
     let(:variant6) { build(:variant, :weight => -1.0) }
     let(:variant7) { mock_model(Spree::Variant, :weight => 29.0, :product => mock_model(Spree::Product, :product_packages => [package1, package2])) }
     let(:variant8) { mock_model(Spree::Variant, :weight => 5.25, :product => mock_model(Spree::Product, :product_packages => [])) }
-    let(:california) { FactoryGirl.create(:state, country: usa, abbr: 'CA', name: 'California') }
-    let(:stock_location) { FactoryGirl.create(:stock_location, :address1 => '1313 S Harbor Blvd', :address2 => '', :city => 'Anaheim', :state => california, :country => usa, :phone => '7147814000', :active => 1) }
+    let(:california) { FactoryBot.create(:state, country: usa, abbr: 'CA', name: 'California') }
+    let(:stock_location) { FactoryBot.create(:stock_location, :address1 => '1313 S Harbor Blvd', :address2 => '', :city => 'Anaheim', :state => california, :country => usa, :phone => '7147814000', :active => 1) }
 
     let(:package) { double(Spree::Stock::Package,
           order: ca_order,
