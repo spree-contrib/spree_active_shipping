@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :product_package, class: Spree::ProductPackage do
     length { SecureRandom.random_number(19) + 1 }
     width { SecureRandom.random_number(19) + 1 }

@@ -6,7 +6,7 @@ require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require 'rspec/rails'
 require 'rspec/active_model/mocks'
 require 'webmock/rspec'
-require 'factory_girl'
+require 'factory_bot'
 require 'pry'
 require 'ffaker'
 # Run any available migration
@@ -28,7 +28,7 @@ Dir[File.join(File.dirname(__FILE__), "factories/*.rb")].each {|f| require f }
 
 RSpec.configure do |config|
   config.include Spree::TestingSupport::ControllerRequests, :type => :controller
-  config.include FactoryGirl::Syntax::Methods
+  config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::UrlHelpers
   config.include WebFixtures
   # == Mock Framework

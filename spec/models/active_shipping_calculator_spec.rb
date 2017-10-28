@@ -6,10 +6,10 @@ module ActiveShipping
     WebMock.disable_net_connect!
     # NOTE: All specs will use the bogus calculator (no login information needed)
 
-    let(:address) { FactoryGirl.create(:address) }
-    let(:stock_location) { FactoryGirl.create(:stock_location) }
+    let(:address) { FactoryBot.create(:address) }
+    let(:stock_location) { FactoryBot.create(:stock_location) }
     let!(:order) do
-      order = FactoryGirl.create(:order_with_line_items, :ship_address => address, :line_items_count => 2)
+      order = FactoryBot.create(:order_with_line_items, :ship_address => address, :line_items_count => 2)
       order.line_items.first.tap do |line_item|
         line_item.quantity = 2
         line_item.variant.save
