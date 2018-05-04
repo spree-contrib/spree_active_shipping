@@ -18,6 +18,7 @@ script:
   - bundle exec rake spec
 
 rvm:
+  - 2.4.4
   - 2.3.1
   - 2.2.7
 
