@@ -2,7 +2,8 @@
 
 source "https://rubygems.org"
 
-gem "spree", "~> 3.3.0"
+gem "spree", "~> 3.5.0"
 gem "rails-controller-testing"
+gem "active_shipping", "~> 1.4"
 
-gemspec :path => "../"
+gemspec path: "../"
