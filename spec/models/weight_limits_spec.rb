@@ -90,8 +90,8 @@ module ActiveShipping
         it "should create array of packages" do
           packages = international_calculator.send :packages, package
           expect(packages.size).to eq(5)
-          expect(packages.map{|package| package.weight.amount}).to eq([61.0, 60.0, 60.0, 40.0, 29.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]})
-          expect(packages.map{|package| package.weight.unit}.uniq).to eq([:ounces])
+          expect(packages.map{|package| package.weight.value}).to eq([61.0, 60.0, 60.0, 40.0, 29.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]})
+          expect(packages.map{|package| package.weight.unit.name}.uniq).to eq(["oz"])
         end
 
         context "raise exception if max weight exceeded" do
@@ -113,8 +113,8 @@ module ActiveShipping
         it "should create array with one package for US" do
           packages = domestic_calculator.send :packages, us_package
           expect(packages.size).to eq(4)
-          expect(packages.map{|package| package.weight.amount}).to eq([61.0, 60.0, 60.0, 69.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]})
-          expect(packages.map{|package| package.weight.unit}.uniq).to eq([:ounces])
+          expect(packages.map{|package| package.weight.value}).to eq([61.0, 60.0, 60.0, 69.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]})
+          expect(packages.map{|package| package.weight.unit.name}.uniq).to eq(["oz"])
         end
       end
     end
@@ -132,8 +132,8 @@ module ActiveShipping
 
         packages = international_calculator.send :packages, package
         expect(packages.size).to eq(12)
-        expect(packages.map{|package| package.weight.amount}).to eq([21.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 29.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]})
-        expect(packages.map{|package| package.weight.unit}.uniq).to eq([:ounces])
+        expect(packages.map{|package| package.weight.value}).to eq([21.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 29.0].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]})
+        expect(packages.map{|package| package.weight.unit.name}.uniq).to eq(["oz"])
       end
     end
 
@@ -157,8 +157,8 @@ module ActiveShipping
       it "should add item packages to weight calculation" do
         packages = domestic_calculator.send :packages, package_with_packages
         expect(packages.size).to eq(6)
-        expect(packages.map{|package| package.weight.amount}).to eq([50, 29, 36, 43, 36, 43].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]})
-        expect(packages.map{|package| package.weight.unit}.uniq).to eq([:ounces])
+        expect(packages.map{|package| package.weight.value}).to eq([50, 29, 36, 43, 36, 43].map{|x| x * Spree::ActiveShipping::Config[:unit_multiplier]})
+        expect(packages.map{|package| package.weight.unit.name}.uniq).to eq(["oz"])
       end
     end
   end
