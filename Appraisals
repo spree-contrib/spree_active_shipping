@@ -1,9 +1,3 @@
-# rails 4.2
-appraise 'spree-3-1' do
-  gem 'spree', '~> 3.1.0'
-  gem 'active_shipping', '~> 1.4'
-end
-
 # rails 5.0
 appraise 'spree-3-2' do
   gem 'spree', '~> 3.2.0'
@@ -26,7 +20,7 @@ appraise 'spree-3-6' do
 end
 
 appraise 'spree-master' do
-  gem 'spree', github: 'spree/spree', branch: 'master'
+  gem 'spree', git: 'https://github.com/spree/spree', branch: 'master'
   gem 'active_shipping', git: 'https://github.com/shopify/active_shipping', branch: 'master'
   gem 'rails-controller-testing'
 end
