@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://github.com/spree-contrib/spree_active_shipping'
   s.summary     = 'Spree extension for providing shipping methods that wrap the active_shipping plugin.'
   s.description = 'Spree extension for providing shipping methods that wrap the active_shipping plugin.'
-  s.required_ruby_version = '>= 2.1.0'
+  s.required_ruby_version = '>= 2.3.0'
   s.rubygems_version      = '>= 1.8.23'
 
   s.files         = `git ls-files`.split("\n")
@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency 'spree_core', '>= 3.1.0', '< 4.0'
-  s.add_dependency 'active_shipping', '~> 1.4'
+  s.add_dependency 'active_shipping', '~> 2.0'
   s.add_dependency 'spree_extension'
 
   s.add_development_dependency 'pry'
