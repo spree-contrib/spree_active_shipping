@@ -10,16 +10,18 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://github.com/spree-contrib/spree_active_shipping'
   s.summary     = 'Spree extension for providing shipping methods that wrap the active_shipping plugin.'
   s.description = 'Spree extension for providing shipping methods that wrap the active_shipping plugin.'
-  s.required_ruby_version = '>= 2.1.0'
+  s.required_ruby_version = '>= 2.3.8'
   s.rubygems_version      = '>= 1.8.23'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib"]
 
-  s.add_dependency 'spree_core', '>= 3.1.0', '< 4.0'
-  s.add_dependency 'active_shipping', '~> 1.4'
+  spree_version = '>= 3.2.0', '< 5.0'
+  s.add_dependency 'spree_core', spree_version
+  s.add_dependency 'spree_backend', spree_version
   s.add_dependency 'spree_extension'
+  s.add_dependency 'active_shipping'
 
   s.add_development_dependency 'pry'
   s.add_development_dependency 'webmock'
@@ -31,6 +33,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'rspec-activemodel-mocks'
   s.add_development_dependency 'pg', '~> 0.18'
-  s.add_development_dependency 'mysql2', '~> 0.3.18'
+  s.add_development_dependency 'mysql2', '~> 0.5.1'
+  s.add_development_dependency 'sqlite3'
   s.add_development_dependency 'appraisal'
 end

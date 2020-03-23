@@ -2,7 +2,8 @@
 
 source "https://rubygems.org"
 
-gem "spree", :github => "spree/spree", :branch => "master"
+gem "spree", git: "https://github.com/spree/spree", branch: "master"
 gem "rails-controller-testing"
+gem "active_shipping", git: "https://github.com/shopify/active_shipping", branch: "master"
 
-gemspec :path => "../"
+gemspec path: "../"
