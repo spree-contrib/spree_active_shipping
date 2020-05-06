@@ -158,6 +158,7 @@ module Spree
           max_weight = get_max_weight(package)
 
           weights = package.contents.map do |content_item|
+            next unless content_item.variant.product.product_packages.any? # product packages take priority over variant dimensions
             item_weight = content_item.variant.weight.to_f
             item_weight = default_weight if item_weight <= 0
             item_weight *= multiplier
@@ -204,6 +205,7 @@ module Spree
         end
 
         # Generates an array of Package objects based on the quantities and weights of the variants in the line items
+        # item specific packages have priority over variant dimensions
         def packages(package)
           units = Spree::ActiveShipping::Config[:units].to_sym
           packages = []
